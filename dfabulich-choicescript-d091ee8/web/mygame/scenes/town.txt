@@ -1,0 +1,121 @@
+*comment ////////////////////////////////////////////////////////////
+*comment // Market
+*comment ////////////////////////////////////////////////////////////
+
+*label market_main
+
+What would you like to do at the market? There's always the general store, the biggest in town, that buys and sells most things for a flat rate, especially gathered goods.
+
+*choice
+    #Buy and sell gathered goods to the general store.
+        *goto market_general_store
+
+*label market_general_store
+
+*temp rosalia_market_price 0
+*if (months_passed modulo 13) = 4
+    *set rosalia_market_price  70
+    *goto market_general_store_determined_rosalia_market_price
+*if (months_passed modulo 13) = 5
+    *set rosalia_market_price 48
+    *goto market_general_store_determined_rosalia_market_price
+*if (months_passed modulo 13) = 6
+    *set rosalia_market_price 42
+    *goto market_general_store_determined_rosalia_market_price
+*if (months_passed modulo 13) = 7
+    *set rosalia_market_price 21
+    *goto market_general_store_determined_rosalia_market_price
+
+*label market_general_store_determined_rosalia_market_price
+
+*choice
+    *selectable_if (inventory_lemens >= 10)  #Sell 10 Lemens [-10 Lemens, +43 Doubloons]
+        *set inventory_lemens - 10
+        *set doubloons + 43
+        *goto market_general_store
+    *selectable_if (inventory_clackadoo_feather >= 1) #Sell 1 Clackadoo Feather [-1 Clackadoo Feather, +3309 Doubloons]
+        *set inventory_clackadoo_feather - 1
+        *set doubloons + 3309
+        *goto market_general_store
+    *comment In the following if statement, rosalia can only be sold in the months of may, june, july, or august, and has varying prices in each month
+    *if (knowledge_rosalia)
+        *selectable_if ((inventory_rosalia >= 2) and (rosalia_market_price > 0)) #Sell 2 Rosalia [-2 Rosalia, +${rosalia_market_price} Doubloons, must be between May and August (price is higher in May and lower in August)]
+            *set inventory_rosalia - 2
+            *set doubloons + rosalia_market_price
+            *goto market_general_store
+    *selectable_if (doubloons >= 182) #One-use torch [-182 Doubloons]
+        *set doubloons - 182
+        *set inventory_torch + 1
+        *goto market_general_store
+    *selectable_if (doubloons >= 4000) #Bribe the guy selling stuff for his very dapper hat. [-32000 Doubloons (it's very dapper)]
+        "I mean, if you really want it that bad you can have it for free. I bought it off ebay for 32 Doubloons. Piece of crap really."
+        
+        You later throw out the hat after finding a maggot in it.
+        *goto market_general_store
+    #Return to main market area
+        *goto market_main
+    #Return home
+        *goto_scene {home_base_scene} {home_base_label}
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Job
+*comment ////////////////////////////////////////////////////////////
+
+*label job
+
+What job do you plan on doing?
+
+*choice
+    *if (unlocked_job_farm_hand) #Work as a lousy farm hand. [+3 months,
+        
+    #Actually nevermind, I don't want to go to work today.
+        *goto_scene {home_base_scene} {home_base_label}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

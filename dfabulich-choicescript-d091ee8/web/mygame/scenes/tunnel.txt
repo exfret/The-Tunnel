@@ -1,0 +1,323 @@
+*label start_of_trip
+
+What sort of trip are you planning?
+
+*choice
+    *selectable_if (inventory_equipments >= layer_1_equipments_needed) #A trip into the first layer [-${layer_1_equipments_needed} Equipments]
+        *set inventory_equipments - layer_1_equipments_needed
+        *goto start_of_trip_layer_1
+    #Back to home
+        *goto_scene {home_base_scene} {home_base_label}
+
+*label start_of_trip_layer_1
+
+*choice
+    #General exploration [+1 month, +3 experience]
+        *set months_passed + 1
+        *set experience + 3
+        *goto general_exploration_layer_1
+    #Fetch some Lemens [+1 month, +${lemen_fetch_skill} Lemens, +1 Lemen fetch skill]
+        *set months_passed + 1
+        *goto fetch_lemens
+    *if (found_layer_1_rosalia_patch) #Gather some rosalia [+1 month, +${rosalia_fetch_skill} Rosalia, +1 Rosalia fetch skill]
+        *set months_passed + 1
+        *goto fetch_rosalia
+    *if (unlocked_support_self) #Nevermind, a different layer
+        *set inventory_equipments + layer_1_equipments_needed
+        *goto start_of_trip
+    #Back to home
+        *set inventory_equipments + layer_1_equipments_needed
+        *goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1
+
+*temp encounter 0
+*rand encounter 1 10
+
+You go exploring.
+
+*page_break
+
+*if (encounter = 1)
+    *goto general_exploration_layer_1_encounter_cave
+*if (encounter = 2)
+    *goto general_exploration_layer_1_encounter_new_lemen_patch
+*if (encounter = 3)
+    *goto general_exploration_layer_1_encounter_pokemon
+*if (encounter = 4)
+    *goto general_exploration_layer_1_encounter_rosalia_patch
+*if (encounter = 5)
+    *goto general_exploration_layer_1_encounter_tso_note_1
+*if (encounter = 6)
+    *goto general_exploration_layer_1_encounter_henry
+*if (encounter = 7)
+    *goto general_exploration_layer_1_encounter_flowers_on_ground
+*if (encounter = 8)
+    *goto general_exploration_layer_1_encounter_dagger
+
+*label general_exploration_layer_1_encounter_cave
+
+*if not (found_layer_1_cave)
+    You explore a few days and come across some rocks rising up from the ground. They form the entrance to a cave. It's really dark inside.
+    *goto general_exploration_layer_1_encounter_cave_2
+*else
+    It's that one cave again.
+    *goto general_exploration_layer_1_encounter_cave_2
+
+*label general_exploration_layer_1_encounter_cave_2
+
+*set found_layer_1_cave true
+
+*choice
+    *selectable_if (inventory_torch > 0) #Use a torch to light up the cave and head inside
+        *goto general_exploration_layer_1_encounter_cave_enter
+    #Explore around the cave
+        *goto general_exploration_layer_1_encounter_cave_around
+
+*label general_exploration_layer_1_encounter_cave_around
+
+*comment TODO: Only allow picking the petunal blossoms once
+*if (knowledge_petunal_blossoms)
+    Oh some flowers! Upon closer examination, they're Petunal Blossoms. You're able to pick a few up and head back.
+    *set inventory_petunal_blossoms + 3
+    *goto_scene {home_base_scene} {home_base_label}
+*else
+    You find nothing but a few useless purple flowers with yellow specks, so you return home.
+    *goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_cave_enter
+
+TODO
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_new_lemen_patch
+
+You find a new lemen patch! You don't have any time to pick anything today, but this one's fresher and should give more lemens. [Lemen Fetch Skill +3]
+
+*set lemen_fetch_skill + 3
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_pokemon
+
+You find an exeggcute, but you don't have any pokeballs or other pokemon to use to catch it, so you return home emtpy-handed.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_rosalia_patch
+
+*if not (knowledge_rosalia)
+    You find a field of red flowers with large broad leaves on their stems. Pretty, but you're not sure what they're used for. You return empty-handed.
+    *goto_scene {home_base_scene} {home_base_label}
+
+*if (found_layer_1_rosalia_patch)
+    You stumble upon the rosalia patch. Might as well gather some rosalia now that you're here.
+    *set found_layer_1_rosalia_patch true
+    *goto fetch_rosalia
+
+You find a beautiful rosalia patch. Might as well gather some rosalia!
+
+*set found_layer_1_rosalia_patch true
+
+*goto fetch_rosalia
+
+*label general_exploration_layer_1_encounter_tso_note_1
+
+*if (found_layer_1_tso_note_1)
+    You wander for hours but find nothing new.
+    *goto_scene {home_base_scene} {home_base_label}
+
+*comment If you're not longer at the orphanage, don't do the orphanage-based scene (though this is incredibly unlikely)
+*if (home_base_scene != "orphanage")
+    You find a note on the ground with familiar handwriting, but can't quite place whose it is. Oh well.
+    *goto_scene {home_base_scene} {home_base_label}
+
+You find a note on the ground and recognize the handwriting as similar to George's. At first, you think it must be a journal entry that got blown away. At first, you find it funny that of all the notes you could have found, you found George's, the only other pioneer at the orphanage. But they you start reading and see it's not George who wrote the note. It says…
+
+"I hope someone finds this. I need them to deliver this to my son George, let him know I'm okay. There was an… accident with me and someone important a few days ago, someone I owe many debts. I need to get away, and the only way to escape is through this goddamned tunnel. I have to get out. Let him know that I love him and am still alive."
+
+*temp time_passed_since_father_left months_passed
+*set time_passed_since_father_left + 7
+
+George's father is still alive? But that's impossible! He disappeared ${time_passed_since_father_left} months ago, leaving George homeless and without a family. Regardless, you have to get this to George, it's a major finding.
+
+*page_break
+
+When you show George, he sighs. "I hope he's okay. I shouldn't go looking for him, as much as I yearn to see him again. He told me that if he ever disappeared never to go after him, because he didn't want us both to die. Still, if you find any more hint of him, I would be incredibly helpful for you to share it with me. For your help so far, I'll let you know of a rosalia patch I found a while back."
+
+*if not (knowledge_rosalia)
+    Oh you don't know about rosalia? I can teach you about it more tomorrow, but essentially it's just another useful plant from the tunnel. Used in a lot of teas. I know this town tends to rely on local crops more, which don't make for good teas, but in the summer when the city merchants make their trips down here you can sell them in the market for a fair price.
+    *goto general_exploration_layer_1_encounter_tso_note_1_explained_rosalia
+
+*label general_exploration_layer_1_encounter_tso_note_1_explained_rosalia
+
+He discusses with you where it is and then heads off to bed with his father's note, his eyes glossy.
+
+*set found_layer_1_rosalia_patch true
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_henry
+
+*if (met_henry)
+    *goto *label general_exploration_layer_1_encounter_henry_already_met
+
+As you wander, you find a middle-aged traveller returning from a trip. "Howdy," you exclaim!
+
+*comment He responds differently at 220 months
+*if (months_passed < 220)
+    He responds in a friendly manner back to you, "I'm Henry. How are you doing little lad?"
+    
+    "I'm doing well." You look at his massive backpack of trinkets. "Yes, quite well, little lad. Here, you can have one if you'd like."
+    
+    He hands you an orb and trots off. *comment TODO: Figure out what to make this
+    
+    Nothing much else happens while you're off.
+    
+    *set fond_henry true
+    *set met_henry true
+    
+    *goto_scene {home_base_scene} {home_base_label}
+*else
+    "Whatever you want of Henry, you ain't gettin' it." Huffs the man, careful to keep his distance from you.
+    
+    "I was just saying hi."
+    
+    "Scammers and murderers say hi as well." He shoots back. "I shouldn't have even given you my name!" Then, he passes out of sight into the cover of some woods.
+    
+    Nothing much else adventurous happens on your trip.
+    
+    *set fond_henry false
+    *set met_henry true
+    
+    *goto_scene {home_base_scene} {home_base_label}
+    
+*label general_exploration_layer_1_encounter_henry_already_met
+
+You happen upon Henry again.
+
+*if (fond_henry)
+    "Howdy," he says to you. "I don't have much to offer you in physical possessions right now unfortunately, but I'd give a good lad like you something great if I had it!"
+    
+    He walks on past and you find nothing much more on your trip.
+    *comment Have him give something once I establish the other things better.
+    
+    *page_break
+    
+    *goto_scene {home_base_scene} {home_base_label}
+*else
+    He just walks around and avoids you.
+    
+    *page_break
+    
+    *goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_flowers_on_ground
+
+You find some harvested flowers on the ground along with a note. The note says:
+
+"I just wanted to be nice to the next person who came upon this area. Here's some rosalia and petunal blossoms. The first is a rose-like flower used in tea, and the second is very nutritious, especially for a vegetarian like myself! Use them however you see fit. :)"
+
+[+14 Petunal Blossoms, +6 Rosalia]
+*set inventory_petunal_blossoms + 14
+*set inventory_rosalia +6
+*comment Set these to true now in case they weren't before. Would be weird for them to be in possession of something they don't know about.
+*set knowledge_petunal_blossoms true
+*set knowledge_rosalia true
+
+Very nice of whoever left this. You wander a little more before returning home.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_encounter_dagger
+
+The biggest thing that happens on your trip is that you find a rusty dagger on the ground.
+
+*if (months_passed < 200)
+    It's illegal for someone less than 200 months old to possess a weapon. Should you leave it, or risk being caught?
+    
+    *choice
+        #Leave it
+            Like I said, nothing else really happens.
+            *goto_scene {home_base_scene} {home_base_label}
+        #Risk being caught and pick it up
+            You take the dagger with you.
+            *set inventory_dagger + 1
+            *goto_scene {home_base_scene} {home_base_label}
+
+You pick up the dagger. Nice find. Now back home.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*comment ////////////////////////////////////////////////////////////
+*comment // General exploration encounters are ABOVE this
+*comment ////////////////////////////////////////////////////////////
+
+*label fetch_lemens
+
+*set inventory_lemens + lemen_fetch_skill
+*set lemen_fetch_skill + 1
+
+You fetched some lemens
+
+*page_break
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label fetch_rosalia
+
+You fetched some rosalia.
+
+*set inventory_rosalia + rosalia_fetch_skill
+*set rosalia_fetch_skill + 1
+
+*goto_scene {home_base_scene} {home_base_label}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

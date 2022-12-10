@@ -1,0 +1,74 @@
+Your world is a small one. Ever since you were born, ever since the elders of the town were born, and ever since [i]their[/i] elders were born, well, everyone has been confined to this cave. It's a spacious cave, mysteriously lit, and stretching hundreds of miles in each direction and leaving plenty of space for a bustling city on one side and a vast sea of farms on the other, but it still confines its inhabitants. Many have tried digging their way out, but no tools seem strong enough to pierce through the stone walls. The only hope to escape, is the tunnel.
+
+The tunnel is a huge hole, dozens of miles across, in the side of the cavern just outside the city. It is a sacred artifact of ancient times, and many believe that, deep inside, hides the secrets to their imprisonment. Many have tried to seek these answers, but if anyone has found them, none of those people returned to tell the tale. More often, the tunnel is a place to scavenge for ancient artifacts and other rarities that can only exist within its abyssal mouth. The deeper in you go, the rarer and more valuable the artifacts, but the higher the danger. No one has ever seen the other side of the tunnel. Some think it is infinite even. But most hold hope that one day, escape will be found.
+
+*page_break
+
+You are an orphan living in a town just outside the city. The orphanage has been kind to you, but doesn't always have the funds to feed, clothe, and shelter everyone appropriately. From time to time, you've seen children starve or freeze to death just outside when there wasn't a spare bed or food to support another. That is why you have taken it upon yourself to be the best tunnel pioneer there has ever been, and to bring back riches for the orphanage to grow and never need to turn another away again.
+
+And today is your first venture into the tunnel.
+
+*page_break
+
+George, your mentor, shows his pioneer pass to the guards at the primary tunnel entrance. It's a privilege to be able to scavenge from the first levels of the tunnel, since if everyone was allowed in at once, the precious resources that exist only within the tunnel would have no time to regrow. Of course, the artifacts have all been taken already, so today you and George are out to collect Bulbous Lemens, a luminous plant that inexplicably dies a few weeks after being removed from the tunnel no matter how well it is tended to by the farmers. While the outside of the cavern is lit 24/7 by a mysterious force, it is necessary to use other solutions like the Lemens for inside buildings.
+
+As you walk with George, you start to get a feel for the absolute magnitude of the tunnel. A couple hours later, and it still feels like you've barely inched into the lip of this massive hole in the cave. This is all you need to go, though, since this is where the secret field of Lemens that George told you he found many years ago is.
+
+"Crap, someone else found it!" George exclaims, gesturing toward some litter on the ground. "And they didn't even pick up after themselves." George always seemed to be perpetually annoyed. Of course, sooner or later, someone would have found this field. "Well, let's start gathering."
+
+*choice
+    #Gather Lemens [+${lemen_fetch_skill} Lemens, +7 Bonus Lemens from George's help]
+        *goto_scene orphanage first_return
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

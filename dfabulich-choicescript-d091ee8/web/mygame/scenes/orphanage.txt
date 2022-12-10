@@ -1,0 +1,213 @@
+*label first_return
+
+*set inventory_lemens + 12
+
+You return to the orphanage with 12 fully harvested lemens, exhausted and yet excited for the weeks to come.
+
+*page_break
+
+The next few weeks consist of just exploration with George, him showing you around the tunnel's first layer. Towards the end, he even shows you the start of the second layer, the first one where there is any hope of finding new relics. However, you don't stay long enough to find any. At the end, he gives you an artifact. "Promise me you'll never get rid of this. I give it to all my mentees so that they remember me." It's a feather. "This has practical purpose, too. It will fly away if you are about to be in grave danger. It's very hard to catch and at that point you probably will want to just run, but one warning is better than none. It comes from a clackadoo bird that I was able to catch in the fourth layer. They are born with an instinct to always know when to flee danger, which makes them incredibly difficult to catch, but also bestows the feathers with that magical property I mentioned. Hold onto it as best as you can.
+
+*choice
+    #Take the Clackadoo Feather [+1 Clackadoo feather]
+        *goto clackadoo_feather
+
+*label clackadoo_feather
+
+*set months_passed + 1
+
+*set inventory_clackadoo_feather + 1
+
+You're off on your own now.
+
+*goto orphanage_home_base
+
+*label orphanage_home_base
+
+[b]Back at the orphanage[/b]
+
+*temp months_passed_to_unlock_support_self 0
+*set months_passed_to_unlock_support_self starting_months_passed
+*set months_passed_to_unlock_support_self + 4
+*if (months_passed >= months_passed_to_unlock_support_self)
+    *if not (unlocked_support_self)
+        The orphanage tells you it's really stressing out and needs you to help pay for yourself. Now, you will need to help pay for the travel supplies. Regardless of time spent in each travel, the number of [i]travel equipments[/i] you'll need only depends on the layer you go into. Farther layers will require exponentially more equipment.
+        
+        To help support your expensive tunneling hobby, the orphanage also recommends some farmers nearby needing farmhands, but also more strongly recommends to not dilly dally your life away collecting flowers in the tunnel.
+        *set unlocked_support_self true
+        *set unlocked_job_farm_hand true
+        
+*temp random_hint 0
+*rand random_hint 1 6
+
+*if (random_hint = 1)
+    Hint: Even if your adventures in "general exploring" don't turn out to be fruitful, you still gain experience, which unlocks new choices down the road. So, don't give up on that option!
+*if (random_hint = 2)
+    Hint: Sometimes, with increased skills, you may notice new things about places even if you've been there before.
+*if (random_hint = 3)
+    Hint: Try to be efficient with your actions. People don't live forever!
+*if (random_hint = 4)
+    Hint: Once you acquire a map-making kit and explore enough of an area, you can start charting the places you've been to in order to return there later!
+*if (random_hint = 5)
+    Hint: You can go to the stats screen and come back for a different hint each time!
+*if (random_hint = 6)
+    Hint: Some areas don't need a map to return to, but some places do.
+
+*label orphanage_home_base_given_random_hint
+
+*temp months_passed_to_unlock_market 0
+*set months_passed_to_unlock_market starting_months_passed
+*set months_passed_to_unlock_market + 2
+*if (months_passed >= months_passed_to_unlock_market)
+    *if not (unlocked_town_market)
+        You just unlocked the ability to access the town market.
+        *set unlocked_town_market true
+        *goto orphanage_homebase_evaluated_market_unlock
+
+*label orphanage_homebase_evaluated_market_unlock
+
+*temp months_passed_to_unlock_study 0
+*set months_passed_to_unlock_study starting_months_passed
+*set months_passed_to_unlock_study + 3
+*if (months_passed >= months_passed_to_unlock_study)
+    *if not (unlocked_town_study)
+        You just unlocked the ability to access the study.
+        *set unlocked_town_study true
+        *goto orphanage_homebase_evaluated_study_unlock
+
+*label orphanage_homebase_evaluated_study_unlock
+
+*choice
+    #Take a trip to the tunnel
+        *if not (unlocked_support_self)
+            *goto_scene tunnel start_of_trip_layer_1
+        *goto_scene tunnel start_of_trip
+    *if (unlocked_town_market) #Go to town market
+        *goto_scene town market_main
+    *if (unlocked_town_study) #Study in the orphanage's study
+        *goto orphanage_study
+    *if (unlocked_job_farm_hand) #Do work in town
+        *goto_scene town job
+    *comment *if (unlocked_level_up) #Give George blossoms and rosalia to demonstrate your readiness for a blue pass [-2 petunal blossoms, -1 rosalia, gain blue pass]
+        *comment TODO
+
+*label orphanage_study
+
+*comment orphanage study only unlocked if in orphanage as home base.
+
+*set visits_orphanage_study + 1
+
+*if (visits_orphanage_study = 1)
+    A young, thin woman looks up from a desk at the front of the orphanage's study. "I'm Mabel. I heard you have been exploring quite a lot, recently. It would only make sense to give you access to our dismal collection of knowledge and folklore surrounding the tunnel. You'll have to get access to the main town library for more in-depth knowledge. Just choose a subject to study and you can rent the book for a month."
+    *goto orphanage_study_first_visit_evaluated
+
+*label orphanage_study_first_visit_evaluated
+
+*choice
+    *if not (researched_botany_1)
+        #Research Botany I [+1 month]
+            *goto research_botany_1
+    #Don't research anything
+        *goto orphanage_homebase
+
+*label research_botany_1
+
+*set researched_botany_1 true
+*set months_passed + 1
+
+*temp no_previous_knowledge true
+
+The first part of the book is all about Lemens. What they are, how to find them, all sorts of things. Of course, you already know about them from your trips with George. Still, it gives some more tips on how to harvest them better. Lemen Fetch Skill +2.
+
+*set lemen_fetch_skill + 2
+
+*if (knowledge_petunal_blossoms)
+    Of course, the book covers petunal blossoms. It just talks about how they're found near caves, but other than that, no new information.
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_petunal_blossoms
+*else
+    Apparently, there's a purple flower with yellow specks that can be found around the first layer. Its petals are apparently really nutritious. Your town is quite carnivorous, but you can think of a few vegetarians who would like the rare vitamins and minerals to be found in the petals. It says the petals are common and that you need a lot for a complete meal, however, so they won't fetch very much.
+    *set knowledge_petunal_blossoms true
+    *goto evaluated_botany_1_knowledge_petunal_blossoms
+    
+*label evaluated_botany_1_knowledge_petunal_blossoms
+    
+*if (knowledge_rosalia)
+    Of course, the book covers rosalia. All it has to say really is that picking skills are best improved with experience, which isn't very helpful.
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_rosalia
+*else
+    The book then talks about a rose-like plant with big, broad leaves on its stem. It says that small parts of the leaves are used for expensive teas. You wonder if you've already seen any around while exploring the tunnel.
+    *set knowledge_rosalia true
+    *goto evaluated_botany_1_knowledge_rosalia
+    
+*label evaluated_botany_1_knowledge_rosalia
+
+*if (knowledge_starblossom)
+    The final part discusses starblossom, that one flower (why is it all about flowers?). The book mainly focuses on harvesting techniques, noting that a special harvest tool grade 2 is needed to pick the flower (SHTG2).
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_starblossom
+*else
+    The final part discusses a rarer flower named the starblossom, whose petals are large and shaped like a five-pointed star. It is perpetually in bloom apparently, but survives much better in layers two and three, and thus is rare to find in layer one. Apparently, a special harvest tool called the SHTG2 is needed to scavenge it from the ground due to its deep roots.
+    *set knowledge_starblossom true
+    *goto evaluated_botany_1_knowledge_starblossom
+
+*label evaluated_botany_1_knowledge_starblossom
+
+*if (no_previous_knowledge)
+    Unfortunately, since you didn't know any of the topics in the book other than about Lemens, it takes you an extra month to complete it. Mabel let's you keep it for longer, but more of your youth has been wasted away.
+    *set months_passed + 1
+    *goto orphanage_home_base
+
+*goto orphanage_home_base
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

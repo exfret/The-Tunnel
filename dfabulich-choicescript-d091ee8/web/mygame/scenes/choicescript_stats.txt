@@ -1,0 +1,244 @@
+*goto main_stats
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Inventory Display
+*comment ////////////////////////////////////////////////////////////
+
+*label display_inventory_clackadoo_feather
+
+*if (inventory_clackadoo_feather > 0)
+    Clackadoo Feathers: ${inventory_clackadoo_feather}
+    *return
+
+*return
+
+*label display_inventory_dagger
+
+*if (inventory_dagger > 0)
+    Daggers: ${inventory_dagger}
+    *return
+
+*return
+
+*label display_inventory_equipments
+
+*if (inventory_equipments > 0)
+    Equipments: ${inventory_equipments}
+    *return
+
+*return
+
+*label display_inventory_lemens
+
+*if (inventory_lemens > 0)
+    Lemens: ${inventory_lemens}
+    *return
+
+*return
+
+*label display_inventory_petunal_blossoms
+
+*if (inventory_petunal_blossoms > 0)
+    Petunal Blossoms: ${inventory_petunal_blossoms}
+    *return
+
+*return
+
+*label display_inventory_rosalia
+
+*if (inventory_rosalia > 0)
+    Rosalia: ${inventory_rosalia}
+    *return
+
+*return
+
+*label display_inventory_starblossom
+
+*if (inventory_starblossom > 0)
+    Starblossoms: ${inventory_starblossom}
+    *return
+
+*return
+
+*label display_inventory_torch
+
+*if (inventory_torch > 0)
+    Torches: ${inventory_torch}
+    *return
+
+*return
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Skill Display
+*comment ////////////////////////////////////////////////////////////
+
+*label display_lemen_fetch_skill
+
+Lemen fetch sklil: ${lemen_fetch_skill}
+
+*return
+
+*label display_rosalia_fetch_skill
+
+*if (knowledge_rosalia)
+    Rosalia fetch skill: ${rosalia_fetch_skill}
+
+*return
+
+*label display_job_experience_farm_hand
+
+*if (unlocked_job_farm_hand)
+    Farm hand experience: ${farm_hand_experience}
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Main inventory
+*comment ////////////////////////////////////////////////////////////
+
+*label main_stats
+
+Moons passed since your Birth: ${months_passed}
+
+Current Month:
+*if (months_passed modulo 13) = 0
+    January
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 1
+    February
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 2
+    March
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 3
+    April
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 4
+    May
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 5
+    June
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 6
+    July
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 7
+    August
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 8
+    September
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 9
+    October
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 10
+    Octember
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 11
+    November
+    *goto main_stats_months_passed_after
+*if (months_passed modulo 13) = 12
+    December
+    *goto main_stats_months_passed_after
+
+*label main_stats_months_passed_after
+
+Experience: ${experience}
+
+Doubloons: ${doubloons}
+
+*choice
+    #Inventory
+        *goto inventory
+    #Skills
+        *goto skills
+
+*label inventory
+
+[b]Equipments[/b]
+*gosub display_inventory_equipments
+
+[b]Non-Equipments Equipment[/b]
+*gosub display_inventory_dagger
+*gosub display_inventory_torch
+
+[b]Gathered goods[/b]
+*gosub display_inventory_clackadoo_feather
+*gosub display_inventory_lemens
+*gosub display_inventory_petunal_blossoms
+*gosub display_inventory_rosalia
+*gosub display_inventory_starblossom
+
+*choice
+    #Main Stats
+        *goto main_stats
+    
+*label skills
+
+*comment TODO: Display these like the inventory items are displayed
+
+[b]Gathering Skills[/b]
+
+Lemen fetch skill: ${lemen_fetch_skill}
+
+Rosalia fetch skill: ${rosalia_fetch_skill}
+
+[b]Experience[/b]
+
+*gosub display_
+
+*choice
+    #Main Stats
+        *goto main_stats
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

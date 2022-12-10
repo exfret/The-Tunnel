@@ -1,0 +1,163 @@
+*title The Darkest Tunnel
+*author Kyle Hess
+
+*scene_list
+    startup
+    
+*comment ////////////////////////////////////////////////////////////
+*comment // Some constants
+*comment ////////////////////////////////////////////////////////////
+*create layer_1_equipments_needed 2
+*create job_pay_farm_hand 152
+    
+*comment ////////////////////////////////////////////////////////////
+*comment // More important variables
+*comment ////////////////////////////////////////////////////////////
+    
+*create home_base_scene "orphanage"
+*create home_base_label "orphanage_home_base"
+
+*create doubloons 0
+*create experience 0
+*create starting_months_passed 156
+*comment Later months_passed will be set to the same value as starting_months_passed, so the 0 doesn't matter too much now.
+*create months_passed 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Inventory Amounts
+*comment ////////////////////////////////////////////////////////////
+    
+*create inventory_clackadoo_feather 0
+*create inventory_dagger 0
+*create inventory_equipments 0
+*create inventory_lemens 0
+*create inventory_petunal_blossoms 0
+*create inventory_rosalia 0
+*create inventory_starblossom 0
+*create inventory_torch 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Places unlocked
+*comment ////////////////////////////////////////////////////////////
+
+*create unlocked_town_market false
+*create unlocked_town_study false
+*create unlocked_job_farm_hand false
+*comment This isn't really a place to unlock, but it's something that comes about as you progress through the game, so I guess it counts.
+*create unlocked_support_self false
+*create unlocked_level_up false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Fetch Skills
+*comment ////////////////////////////////////////////////////////////
+
+*create lemen_fetch_skill 5
+*create rosalia_fetch_skill 2
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Job Experience
+*comment ////////////////////////////////////////////////////////////
+
+*create job_experience_farm_hand 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Knowledge Booleans
+*comment ////////////////////////////////////////////////////////////
+
+*create knowledge_petunal_blossoms false
+*create knowledge_rosalia false
+*create knowledge_starblossom false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Exploration Booleans
+*comment ////////////////////////////////////////////////////////////
+
+*create found_layer_1_cave false
+*create found_layer_1_rosalia_patch false
+*create found_layer_1_tso_note_1 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Research Tree
+*comment ////////////////////////////////////////////////////////////
+
+*create researched_botany_1 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Number of Visits Trackers
+*comment ////////////////////////////////////////////////////////////
+
+*create visits_orphanage_study 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Encounters with People
+*comment ////////////////////////////////////////////////////////////
+
+*create met_henry false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Relationships with People
+*comment ////////////////////////////////////////////////////////////
+
+*comment Pretty simple, just whether a character is fond of you
+
+*create fond_henry false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Initializations
+*comment ////////////////////////////////////////////////////////////
+
+*set months_passed starting_months_passed
+
+*goto_scene introduction
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
