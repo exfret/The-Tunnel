@@ -1,1 +1,8 @@
-*label study
+*label has_weapon
+
+*if inventory_dagger > 0
+    *set temp_logic_boolean true
+*else
+    *set temp_logic_boolean false
+
+*return

@@ -54,6 +54,8 @@ You go exploring.
     *goto general_exploration_layer_1_encounter_flowers_on_ground
 *if (encounter = 8)
     *goto general_exploration_layer_1_encounter_dagger
+*if (encounter = 9)
+    *goto general_exploration_layer_1_backpack_steal
 
 *label general_exploration_layer_1_encounter_cave
 
@@ -161,7 +163,7 @@ He discusses with you where it is and then heads off to bed with his father's no
 *label general_exploration_layer_1_encounter_henry
 
 *if (met_henry)
-    *goto *label general_exploration_layer_1_encounter_henry_already_met
+    *goto general_exploration_layer_1_encounter_henry_already_met
 
 As you wander, you find a middle-aged traveller returning from a trip. "Howdy," you exclaim!
 
@@ -171,7 +173,9 @@ As you wander, you find a middle-aged traveller returning from a trip. "Howdy," 
     
     "I'm doing well." You look at his massive backpack of trinkets. "Yes, quite well, little lad. Here, you can have one if you'd like."
     
-    He hands you an orb and trots off. *comment TODO: Figure out what to make this
+    He hands you an orb and trots off.
+    
+    *comment TODO: Figure out what to make this
     
     Nothing much else happens while you're off.
     
@@ -247,6 +251,83 @@ The biggest thing that happens on your trip is that you find a rusty dagger on t
             *goto_scene {home_base_scene} {home_base_label}
 
 You pick up the dagger. Nice find. Now back home.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_backpack_steal
+
+You come across a backpack lying on the ground next to a fresh campfire. Do you take it, or leave it?
+
+*choice
+    #Yes
+        *goto general_exploration_layer_1_backpack_steal_stole
+    #No
+        *goto general_exploration_layer_1_backpack_steal_left
+
+*label general_exploration_layer_1_backpack_steal_stole
+
+You pick up the backpack and carry on a ways before you hear a yell from behind you. "Hey, that's mine!" says the voice.
+
+*choice
+    #Return the backpack
+        *goto general_exploration_layer_1_backpack_steal_return
+    #Run away with the backpack
+        *goto general_exploration_layer_1_backpack_steal_run
+
+*label general_exploration_layer_1_backpack_steal_return
+
+"Thanks for returning the backpack," says the owner, "But you really should never have taken it." He balls up his fist and approaches you.
+
+*gosub_scene logic has_weapon
+
+*if (temp_logic_boolean)
+    *choice
+        #Defend yourself with the knife
+            *goto general_exploration_layer_1_backpack_steal_defend
+        #Let yourself take a beating
+            *goto general_exploration_layer_1_backpack_steal_beat_up
+
+*goto general_exploration_layer_1_backpack_steal_beat_up
+
+*label general_exploration_layer_1_backpack_steal_run
+
+*comment TODO: Make this depend on some running/physical fitness skill
+
+You run as fast as you can, but with the backpack weighing you down, it's useless.
+
+*if (temp_logic_boolean)
+    *choice
+        #Defend yourself with the knife
+            *goto general_exploration_layer_1_backpack_steal_defend
+        #Let yourself take a beating
+            *goto general_exploration_layer_1_backpack_steal_beat_up
+
+*goto general_exploration_layer_1_backpack_steal_beat_up
+
+*label general_exploration_layer_1_backpack_steal_defend
+
+You whip out your weapon.
+
+*if (months_passed < 200)
+    He says, "You know, you don't look too old to be wielding a weapon like that... would be a shame if someone found out." Then he winks and runs away.
+*else
+    The man runs away like a coward
+
+*goto {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_backpack_steal_beat_up
+
+He beats you up. It takes you an extra month to recover.
+
+*set months_passed + 1
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label general_exploration_layer_1_backpack_steal_left
+
+*comment TODO: Add small reward here so it's not just "nothing happens"
+
+You leave the backpack where it is and continue on, finding nothing else the rest of your trip.
 
 *goto_scene {home_base_scene} {home_base_label}
 

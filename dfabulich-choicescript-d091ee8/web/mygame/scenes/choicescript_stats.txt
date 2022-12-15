@@ -88,7 +88,9 @@ Lemen fetch sklil: ${lemen_fetch_skill}
 *label display_job_experience_farm_hand
 
 *if (unlocked_job_farm_hand)
-    Farm hand experience: ${farm_hand_experience}
+    Farm hand experience: ${job_experience_farm_hand}
+
+*return
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Main inventory
@@ -177,68 +179,13 @@ Doubloons: ${doubloons}
 
 [b]Gathering Skills[/b]
 
-Lemen fetch skill: ${lemen_fetch_skill}
-
-Rosalia fetch skill: ${rosalia_fetch_skill}
+*gosub display_lemen_fetch_skill
+*gosub display_rosalia_fetch_skill
 
 [b]Experience[/b]
 
-*gosub display_
+*gosub display_job_experience_farm_hand
 
 *choice
     #Main Stats
         *goto main_stats
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
