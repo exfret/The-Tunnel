@@ -1,191 +1,852 @@
-*goto main_stats
-
-*comment ////////////////////////////////////////////////////////////
-*comment // Inventory Display
-*comment ////////////////////////////////////////////////////////////
-
-*label display_inventory_clackadoo_feather
-
-*if (inventory_clackadoo_feather > 0)
-    Clackadoo Feathers: ${inventory_clackadoo_feather}
-    *return
-
-*return
-
-*label display_inventory_dagger
-
-*if (inventory_dagger > 0)
-    Daggers: ${inventory_dagger}
-    *return
-
-*return
-
-*label display_inventory_equipments
-
-*if (inventory_equipments > 0)
-    Equipments: ${inventory_equipments}
-    *return
-
-*return
-
-*label display_inventory_lemens
-
-*if (inventory_lemens > 0)
-    Lemens: ${inventory_lemens}
-    *return
-
-*return
-
-*label display_inventory_petunal_blossoms
-
-*if (inventory_petunal_blossoms > 0)
-    Petunal Blossoms: ${inventory_petunal_blossoms}
-    *return
-
-*return
-
-*label display_inventory_rosalia
-
-*if (inventory_rosalia > 0)
-    Rosalia: ${inventory_rosalia}
-    *return
-
-*return
-
-*label display_inventory_starblossom
-
-*if (inventory_starblossom > 0)
-    Starblossoms: ${inventory_starblossom}
-    *return
-
-*return
-
-*label display_inventory_torch
-
-*if (inventory_torch > 0)
-    Torches: ${inventory_torch}
-    *return
-
-*return
-
-*comment ////////////////////////////////////////////////////////////
-*comment // Skill Display
-*comment ////////////////////////////////////////////////////////////
-
-*label display_lemen_fetch_skill
-
-Lemen fetch sklil: ${lemen_fetch_skill}
-
-*return
-
-*label display_rosalia_fetch_skill
-
-*if (knowledge_rosalia)
-    Rosalia fetch skill: ${rosalia_fetch_skill}
-
-*return
-
-*label display_job_experience_farm_hand
-
-*if (unlocked_job_farm_hand)
-    Farm hand experience: ${job_experience_farm_hand}
-
-*return
-
 *comment ////////////////////////////////////////////////////////////
 *comment // Main inventory
 *comment ////////////////////////////////////////////////////////////
 
+*if (hide_stats)
+    You can't open up your stats screen right now.
+    
+    *finish
+
+*comment TODO: Make inventory get more and more complicated as you go along
+
 *label main_stats
 
-Moons passed since your Birth: ${months_passed}
+Pass Level:
+*if (not (pass_unlocked_green))
+    Training
+*if (pass_unlocked_green and (not (pass_unlocked_blue)))
+    Green
+*if (pass_unlocked_blue)
+    Blue
+*if (pass_lost_blue_from_cave)
+    (Lost)
+*if (unlocked_doubloons)
+    *line_break
+    Doubloons: ${doubloons}
+*if (unlocked_experience)
+    *line_break
+    Experience: ${experience}
+*if (reputation > 0)
+    *line_break
+    Reputation: ${reputation}
+*if (can_fight)
+    *line_break
+    Health: ${health}/${max_health}
+*if (unlocked_energy)
+    *line_break
+    Energy: ${energy} (max ${max_energy})
+*if (unlocked_focus)
+    *line_break
+    Energy Skill Points: ${focus_points}
 
-Current Month:
-*if (months_passed modulo 13) = 0
-    January
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 1
-    February
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 2
-    March
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 3
-    April
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 4
-    May
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 5
-    June
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 6
-    July
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 7
-    August
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 8
-    September
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 9
-    October
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 10
-    Octember
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 11
-    November
-    *goto main_stats_months_passed_after
-*if (months_passed modulo 13) = 12
-    December
-    *goto main_stats_months_passed_after
+Months passed: ${months_passed} (${curr_month_name})
 
-*label main_stats_months_passed_after
+*if (unlocked_objective_blue_pass)
+    [b]Objectives[/b] (updated at the end of each month)
+    
+*if ((unlocked_objective_blue_pass) and (not (objective_blue_pass)))
+    [b]Blue Pass:[/b] Get a Blue Pass from George (go to "Visit someone else's room" then talk to George).
 
-Experience: ${experience}
+*if ((unlocked_objective_town_square) and (not (objective_town_square)))
+    [b]New Clothes:[/b] Get some new clothes from the Blue Coin Clothes store in the market. It costs 6 Blue Coins total to enter the store, so you have ${inventory_blue_coins}/6 of the necessary Blue Coins.
 
-Doubloons: ${doubloons}
+*if ((unlocked_objective_layer_two_novice) and (not (objective_layer_two_novice)))
+    [b]Layer Two Novice:[/b] Have visited layer two three times. You have currently visited it ${objective_layer_2_visits} times.
+
+*if ((unlocked_objective_kinda_trained) and (not (objective_kinda_trained)))
+    [b]Kinda Trained:[/b] Receive 3 trainings. You have currently have ${exploration_trainings} trainings.
 
 *choice
     #Inventory
         *goto inventory
-    #Skills
-        *goto skills
+    #Character
+        *goto character
+    #Encyclopedia
+        *goto encyclopedia
+    #Helpful Information
+        *goto helpful_info
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Inventory
+*comment ////////////////////////////////////////////////////////////
 
 *label inventory
 
-[b]Equipments[/b]
-*gosub display_inventory_equipments
+*gosub update_total_lemens
 
-[b]Non-Equipments Equipment[/b]
-*gosub display_inventory_dagger
-*gosub display_inventory_torch
+First, choose which part of your inventory you'd like to inspect. This is a big game, so there are lots of different types of items to choose from!
 
-[b]Gathered goods[/b]
-*gosub display_inventory_clackadoo_feather
-*gosub display_inventory_lemens
-*gosub display_inventory_petunal_blossoms
-*gosub display_inventory_rosalia
-*gosub display_inventory_starblossom
+Note: When something isn't listed, it may be the case that you checked the wrong tab, or that you just don't have any!
+
+[b]At a glance[/b]
+*if (unlocked_doubloons)
+    *line_break
+    Doubloons: ${doubloons}
+*if (knowledge_blue_coins)
+    *line_break
+    Blue Coins: ${inventory_blue_coins}
+*if (unlocked_support_self)
+    *line_break
+    Equipments: ${inventory_equipments}
+*if (knowledge_lemens)
+    *line_break
+    All Lemens: ${total_lemens}
+*if (inventory_lemens_immortal > 0)
+    (excluding ${inventory_lemens_immortal} immortal lemens)
+*if (knowledge_rosalia)
+    *line_break
+    Rosalia: ${inventory_rosalia}
+*if (knowledge_petunal_blossoms)
+    *line_break
+    Petunal Blossoms: ${inventory_petunal_blossoms}
+
+*label inventory_noteless
+
+*comment TODO: Passes, clothes, keys
 
 *choice
-    #Main Stats
+    #Back
         *goto main_stats
+    #See Overview
+        *goto inventory
+    #See My Currencies
+        *goto inventory_currency
+    #See My Equipment
+        *goto inventory_equipment
+    #See My Common Gathered Goods
+        *goto inventory_gathered
+    #See My Rare Gathered Goods
+        *goto inventory_gathered_rare
+    #See My Gardening Items
+        *goto inventory_garden
+    #See My Quest Items
+        *goto inventory_quest
+    *if (researched_materials_1)
+        #Rock Collection
+            *goto inventory_rock
+    *if (unlocked_tea_storage)
+        #Tea Boxes
+            *goto inventory_tea_boxes
+    #Prized Possessions
+        *goto inventory_prized_possessions
+
+*label inventory_currency
+
+[i]Standardized Knicknacks of All Sorts, Primarily Used in the Exchange of Items…[/i]
+
+Note: Unlike most categories, items will display here even if you have zero. You will still have to gain knowledge of the item's existence first.
+
+[b]Coins[/b]
+*line_break
+Doubloons: ${doubloons}
+*if (knowledge_blue_coins)
+    *line_break
+    Blue Coins: ${inventory_blue_coins}
+*if (knowledge_purple_coin)
+    *line_break
+    Purple Coins: ${inventory_purple_coin}
+*if (knowledge_ducats)
+    *line_break
+    Ducats: ${inventory_ducats}
+
+*goto inventory_noteless
+
+*label inventory_equipment
+
+[i]Commonly Used Consumables and Persistent Character Equipment…[/i]
+
+[b]Exploration[/b]
+*if (unlocked_support_self)
+    *line_break
+    Equipments: ${inventory_equipments}
+*if (inventory_xp_amulet > 0)
+    *line_break
+    XP Amulets: ${inventory_xp_amulet}
+*if (inventory_torch > 0)
+    *line_break
+    Torches: ${inventory_torch}
+
+[b]Gathering[/b]
+*line_break
+SHTG Level:
+*if (not (inventory_shtg2))
+    None
+*if (inventory_shtg2)
+    2
+*if (inventory_shovel)
+    *line_break
+    Double Shovel
+*if (inventory_blue_coin_pickaxe_uses > 0)
+    *line_break
+    Blue Coin Pickaxe (${inventory_blue_coin_pickaxe_uses} Uses Left)
+
+[b]Weaponry[/b]
+*if (inventory_dagger > 0)
+    *line_break
+    Daggers: ${inventory_dagger}
+*if (inventory_ghost_dagger > 0)
+    *line_break
+    Ghost Daggers: ${inventory_ghost_dagger}
+*if (inventory_two_handed_sword > 0)
+    *line_break
+    Two-handed Swords: ${inventory_two_handed_sword}
     
-*label skills
+[b]Building[/b]
+*if (inventory_building_materials > 0)
+    *line_break
+    Building Materials: ${inventory_building_materials}
+    
+*goto inventory_noteless
 
-*comment TODO: Display these like the inventory items are displayed
+*label inventory_gathered
 
-[b]Gathering Skills[/b]
+[i]Items Often Found in General Exploration and Gather Missions…[/i]
 
-*gosub display_lemen_fetch_skill
-*gosub display_rosalia_fetch_skill
+*if (inventory_andellise)
+    [b]Squirrel[/b]
+    *line_break
+    Andellise: 1
+    *line_break
+    (Andellise pops her head up chattering about how she's not "common goods" and "I should go in prized possessions" and all that stuff, but you ignore it.)
 
-[b]Experience[/b]
+[b]Flowers[/b]
+*if (total_lemens > 0)
+    *line_break
+    Lemens: ${total_lemens}
+*if (inventory_lemens_immortal > 0)
+    (excluding ${inventory_lemens_immortal} immortal lemens)
+*if (inventory_rosalia > 0)
+    *line_break
+    Rosalia: ${inventory_rosalia}
+*if (inventory_petunal_blossoms > 0)
+    *line_break
+    Petunal Blossoms: ${inventory_petunal_blossoms}
+*if (inventory_starblossom > 0)
+    *line_break
+    Starblossoms: ${inventory_starblossom}
+*if (inventory_glowshroom_flower > 0)
+    *line_break
+    *if (not (knowledge_glowshroom_flower))
+        Mysterious Flower: ${inventory_glowshroom_flower}
+    *if (knowledge_glowshroom_flower)
+        Glowshroom Flower: ${inventory_glowshroom_flower}
+*if (inventory_mother_of_specters > 0)
+    *line_break
+    Mother of Specters: ${inventory_mother_of_specters}
 
-*gosub display_job_experience_farm_hand
+[b]Fruits[/b]
+*if (inventory_kiwi > 0)
+    *line_break
+    Kiwi: ${inventory_kiwi}
+
+[b]Animal Bits[/b]
+*if (inventory_tracking_meat > 0)
+    *line_break
+    Tracking Meat: ${inventory_tracking_meat}
+*if (inventory_dingrit_claw > 0)
+    *line_break
+    Dingrit Claws: ${inventory_dingrit_claw}
+
+[b]Miscellaneous[/b]
+*if (inventory_ectoplasm > 0)
+    *line_break
+    Ectoplasm: ${inventory_ectoplasm}
+*if (inventory_special_dirt > 0)
+    *line_break
+    Special Dirt: ${inventory_special_dirt}
+
+*goto inventory_noteless
+
+*label inventory_gathered_rare
+
+[i]Uncommon Items Not Seen Often in Places Other than Your Inventory…[/i]
+
+(For uncommon currencies, see the Currencies section)
+
+[b]Feathers[/b]
+*if (inventory_clackadoo_feather > 0)
+    *line_break
+    Clackadoo Feather: ${inventory_clackadoo_feather}
+
+[b]Useless shit that you picked up for some reason[/b]
+*line_break
+Socks that you've stolen from other orphans so that they have to mismatch pairs: ${inventory_orphan_socks}
+*if (inventory_burnt_match_box > 0)
+    *line_break
+    Burnt out match box: ${inventory_burnt_match_box}
+
+*goto inventory_noteless
+
+*label inventory_garden
+
+[i]Items Mainly For Use in the Gardens of the World…[/i]
+
+Note: This will only list items not listed elsewhere, like seeds. To see plants, like the number of kiwis you have, go to "See My Common Gathered Goods". Other information not listed here can probably be found similarly.
+
+[b]Seeds[/b]
+*if (inventory_flower_seeds_1 > 0)
+    *line_break
+    Basic Flower Seeds: ${inventory_flower_seeds_1}
+*if (inventory_kiwi_seeds > 0)
+    *line_break
+    Kiwi Seeds: ${inventory_kiwi_seeds}
+*if (inventory_petunal_seeds > 0)
+    *line_break
+    Petunal Seeds: ${inventory_petunal_seeds}
+*if (inventory_blue_coin_seed > 0)
+    *line_break
+    Blue Coin Seeds: ${inventory_blue_coin_seed}
+*if (inventory_doubloon_seeds > 0)
+    *line_break
+    Doubloon Seeds: ${inventory_doubloon_seeds}
+
+*comment TODO: Actually add fertilizers later
+[b]Fertilizers[/b]
+*if (inventory_fertilizer > 0)
+    *line_break
+    Fertilizers: ${inventory_fertilizer}
+
+*goto inventory_noteless
+
+*label inventory_quest
+
+[i]Items Tied to Specific Quest Lines Discovered by Yourself…[/i]
+
+Note: Categories will only show up here when you've unlocked a quest line. Unlike most categories, items will display here even if you have zero.
+
+*if (unlocked_squirrel_war)
+    [b]The Squirrel Wars[/b]
+    *line_break
+    Nuts: ${inventory_nuts}
+    *if (inventory_duke_nut)
+        *line_break
+        Duke's Nuts: 1
+    *line_break
+    Acorns: ${inventory_acorns}
+
+*if (unlocked_exeggcute_quest)
+    [b]Exeggcute's Last Wish[/b]
+    *line_break
+    Pokeballs: ${inventory_pokeball}
+
+*goto inventory_noteless
+
+*label inventory_rock
+
+Not yet implemented :(
+
+*goto inventory_noteless
+
+*label inventory_tea_boxes
+
+*if (container_owned_tea_box_outskirts)
+    [b]Leif's Tea Shop Tea Box[/b]
+    *line_break
+    Amount used: ${container_occupancy_tea_box_outskirts} (capacity of ${container_capacity_tea_box_outskirts})
+    *line_break
+    Contents: ${container_contents_tea_box_outskirts}
+
+*goto inventory_noteless
+
+*label inventory_prized_possessions
+
+Only your most prized possessions are here. Even the clackadoo feather that George gave you isn't enough to warrant a place on this page.
+
+You stare at your collection of valuables, things that will never leave you. There's…
+*if (inventory_george_drawing)
+    a drawing of your face from memory made by George, which somehow makes even the zit you had on your nose the day he left look beautiful;
+a lock of hair from an orphan girl outside who froze to death because the orphanage couldn't afford to take her in, something to remind you the reason you're an explorer;
+and an amulet, the sole thing left to you by your parents.
+
+*goto inventory_noteless
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Character
+*comment ////////////////////////////////////////////////////////////
+
+*label character
+
+Where all the various bits of info about your character are held.
+
+TODO: Skill tree and research info
+*comment TODO
+
+[b]Overview[/b]
+
+Full-time Jobs: (${num_full_time_jobs}/${max_num_full_time_jobs})
+*if (has_job_advanced_farm_hand)
+    *line_break
+    Advanced Farm Hand
+*if (has_job_farm_hand_supervisor)
+    *line_break
+    Farm Hand Supervisor
+*if (has_job_petunia_assistant)
+    *line_break
+    Aunt Petunia's Garden Shop Assistant
+*if (has_job_tea_shop)
+    *line_break
+    Leif Tea Shop Tea Delivery
+*if (has_job_general_store_grunt)
+    *line_break
+    Town General Store Grunt
+
+*label character_noteless
+
+*choice
+    #Back
+        *goto main_stats
+    #Overview
+        *goto character
+    #Skills and Experience
+        *goto character_skills
+    #Research
+        *goto character_research
+    #Personal Log
+        *goto character_log
+    #Diary
+        *goto character_diary
+
+*label character_skills
+
+*if (unlocked_trainings)
+    [b]Trainings:[/b] ${exploration_trainings}
+
+[b]Fetch Skills[/b]
+*line_break
+Lemen Fetch Skill: ${lemen_fetch_skill}
+*if (knowledge_rosalia)
+    *line_break
+    Rosalia Fetch Skill: ${rosalia_fetch_skill}
+
+[b]Task Experience[/b]
+*if (unlocked_job_farm_hand)
+    *line_break
+    Farm Hand Experience: ${job_experience_farm_hand}
+*if (job_experience_secretary > 0)
+    *line_break
+    Secretarial Experience: ${job_experience_secretary}
+*if (unlocked_orphanage_garden)
+    *line_break
+    Gardening Experience: ${task_experience_gardening}
+
+*goto character_noteless
+
+*label character_research
+
+Your current research speed is ${research_speed} research points per month.
+
+[b]Checked Out Books[/b]
+*if (not (book_checked_out_town_library_1 = "none"))
+    *line_break
+    Town Library Book 1 (${book_checked_out_town_library_1_research_points_left} research points left): ${book_checked_out_town_library_1}
+    
+*comment: TODO: List completed researches
+
+*goto character_noteless
+
+*label character_log
+
+*comment TODO: Places with Focus Points
+
+TODO
+
+*goto character_noteless
+
+*label character_diary
+
+*temp beginning_text ((("[b]Month " & months_passed) & ((" (" & curr_month_name) & ")")) & ("[/b]"))
+
+${beginning_text}
+*line_break
+[i](Month in Progress).[/i]
+
+${diary}
+
+*goto character_noteless
+    
+*comment ////////////////////////////////////////////////////////////
+*comment // Encyclopedia
+*comment ////////////////////////////////////////////////////////////
 
 *choice
     #Main Stats
         *goto main_stats
+
+*label encyclopedia
+
+Your notes are really disorganized right now. Maybe you'll fix that in the future.
+
+*comment TODO: Display research tree
+
+*comment TODO: Glowshroom flower
+
+*if (researched_observation_1)
+    [b]Checks:[/b] Checks appear in <brackets> and indicate that a special event was missed or passed based on your stats at the time. For example, {Check: Energy <= 10} means that there was check to see if you had at most 10 energy. If it's followed by {Pass} then that means you "passed" (in this case, that would mean you had at most 10 energy). Otherwise, it will be followed by a {Fail}. You probably wouldn't want to pass this particular check in the example, since checks for low energy rarely result in anything good.
+    
+    Passing will usually result in special text and a gameplay effect. Not all checks will be visible even with your Observation I research. Some checks will only say {Check} and then either {Pass} or {Fail}, rather than saying what the check was on. Make sure to keep upgrading observation researches to see all checks and their conditions, especially in the later layers!
+    
+    There's also a special check condition for whether you're a ghost. It'll show up like {Check: Ghost}. You can become a ghost through a special layer 2 encounter to scoop up these extra bits of story! There may also be references to other events you would have had to have completed to pass a certain check, but those should be pretty self-explanatory.
+
+*if (unlocked_tea_storage)
+    [b]Tea Storage:[/b] Tea needs to be stored in special containers. Most tea shops will give you a tea box for free when first visited in order to encourage you to buy there, but other than that they have to be found in the wild. Tea boxes can only be filled with one type of tea and have a certain capacity.
+
+*if (job_offered_advanced_farm_hand)
+    [b]Full-time Jobs:[/b] You may only have one full-time job position at a time.
+
+*if (knowledge_kiwi_level)
+    [b]Kiwi:[/b] A fruit often given by someone seeking forgiveness. It follows the rules of the kiwi trifecta.
+    
+    [b]Kiwi Level:[/b] Everything with kiwis must be done in threes. The higher power of three that divides your number of kiwis, the better. To see your kiwi level, you can go to helpful information tab.
+
+*if (knowledge_clackadoo_feather)
+    [b]Clackadoo Feathers:[/b] Clackadoo feathers come from the clackadoo bird, which is native to all layers past the first two. The clackadoo bird as an innate sense of impending danger, which makes it incredibly hard to catch. It also infuses the feather with the distinctive ability to blow away whenever mortal danger is nearby.
+
+*if (knowledge_mother_of_specters)
+    [b]Mother of Specters:[/b] Yellow flowers with short petals and a sweet, buttery smell to them. Extremely poisonous. Named after the number of ghosts they've caused. Note: Mother of Specters Fetch skill acts differently than other fetch skills at this point. It has a skill tree rather than contributing directly to harvesting more Mother of Specters.
+
+*if (artifact_has_language_orb)
+    [b]The Language Orb:[/b] One of the 13 Orbs of Lesser Knowledge. This allows you to read some otherwise unreadable inscriptions in the Tunnel. On the bottom, "return to Henry if lost" is written in sharpie.
+
+*if (knowledge_ghostly_orbs)
+    [b]Colored Ghostly Orbs:[/b] It is said that the first to bring all the ghostly orbs together may resurrect someone. This is the only way to truly bring someone back to life. Period.
+
+*if (knowledge_lemens)
+    [b]Bulbous Lemens:[/b] A luminous plant that inexplicably dies a few weeks after being removed from the tunnel no matter how well it is tended to by the farmers. While the outside of the cavern is lit 24/7 by a mysterious force, it is necessary to use other solutions like the Lemens for inside buildings.
+
+*if (knowledge_rosalia)
+    [b]Rosalia:[/b] Rosalia is a rose-like plant with big, broad, deep red leaves and smaller leaves along its stem. These smaller leaves are often crushed up to create teas.
+
+*if (knowledge_petunal_blossoms)
+    [b]Petunal Blossoms:[/b] A flower whose petals are purple with yellow specks. It can be found around the first layer. Its petals are nutritious, with rare vitamins, but many are needed to get enough nutrients.
+    
+*if (knowledge_starblossom)
+    [b]Starblossom Flower:[/b] A flower whose petals are large and shaped like a five-pointed star. It is perpetually in bloom, but survives better in layers two and three, and thus is rare to find in layer one. A special tool called the SHTG2 is needed to scavenge it from the ground due to its deep roots.
+
+*if (knowledge_blue_coins)
+    [b]Blue Coins:[/b] A type of currency that can be found in the Tunnel. Some places accept only Tunnel currency, mostly secret organizations and the such, since they view the metallic main-dome based currency as corrupt. It's basically a pointy blue sphere, whatever that means.
+
+*if (researched_tracking_1)
+    [b]Tracking:[/b] You can only track in layers of level at most your tracking level. That is, if your tracking level is 1, you can only track up to layer 1, and not in any other layers. To track, you simply select that option when selecting what to do in that layer, or you must find animal tracks for special encounters. Animal track encounters will offer unique bonuses when the tracking is done, and also involve a unique extra tracking question at the end.
+    
+    To successfully track an animal, you must answer a series of two questions about the encounters in the layer you are doing the tracking. These questions vary greatly in difficulty, just like tracking does in real life!
+    
+    Also, layer 1 tracking encounters of all types require no fights, but later layers will require fighting to finish the hunt!
+
+*if (key_owned_ghost_key)
+    [b]Ghost Key:[/b] A key that will unlock things in the shadow realm. No wait, that's the shadow key. This one just unlocks various places you're normally not supposed to get into. What, you thought it had something to do with ghosts?
+    
+*if (unlocked_squirrel_war)
+    [b]Squirrel Wars:[/b] Charles the Squirrel is trying to reclaim his throne, but there are many competing factions looking to do the same. Enlist squirrels you come across to a cause of your choice by giving them a nut.
+
+*if (artifact_has_magic_scythe)
+    [b]The Magic Scythe:[/b] A magical scythe that increases the benefits from working as a lousy farm hand or an advanced farm hand (but no other jobs). When working as a lousy farm hand, quadruple your pay, and when working as an advanced farm hand, triple the experience earned.
+
+*if (unlocked_trainings)
+    [b]Trainings:[/b] To get a yellow pass for the third layer, you need a certain number of Trainings (the number is 5 btw, dunno why I didn't just say initially). Uh, that's about it. Most people only offer one training. Go see George when you get 150 exp btw that'll get you a training.
+    
+*if (artifact_has_equipipen)
+    [b]Equipipen:[/b] Coolio, layer trips cost one fewer equipment!
+
+*if (can_fight)
+    [b]Fighting:[/b] Fighting is actually pretty chill. Monsters wouldn't dare to harm the main character of a story, so you'll be doing all the attacking. You only need to choose how to equip yourself in the home base actions and make a choice about how energetically to attack, then the combat calculator will do the rest.
+    
+    All in all, it's pretty simple, but there are a lot of modifiers that will come into play, so it won't stay that way! Just keep in mind that you're the only one in this game with plot armor. Don't let the power of invincibility go to your head.
+
+*if (knowledge_purple_coin)
+    [b]Purple Coins:[/b] Extremely valuable versions of blue coins. For every thousand blue coins, there's a purple coin. They're so rare that even people who normally don't take blue coins will make special offers for a purple coin. Often, they are passed down as heirlooms in important family lines.
+
+*choice
+    #Back
+        *goto main_stats
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Helpful Information
+*comment ////////////////////////////////////////////////////////////
+    
+*label helpful_info
+
+Just various bits of info that are helpful for you on your journey.
+
+*label helpful_info_noteless
+
+*choice
+    #Back
+        *goto main_stats
+    #Calendar
+        *goto helpful_info_calendar
+    *if (unlocked_squirrel_war)
+        #Squirrel Wars
+            *goto helpful_info_squirrel_wars
+    *if (knowledge_kiwi_level)
+        #Kiwi Level
+            *goto helpful_info_kiwi_level
+    *if (researched_artifacts_1)
+        #Persistence Artifacts
+            *goto helpful_info_persistence_artifacts
+    #Achievements
+        *goto helpful_info_achievements
+    *if (randy_burned)
+        #Randy's Cheat Log
+            *goto helpful_info_randy_log
+
+*label helpful_info_calendar
+
+Months passed: ${months_passed}
+
+*gosub display_month
+*comment TODO: Some extra detail about the month, changing depending on where your homebase is
+
+*if (job_test_next_offered_ers_servant > months_passed)
+    You failed your last attempt at the ers test. The next test offering is: Month ${job_test_next_offered_ers_servant}
+
+Note: You may not be able to attend all the upcoming events listed. I'll fix this in the future.
+
+[b]All Upcoming Events[/b]
+
+*if ((209 <= months_passed) and (months_passed <= 227))
+    Name: Marriage of Dulcius and Regintina
+    *line_break
+    Time: Month 222 - Month 227
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: Dulcius, a wealthy landowner of many farms, is getting married to Regintina, a lesser Noble's disowned daughter.
+    *line_break
+    Requirements: Rolling in Rosalia Achievement
+
+*if ((219 <= months_passed) and (months_passed <= 232))
+    Name: The Petunal Festival
+    *line_break
+    Time: Month 232 - Month 244
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: The Petunal Festival celebrates the town's children through Petunal Blossoms. It occurs every 25 years.
+    *line_break
+    Requirements: None
+
+*if ((238 <= months_passed) and (months_passed <= 256))
+    Name: Solar Eclipse
+    *line_break
+    Time: Month 251 - Month 256
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: Solar eclipses are cool.
+    *line_break
+    Requirements: Have seen the damn sun
+
+*if ((249 <= months_passed) and (months_passed <= 267))
+    Name: Lemen Game (Town vs. Rivalton)
+    *line_break
+    Time: Month 262 - Month 267
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: An important game, considering that Town is usually not good enough at lemen-ball to even qualify to play Rivalton. This year, Town might even win! Support Town, your hometown, in its fight against its rival town, Rivalton, if you can! Entry fee is 50 lemens.
+    *line_break
+    Requirements: Lemen Lover Achievement, 50 lemen entry fee
+
+*if ((255 <= months_passed) and (months_passed <= 273))
+    Name: Traveling Trainer
+    *line_break
+    Time: Month 268 - Month 273
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: The traveling trainer likes to train those who don't train themselves, but the trainings can be very vigorous.
+    *line_break
+    Requirements: Takes 16 energy, must have unlocked trainings
+
+*if ((257 <= months_passed) and (months_passed <= 282))
+    Name: Fortune Teller
+    *line_break
+    Time: Month 270 - Month 282
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: The fortune teller tells your fortune.
+    *line_break
+    Requirements: Costs 50 doubloons
+
+*if ((263 <= months_passed) and (months_passed <= 288))
+    Name: Market Celebration Event
+    *line_break
+    Time: Month 276 - Month 288
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: Get special deals from every significant market store.
+    *line_break
+    Requirements: None
+
+*if ((288 <= months_passed) and (months_passed <= 313))
+    Name: Social Welfare Disbursement
+    *line_break
+    Time: Month 301 - Month 313
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: Qualify for free stuff if you don't have stuff (impacts not just doubloons)
+    *line_break
+    Requirements: None
+
+*if ((301 <= months_passed) and (months_passed <= 326))
+    Name: Explorer's Conference
+    *line_break
+    Time: Month 314 - Month 326
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: The Explorer's Conference happens in town every ten years.
+    *line_break
+    Requirements: None
+    
+*if ((316 <= months_passed) and (months_passed <= 334))
+    Name: Solar Eclipse No. 2
+    *line_break
+    Time: Month 329 - Month 334
+    *line_break
+    Location: Town Events Tab
+    *line_break
+    Description: Solar eclipses are cool.
+    *line_break
+    Requirements: Have seen the damn sun
+    
+*goto helpful_info_noteless
+
+*label helpful_info_squirrel_wars
+
+Currently discovered squirrel factions:
+*line_break
+charles
+*line_break
+fred
+*if (squirrel_faction_unlocked_henry)
+    *line_break
+    henry
+
+*goto helpful_info_noteless
+
+*label helpful_info_kiwi_level
+
+[b]Kiwi Level[/b]
+
+*if (inventory_kiwi = 0)
+    You have zero kiwis. Kiwi level doesn't apply to you.
+    *goto eval_kiwi
+
+The highest kiwi level is: 10
+*line_break
+*if ((inventory_kiwi modulo 59049) = 0)
+    Your kiwi level is: 10 (Wow)
+*if (((inventory_kiwi modulo 19683) = 0) and (not ((inventory_kiwi modulo 59049) = 0)))
+    Your kiwi level is: 9
+*if (((inventory_kiwi modulo 6561) = 0) and (not ((inventory_kiwi modulo 19683) = 0)))
+    Your kiwi level is: 8
+*if (((inventory_kiwi modulo 2187) = 0) and (not ((inventory_kiwi modulo 6561) = 0)))
+    Your kiwi level is: 7
+*if (((inventory_kiwi modulo 729) = 0) and (not ((inventory_kiwi modulo 2187) = 0)))
+    Your kiwi level is: 6
+*if (((inventory_kiwi modulo 243) = 0) and (not ((inventory_kiwi modulo 729) = 0)))
+    Your kiwi level is: 5
+*if (((inventory_kiwi modulo 81) = 0) and (not ((inventory_kiwi modulo 243) = 0)))
+    Your kiwi level is: 4
+*if (((inventory_kiwi modulo 27) = 0) and (not ((inventory_kiwi modulo 81) = 0)))
+    Your kiwi level is: 3
+*if (((inventory_kiwi modulo 9) = 0) and (not ((inventory_kiwi modulo 27) = 0)))
+    Your kiwi level is: 2
+*if (((inventory_kiwi modulo 3) = 0) and (not ((inventory_kiwi modulo 9) = 0)))
+    Your kiwi level is: 1
+*if ((not ((inventory_kiwi modulo 3) = 0)))
+    Your kiwi level is: 0, which is pathetic.
+
+*label eval_kiwi
+
+*goto helpful_info_noteless
+
+*label helpful_info_persistence_artifacts
+
+Persistence artifacts are unlocked after this many visits to a given layer (you have to know about persistence artifacts before visits apply)…
+
+2
+
+*goto helpful_info_noteless
+
+*label helpful_info_achievements
+
+List of completed achievements. (Incomplete Achievements are secrets).
+
+[i]Completed…[/i]
+*if (achievement_rolling_in_rosalia)
+    *line_break
+    [b]Rolling in Rosalia:[/b] Have 25 Rosalia (Unlocks Weddings)
+*if (achievement_kiwi_white_belt)
+    *line_break
+    [b]Kiwi White Belt:[/b] Attain Kiwi Level 1 (Harvesting plants gives a kiwi seed)
+*if (achievement_well_read)
+    *line_break
+    [b]Well Read:[/b] Return a researched library book (Unlocks Book Club meetings)
+
+*goto helpful_info_noteless
+
+*label helpful_info_randy_log
+
+${town_outskirts_randy_money_cheated_log}
+
+*goto helpful_info_noteless
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Subroutines
+*comment ////////////////////////////////////////////////////////////
+
+*label display_month
+
+Current Month:
+*if (months_passed modulo 13) = 0
+    January
+*if (months_passed modulo 13) = 1
+    February
+*if (months_passed modulo 13) = 2
+    March
+*if (months_passed modulo 13) = 3
+    April
+*if (months_passed modulo 13) = 4
+    May
+*if (months_passed modulo 13) = 5
+    June
+*if (months_passed modulo 13) = 6
+    July
+*if (months_passed modulo 13) = 7
+    August
+*if (months_passed modulo 13) = 8
+    September
+*if (months_passed modulo 13) = 9
+    October
+*if (months_passed modulo 13) = 10
+    Octember
+*if (months_passed modulo 13) = 11
+    November
+*if (months_passed modulo 13) = 12
+    December
+
+*return
+
+*label update_total_lemens
+
+*set total_lemens 0
+*set total_lemens + inventory_lemens_13
+*set total_lemens + inventory_lemens_12
+*set total_lemens + inventory_lemens_11
+*set total_lemens + inventory_lemens_10
+*set total_lemens + inventory_lemens_9
+*set total_lemens + inventory_lemens_8
+*set total_lemens + inventory_lemens_7
+*set total_lemens + inventory_lemens_6
+*set total_lemens + inventory_lemens_5
+*set total_lemens + inventory_lemens_4
+*set total_lemens + inventory_lemens_3
+*set total_lemens + inventory_lemens_2
+*set total_lemens + inventory_lemens_1
+
+*return

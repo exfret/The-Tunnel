@@ -1,16 +1,1810 @@
 *comment ////////////////////////////////////////////////////////////
+*comment // Main Screen
+*comment ////////////////////////////////////////////////////////////
+
+*label main
+
+*if (skip_mode = "normal")
+    Where in town would you like to go?
+
+*if (skip_mode = "skip")
+    *if (decision_point = "25")
+        *set decision_point "26"
+        *goto job
+    *if (decision_point = "28")
+        *set decision_point "29"
+        *goto job
+    *if (decision_point = "31")
+        *set decision_point "32"
+        *goto market
+    *if (decision_point = "51")
+        *set decision_point "52"
+        *goto market
+    *if (decision_point = "55")
+        *set decision_point "56"
+        *goto job
+*choice
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Go to the market
+        *goto market
+    *if (unlocked_town_outskirts)
+        #Go to town outskirts
+            *goto outskirts
+    *if (has_street_attire)
+        #Go to town square
+            *goto town_square
+    *if (has_streets_clothes)
+        #Go to the Streets
+            *goto streets
+    *if (town_knows_homeowner)
+        #Go to the residential bit
+            *goto residential
+    *if (unlocked_town_events)
+        #Go to the events board
+            *goto events
+    #Go to the job board
+        *goto job
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Events!
+*comment ////////////////////////////////////////////////////////////
+
+*label events
+
+Unlock achievements to get access to special town events. Later, you might even get invited to events outside of town!
+
+*gosub_scene logic update_total_lemens
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((not (event_wedding_visited_dulcius_wedding_1)) and ((months_passed >= 222) and (months_passed <= 227)))
+        *selectable_if (achievement_rolling_in_rosalia) #Attend Wedding: Dulcius and Regintina [Requires Achievement "Rolling in Rosalia"]
+            *set event_wedding_visited_dulcius_wedding_1 true
+            *goto events_weddings_dulcius_regintina_1
+    *if ((not (event_festival_town_petunal_1)) and ((months_passed >= 232) and (months_passed <= 244)))
+        #Visit the Petunal Festival, which occurs in town every 25 years for a year (Make sure to bring a lot of petunal blossoms!)
+            *set event_festival_town_petunal_1 true
+            *goto events_petunal_festival_intro
+    *if ((not (event_solar_eclipse_visited_1)) and ((months_passed >= 251) and (months_passed <= 256)))
+        #Watch the solar eclipse
+            *set event_solar_eclipse_visited_1 true
+            
+            It invigorates you. Your energy is set to max and you get +1 max energy. But in the wrong order, cuz, ya know, I like to be like that.
+            
+            [Energy Refilled]
+            *line_break
+            [+1 Max Energy]
+            *set energy max_energy
+            *set max_energy + 1
+            
+            *goto events
+    *if ((not (event_lemen_ball_game_visited_1)) and ((months_passed >= 262) and (months_passed <= 267)))
+        *selectable_if ((total_lemens >= 50) and (achievement_lemen_lover)) #Watch the lemen game [-50 Lemens, Requires Achievement "Lemen Lover"]
+            *set event_lemen_ball_game_visited_1 true
+            *goto events_lemen_ball_game_1
+    *if ((not (event_traveling_trainer_visited_1)) and ((months_passed >= 268) and (months_passed <= 273)))
+        *selectable_if ((energy >= 16) and (unlocked_trainings)) #Receive a training from the traveling trainer [-16 Energy]
+            *set event_traveling_trainer_visited_1 true
+            
+            [Training]
+            *set exploration_trainings + 1
+            
+            *goto_scene {home_base_scene} {home_base_label}
+    *if ((not (event_fortune_teller_visited_1)) and ((months_passed >= 270) and (months_passed <= 282)))
+        *selectable_if (doubloons >= 50) #Receive a fortune from the fortune teller in town [-50 Doubloons]
+            *set event_fortune_teller_visited_1 true
+            
+            "I see swords. Many swords. And behind them a lantern. These do not seem like good omens!" Then, she kicks you out.
+            
+            *goto_scene {home_base_scene} {home_base_label}
+    *if ((not (event_town_market_birthday_1)) and ((months_passed >= 276) and (months_passed <= 288)))
+        #Visit the town market event, but be prepared with many doubloons!
+            *set event_town_market_birthday_1 true
+            *goto events_market_birthday_1
+    *if ((not (event_social_welfare_disbursement_1)) and ((months_passed >= 301) and (months_passed <= 313)))
+        #Visit the town market event, but be prepared with many doubloons!
+            *set event_social_welfare_disbursement_1 true
+            *goto events_social_welfare_disbursement_1
+    *if ((not (event_explorer_conference_visited_1)) and ((months_passed >= 314) and (months_passed <= 326)))
+        #Visit the Explorer's Conference, which occurs in town every 10 years for a year
+            *set event_explorer_conference_visited_1 true
+            *goto events_explorer_conference
+    *if ((not (event_solar_eclipse_visited_2)) and ((months_passed >= 329) and (months_passed <= 334)))
+        #Watch the solar eclipse
+            *set event_solar_eclipse_visited_2 true
+            
+            It invigorates you. Your energy is set to max and you get +1 max energy. But in the wrong order, cuz, ya know, I like to be like that.
+            
+            [Energy Refilled]
+            *line_break
+            [+1 Max Energy]
+            *set energy max_energy
+            *set max_energy + 1
+            
+            *goto events
+    *if (((event_town_book_club_last_visited + 10) < months_passed) and ((((months_passed modulo 100) >= 30) and ((months_passed modulo 100) <= 40)) or (((months_passed modulo 100) >= 70) and ((months_passed modulo 100) <= 80))))
+        *selectable_if (achievement_well_read) #Attend a Town Book Club meeting [Requires Achievement "Well Read"]
+            *comment TODO
+            
+            Not yet implemented
+            
+            *page_break
+            *goto events
+
+*label events_social_welfare_disbursement_1
+
+*temp took_package_1 false
+*temp took_package_2 false
+*temp took_package_3 false
+*temp took_package_4 false
+*temp took_package_5 false
+
+*label events_social_welfare_disbursement_1_choice
+*page_break
+
+You're presented with a list of packages. You can take as many as you wish, but it must be one at a time.
+
+(Right now, there's only one, I'll add more later).
+*comment TODO
+
+*gosub_scene logic update_total_lemens
+
+*choice
+    *if (not (took_package_1))
+        *selectable_if ((doubloons < 1000) and (inventory_blue_coins < 10)) #Doubloons, Doubloons, Doubloons... [Requires: <1000 Doubloons, <5 Blue Coins; Gives: +400 Doubloons, +10 Blue Coins, +1 Kiwi, +14 Nearly-Spoiled Lemens]
+            [+400 Doubloons]
+            *line_break
+            [+10 Blue Coins]
+            *line_break
+            [+1 Kiwi]
+            *line_break
+            [+14 Nearly-Spoiled Lemens]
+            *set doubloons + 400
+            *set inventory_blue_coins + 10
+            *set inventory_kiwi + 1
+            *set inventory_lemens_1 + 14
+            
+            *goto events_social_welfare_disbursement_1_choice
+    #Go home
+        *goto_scene {home_base_scene} {home_base_label}
+
+*label events_market_birthday_1
+
+You scan by the booths, each giving a special offer and representing a shop that you've unlocked in the market. You can only buy one offer per booth, and you will only get these offers one time for each anniversary you visit.
+
+*comment TODO: Code in more anniversaries. Maybe every 20 years or so
+
+*label events_market_birthday_1_offer_general_store
+*page_break
+
+The first booth represents the general store, even the booth is not manned by the main owner at the moment. It seems he's busy somewhere.
+
+*choice
+    *selectable_if (doubloons >= 850) #Buy bulk equipments [-850 Doubloons, +250 Equipments]
+        [-850 Doubloons]
+        *line_break
+        [+250 Equipments]
+        *set doubloons - 850
+        *set inventory_equipments + 250
+        
+        *goto events_market_birthday_1_offer_market_square_booths
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_market_square_booths
+
+*label events_market_birthday_1_offer_market_square_booths
+*page_break
+
+*if (not (unlocked_market_square_booth))
+    *goto events_market_birthday_1_offer_lemen
+
+The next one represents the market square booths.
+
+*choice
+    *selectable_if (doubloons >= 23000) #Buy a massive tarp that will allow for market square booths to be open in the winter [-23000 Doubloons]
+        Sorry, this hasn't been implemented yet.
+        *goto events_market_birthday_1_offer_lemen
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_lemen
+
+*label events_market_birthday_1_offer_lemen
+*page_break
+
+*if (not (unlocked_town_market_lemen_collective))
+    *goto events_market_birthday_1_offer_clothes
+
+The next booth represents the lemen collective. They're giving out free immortal lemens!
+
+[+15 Immortal Lemens]
+*set inventory_lemens_immortal + 15
+
+*goto events_market_birthday_1_offer_clothes
+
+*label events_market_birthday_1_offer_clothes
+*page_break
+
+*if (not (knowledge_blue_coins))
+    *goto events_market_birthday_1_offer_equipment
+
+The next booth represents the blue coin clothing store. Looks like it's just selling some of the standard stuff for a massive discount. An apprentice mans the booth while the shopowner is off fetching some tea.
+
+*choice
+    *selectable_if (doubloons >= 350) #Buy a Shopper's Gown (for accessing the higher tier shops in market square and for renting/buying properties) [-350 Doubloons]
+        [-350 Doubloons]
+        *line_break
+        [Acquired Shopper's Gown]
+        *set doubloons - 350
+        *set has_shopping_attire true
+        
+        *goto events_market_birthday_1_offer_equipment
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_equipment
+
+*label events_market_birthday_1_offer_equipment
+*page_break
+
+*if (not (pass_unlocked_blue))
+    *goto events_market_birthday_1_offer_garden_shop
+
+Even the equipment shop is here with its own booth. It seems to be catering more to past customers with upgrades to previous items.
+
+*choice
+    *selectable_if (false) #SHTG3 [-30000 Doubloons, Requires 200 Gardening Experience, Requires SHTG2]
+        Not implemented.
+        
+        *goto events_market_birthday_1_offer_garden_shop
+    *selectable_if (false) #Buy a Double Shovel Doubler Shoveler [-3600 Doubloons, -30 Special Dirt, Requires Double Shovel, Doubles the effects of a double shovel]
+        Not implemented.
+        
+        *goto events_market_birthday_1_offer_garden_shop
+    *selectable_if (doubloons >= 554) #Buy an XP Amulet [-554 Doubloons, +1 Experience each month you're in the Tunnel (stacks if you have multiple)]
+        [-554 Doubloons]
+        *line_break
+        [+1 XP Amulet]
+        *set doubloons - 554
+        *set inventory_xp_amulet + 1
+        
+        *goto events_market_birthday_1_offer_garden_shop
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_garden_shop
+
+*label events_market_birthday_1_offer_garden_shop
+*page_break
+
+*if (not (unlocked_market_garden_store))
+    *goto events_market_birthday_1_offer_armory
+
+Then it's Aunt Petunia's.
+
+*choice
+    *selectable_if (doubloons >= 900) #A lot of fertilizer [-900 Doubloons, +20 Fertilizers]
+        [-900 Doubloons]
+        *line_break
+        [+20 Fertilizers]
+        *set doubloons - 900
+        *set inventory_fertilizer + 20
+        
+        *goto events_market_birthday_1_offer_armory
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_armory
+
+*label events_market_birthday_1_offer_armory
+*page_break
+
+Then it's the armory, again overseen by a representative of the shop rather than the shop owner themselves. However, it also appears that they're sold out for the moment.
+
+*comment TODO: Shop items
+
+*choice
+    #Continue without buying anything
+        *goto events_market_birthday_1_offer_trainer
+    
+*label events_market_birthday_1_offer_trainer
+*page_break
+
+*if (not ((unlocked_trainings) and (knowledge_blue_coins)))
+    *goto events_market_birthday_1_done
+
+The trainer also isn't selling anything. Huh. Oh well!
+
+*goto events_market_birthday_1_done
+    
+*label events_market_birthday_1_done
+
+And that's all of them! Hope you had fun shopping.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label events_weddings_dulcius_regintina_1
+
+The wedding is held at the white barn, an out-of-place barn in the middle of town square.
+
+*if (met_amy)
+    *set diary ("I went to a wedding today! I even saw Amy the vampire. She actually seems kinda cute.[n/][n/]" & diary)
+    
+    You're surprised to see Amy, the vampire from the cave, here. You're unsure whether to say hi, but she sees you and beams and walks over, her long black hair bobbing with her bouncy steps.
+    
+    "Hiya Lauren," She starts. "Oh, sorry, that must have freaked you out, I know your name cuz of mind reading. Vampire thing." Then she whispers in your ear, "But don't tell anyone else here that, they'd freak out!" You're still perplexed as you look at her. Getting the message she answers, "Oh I know Regintina. I'm her great-great-great-great-grandma. Well, I guess she doesn't know me, but those are the woes of being a vampire. I like to check in on my children every once in a while. Make sure [i]not[/i] to invite her to the bloodfest party!" Then Amy chuckles. "Anyways, see you around!"
+*if (not (met_amy))
+    *set diary ("I went to a wedding today! There was this cute girl with black hair, but something seems off about her.[n/][n/]" & diary)
+    
+    You catch the eye of a tall, pale girl with long black hair. She's wearing starblossom embroidery on her dress, which is white and flowy. You feel something off about her, but you can't quite put your finger on what it is.
+    
+The wedding draws to a close for the day, and you feel you've had enough of this specific event.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label events_explorer_conference
+
+*comment TODO: Different intros based on pass level
+
+You shuffle through a huge crowd and put a blue lanyard on signifying your pass level. You hear there's an even bigger conference in the city, but you can't imagine anything bigger than the thousands of people crowding into this huge cement room. There are dozens of booths set out with different presentations on each. There is also a lounge for yellow pass holders and above with some ropes to stop others from barging in. And then there's the keynote speaker speech, which changes each conference.
+
+*choice
+    #Read some of the presentations
+        *goto events_explorer_conference_presentations
+    #Listen to the keynote speech
+        The keynote speech is some boring crap about "motivation" and "how to be GREAT" (which was probably said about 100 times), but they gave out these free books!
+        
+        *if (research_unlocked_exploration_2)
+            It's Exploration II. You already donated a copy to the orphanage, though, so you just throw it out.
+        *if (not (research_unlocked_exploration_2))
+            It's a copy of Exploration II. You decide to donate this to the orphanage.
+            *set research_unlocked_exploration_2 true
+        
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (focus_points_town_explorers_conference >= 1)
+        #Focus [${focus_points_town_explorers_conference} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_explorers_conference} Focus Points]
+            *set focus_points + focus_points_town_explorers_conference
+            *set focus_points_town_explorers_conference 0
+            
+            *goto_scene {home_base_scene} {home_base_label}
+
+*label events_explorer_conference_presentations
+
+Each time you find a presentation booth, you get a random "souvenir". The current souvenirs are:
+
++1 Blue Coin
+*line_break
++20 Doubloons
+*line_break
++3 Rosalia
+*line_break
++2 Building Materials
+*line_break
+Double the amount of your next souvenir
+*line_break
+Triple the amount of your next souvenir
+*line_break
+Nothing
+
+You can keep rolling for another souvenir with 3 Energy.
+
+*temp souvenir
+*rand souvenir 1 7
+
+*temp multiplier 1
+*temp num_received 0
+
+Click next to see what you got!
+
+*page_break
+
+*label events_explorer_conference_presentations_souvenir
+
+*if (souvenir = 1)
+    *set num_received 1
+    *set num_received * multiplier
+    [+${num_received} Blue Coin]
+    *set inventory_blue_coins + num_received
+    *set multiplier 1
+*if (souvenir = 2)
+    *set num_received 20
+    *set num_received * multiplier
+    [+${num_received} Doubloons]
+    *set doubloons + num_received
+    *set multiplier 1
+*if (souvenir = 3)
+    *set num_received 3
+    *set num_received * multiplier
+    [+${num_received} Rosalia]
+    *set inventory_rosalia + num_received
+    *set multiplier 1
+*if (souvenir = 4)
+    *set num_received 2
+    *set num_received * multiplier
+    [+${num_received} Building Materials]
+    *set inventory_building_materials + num_received
+    *set multiplier 1
+*if (souvenir = 5)
+    Your multiplier is doubled!
+    *set multiplier * 2
+*if (souvenir = 6)
+    Your multiplier is tripled!
+    *set multiplier * 3
+*if (souvenir = 7)
+    You receive nothing.
+    *set multiplier 1
+
+If you roll again, you will receive one of:
+
++1 Blue Coin
+*line_break
++20 Doubloons
+*line_break
++3 Rosalia
+*line_break
++2 Building Materials
+*line_break
+Double the amount of your next souvenir
+*line_break
+Triple the amount of your next souvenir
+*line_break
+Nothing
+
+(Current multiplier: ${multiplier})
+
+*rand souvenir 1 7
+
+*choice
+    *selectable_if (energy >= 3) #Roll for a souvenir again [-3 Energy]
+        *set energy - 3
+        *goto events_explorer_conference_presentations_souvenir
+    #Go home
+        *goto_scene {home_base_scene} {home_base_label}
+
+*label events_petunal_festival_intro
+
+*temp option_1 false
+*temp option_2 false
+*temp option_3 false
+*temp option_4 false
+*temp option_5 false
+*temp option_6 false
+*temp option_7 false
+
+*label events_petunal_festival
+
+There are various petunal blossom themed activities to participate in.
+
+*comment TODO: Gift shop, adoptions, and more! Also become a "petunal child" (unlocks some things or smth) and such. Also place to focus.
+
+*choice
+    *if (not (option_1))
+        *selectable_if (inventory_petunal_blossoms >= 1) #Throw a Petunal Blossom in the Wish Pile to make a wish [-1 Petunal Blossom]
+            *set option_1 true
+            *set inventory_petunal_blossoms - 1
+            *goto events_petunal_festival_wish
+    *if (not (option_2))
+        *selectable_if (inventory_petunal_blossoms >= 2) #Visit the kissing booth [-2 Petunal Blossoms]
+            *set option_2 true
+            *set inventory_petunal_blossoms - 2
+            The kiss you get feels like it lasts a little longer than the ones other people are getting. Or maybe you're just being hopeful because the brunette girl at the booth is super cutesy and it makes your heart flutter (just a little though!).
+
+            *comment TODO: She approaches you afterwards (maybe need to research social cues?)
+            *goto events_petunal_festival
+    *if (not (option_3))
+        *selectable_if ((inventory_petunal_blossoms >= 3) and (energy >= 2)) #Try a Race [-3 Petunal Blossoms, -2 Energy]
+            *set option_3 true
+            *set inventory_petunal_blossoms - 3
+            *set energy - 2
+            *goto events_petunal_festival_race
+    *if (not (option_4))
+        *selectable_if (false) #Three legged race with parent [-4 Petunal Blossoms, Requires parent]
+            *finish
+    *if (not (option_5))
+        *selectable_if (inventory_petunal_blossoms >= 5) #Take a quiz: which historical figure are you? [-5 Petunal Blossoms]
+            *set option_5 true
+            *set inventory_petunal_blossoms - 5
+            *goto events_petunal_festival_quiz
+    *if (not (option_6))
+        *selectable_if (inventory_petunal_blossoms >= 6) #Enter the Petunal Blossom Raffle [-6 Petunal Blossoms]
+            *set option_6 true
+            *set inventory_petunal_blossoms - 6
+            You get a raffle ticket and will be told at the end if you win.
+
+            *goto events_petunal_festival
+    *if (not (option_7))
+        *selectable_if (inventory_petunal_blossoms >= 7) #Visit the Petting Zoo [-7 Petunal Blossoms]
+            *set option_7 true
+            *set inventory_petunal_blossoms - 7
+            *comment TODO: Make this relevant
+
+            You bond with the animals in the petting zoo.
+            *goto events_petunal_festival
+    #Go home
+        *if (option_6)
+            You did not win the raffle.
+        
+        You return home from the festivities.
+        *goto_scene {home_base_scene} {home_base_label}
+        
+
+*label events_petunal_festival_wish
+
+What would you like to wish for?
+
+*temp wish
+*input_text wish
+
+*set diary ((("I wished for " & wish) & "[n/][n/]") & diary)
+
+Good luck!
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_race
+
+*comment TODO: Add prizes
+
+You're not fast enough to win anything, but you do increase your nimblicity skill.
+
+[+15 Nimblicity Skill]
+*set nimblicity_skill + 15
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz
+
+*temp petutius 0
+*temp klonan 0
+*temp rosaline 0
+*temp lemeny 0
+*temp orphan false
+
+Question 1: Which flower do you most identify with?
+
+*choice
+    #Lemens
+        *set lemeny + 1
+        *goto events_petunal_festival_quiz_2
+    #Rosalia
+        *set rosaline + 1
+        *goto events_petunal_festival_quiz_2
+    #Petunal Blossom Flowers
+        *set petutius + 1
+        *goto events_petunal_festival_quiz_2
+    #I'd rather read than busy myself with flowers
+        *set klonan + 1
+        *goto events_petunal_festival_quiz_2
+
+*label events_petunal_festival_quiz_2
+
+Question 2: Do you believe in true love?
+
+*choice
+    #No, and I'll never find it
+        *set klonan + 1
+        *goto events_petunal_festival_quiz_3
+    #No, but I'll find it somehow anyways
+        *set lemeny + 1
+        *goto events_petunal_festival_quiz_3
+    #Yes, but I'll never find it
+        *set rosaline + 1
+        *goto events_petunal_festival_quiz_3
+    #Yes, and I will find it
+        *set petutius + 1
+        *goto events_petunal_festival_quiz_3
+
+*label events_petunal_festival_quiz_3
+
+Question 3: If your parents had to describe you in one word, what would it be?
+
+*choice
+    #Loving
+        *set petutius + 1
+        *set rosaline + 1
+        *goto events_petunal_festival_quiz_4
+    #Orphan
+        *set orphan true
+        *goto events_petunal_festival_quiz_4
+    #Feared
+        *set klonan + 1
+        *goto events_petunal_festival_quiz_4
+    #Bratty
+        *set lemeny + 1
+        *goto events_petunal_festival_quiz_4
+
+*label events_petunal_festival_quiz_4
+
+Question 4: What do you think of writing?
+
+*choice
+    #I can't write
+        *set lemeny + 1
+        *goto events_petunal_festival_quiz_5
+    #Poems are nice
+        *set rosaline + 1
+        *goto events_petunal_festival_quiz_5
+    #All sorts of reading and writing are great!
+        *set klonan + 1
+        *goto events_petunal_festival_quiz_5
+    #If it helps me or my lover, I will always do it
+        *set petutius + 1
+        *goto events_petunal_festival_quiz_5
+
+*label events_petunal_festival_quiz_5
+
+After giving your answers, you tally up points and flip to the corresponding page of the quiz booklet.
+
+*if (orphan)
+    *goto events_petunal_festival_quiz_orphan
+*if (petutius >= 2)
+    *goto events_petunal_festival_quiz_petutius
+*if (klonan >= 2)
+    *goto events_petunal_festival_quiz_klonan
+*if (rosaline >= 2)
+    *goto events_petunal_festival_quiz_rosaline
+*if (lemeny >= 1)
+    *goto events_petunal_festival_quiz_lemeny
+
+The booklet says:
+
+"You're too indecisive. You didn't match any of the major historical figures in this quiz! Maybe you're not meant to be historical.
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz_orphan
+
+The booklet says:
+
+"You answered that you're an orphan. None of the historical figures were orphans, so you can't be any of them. It's that simple, orphan swine."
+
+That's bullshit!
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz_petutius
+
+*comment TODO: Maybe bias this a little more towards Petutius?
+
+The booklet says:
+
+"You're the very figure that this festival is named for: Petutius himself. Petutius is said to have been in competition with Rosalia to see who would find true love first. Rosaline thought she had found it and as a reward became the Queen of the Dome. However, her lover had been eloping with Petutius. When they were found out, they were exiled. Petutius would do whatever it took, including writing letters with Petunian flower used as ink to the 5 unincorporated towns of the dome for support. All but one town responded with aid, and Rosaline was destroyed. The fifth town, called the Lost Town, was destroyed, and its name became taboo. This town is proud to have been the first to answer his call for help."
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz_klonan
+
+The booklet says:
+
+"You're Klonan. Which one? Well, certainly not Klonan the Wise, or else you wouldn't need a quiz to figure this stuff out (also, c'mon, no one's as baller as that guy). You're also not Klonan the Happy, since you weren't thrown in a dungeon for 30 years, forced to watch your mother's execution, dragged behind a horse until you died, and then named in an ironic manner. (At least, we hope you won't be!) No, you're Klonan the Lesser. With a fraction of the knowledge, and almost none of the wisdom of Klonan the Wise, you're grumpy and feared for your dramatic emotional outbursts. Nonetheless, you're often compared to the better Klonan of many millenia before due to how you spread knowledge of academia across the dome. The study of history is said to have started with you, and history itself to have started with Klonan the Wise.
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz_rosaline
+
+The booklet says:
+
+"You're Rosaline, the tragic lover. Your naivety and trust are your downfall. You would write many poems for your lover, Caramel, but her sweetness would only stay on your tongue for so long (and yes, that's her name!). She would soon be taken by Petutius, the rightful ruler of the Dome. There is no good ending for you."
+
+*goto events_petunal_festival
+
+*label events_petunal_festival_quiz_lemeny
+
+The booklet says:
+
+"You've got some Lemeny in you, you little trickster! If you were a true Lemeny, you would have answered all the questions wrong just to spite anyone watching, but you still might have just a dab. Lemeny was conniving all her life, including through childhood. Despite her turbulent nature, a calm Tunnel Spirit named Mystery was able to wrangle her in. Lemeny would always deny to others that she was in love, but posthumous publishing of the letters the two wrote each other confirmed that they always had a soft spot in each other's hearts, even if they never were formally married."
+
+*goto events_petunal_festival
+
+*label events_lemen_ball_game_1
+
+This is one of your first excursions outside of town not counting Tunnel visits. And even with the slight drizzle that was going that day, it was awesome! You were even able to catch one of the lemens!
+
+[+1 Lemen]
+*comment It's not a good lemen that's caught LOL
+*set inventory_lemens_2 + 1
+
+The person next to you says that if you come to another game, they might notice your natural catch and invite you. Especially once these lemen all-stars move on to bigger and better things. You're so hyped by all this you forget who wins.
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Town Square
+*comment ////////////////////////////////////////////////////////////
+
+*label town_square
+
+You enter the majestic middle of town.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Visit Town Hall
+        *goto town_square_hall
+    *selectable_if (has_mundane_attire) #Visit the Post Office to send a letter [Requires Mundane Street Attire]
+        *finish
+    *selectable_if (has_travel_shoes) #Visit the Office of Traveling Affairs to go on a trip somewhere else. [Requires Traveller's Self-Shining Shoes]
+        *finish
+    *selectable_if (has_shopping_attire) #Shop around for residential properties. [Requires Shopper's Gown]
+        *goto town_square_house_shopping
+    *selectable_if (has_shopping_attire) #Visit the shopping district. [Requires Shopper's Gown]
+        (Not yet implemented).
+        
+        *page_break
+        *goto town_square
+    *selectable_if (has_business_suit) #Visit the business district. [Requires Business Suit]
+        *finish
+    *selectable_if (has_fancy_business_suit) #Start a business. [Requires a Fancy Business Suit]
+        *finish
+    *selectable_if (false) #Socialize [Requires a Social Vest]
+        *finish
+    #Visit the town library.
+        *goto town_square_library
+    #Visit the park.
+        *goto town_square_park
+
+*label town_square_hall
+
+*comment TODO: Offer ers position if not already offered
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((unlocked_trainings) and (pass_unlocked_blue))
+        *selectable_if (((((experience >= 350) and (exploration_trainings >= 5)) and (pass_test_passed_yellow)) and (layer_2_num_general_explorations >= 12)) and (inventory_blue_coins >= 30)) #Apply for a Yellow Pass (there is one further step after this regarding artifacts) [-30 Blue Coins, Acquire Yellow Pass, Requires 350 Experience, 5 Trainings, 12 General Explorations into layer 2]
+            *goto town_square_hall_unlock_yellow_pass
+    #Testing center
+        *goto town_square_hall_testing
+    #Sleep in the sleepy lobby [Nap]
+        Unfortunately, this is only allowed to large benefactors and salaried employees.
+        
+        *page_break
+        *goto town_square_hall
+
+*label town_square_hall_unlock_yellow_pass
+
+*comment TODO: Update this when I have more artifacts!
+
+*if (not (((artifact_has_language_orb) or (artifact_has_magic_scythe)) or (artifact_has_ghost_orb_off_white)))
+    Your application has been rejected on the grounds of not having enough artifacts collected.
+
+The last step to obtaining your yellow pass is giving up an artifact to the Commons Museum (you should have plenty by now).
+
+*choice
+    *if (artifact_has_language_orb)
+        #Language Orb
+            *set artifact_has_language_orb false
+            *set pass_yellow_commons_artifact "language_orb"
+            *goto town_square_hall_yellow_ceremony
+    *if (artifact_has_magic_scythe)
+        #Magic Scythe
+            *set artifact_has_magic_scythe false
+            *set pass_yellow_commons_artifact "magic_scythe"
+            *goto town_square_hall_yellow_ceremony
+    *if (artifact_has_ghost_orb_off_white)
+        #Off-white Ghost Orb
+            *set artifact_has_ghost_orb_off_white false
+            *set pass_yellow_commons_artifact "ghost_orb_off_white"
+            *goto town_square_hall_yellow_ceremony
+    #I'm not ready for the responsibility of a yellow pass yet
+        Oh well, not everyone can be a great explorer right away.
+        
+        *page_break
+        *goto town_square_hall
+
+*label town_square_hall_yellow_ceremony
+
+*comment TODO
+
+You're given your yellow pass (yay).
+
+*set pass_unlocked_yellow true
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*label town_square_hall_testing
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (doubloons >= 150) #Take the Yellow Pass Test for a fee (this is just one of the steps, you'll need to do more to obtain the yellow pass than just the test) [-150 Doubloons]
+        [-150 Doubloons]
+        *set doubloons - 150
+        
+        *goto town_square_hall_yellow_pass_test
+
+*label town_square_hall_yellow_pass_test
+
+*comment TODO: Option to cheat
+*comment TODO
+
+Sorry, the test isn't being offered yet
+
+[+150 Doubloons]
+*set doubloons + 150
+
+*page_break
+*goto town_square_hall
+
+*label town_square_house_shopping
+
+*if (not (town_knows_homeowner))
+    You can now visit the residential bit of town! (Access it from the main town menu).
+    
+    *set town_knows_homeowner true
+
+You're presented with several housing options, each with their own 10-month leases. (Payment must be made up front for each 10-month period). These can all be visited in the residential bit of town.
+
+Housing places offer certain bonuses which can be viewed via touring the houses. A big bonus is regenerating energy with lower costs than at the orphanage. However, regenerating in places other than the orphanage will not always fill your energy up to max.
+
+You will still return to the orphanage after trips. Nothing will replace it as home. :)
+
+*comment TODO: Future option to do tours
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if ((doubloons >= 460) and (rent_paid_month_town_crusty_shack = 0)) #Mice-infested, run-down shack [-460 Doubloons for 10 Months of Rent]
+        *set doubloons - 460
+        
+        *set rent_paid_month_town_crusty_shack months_passed
+        *set rent_paid_month_town_crusty_shack + 10
+        
+        *goto_scene {home_base_scene} {home_base_label}
+    #Slightly decent hut [-1780 Doubloons for 10 Months of Rent]
+        *set doubloons - 1780
+        
+        *set rent_paid_month_town_decent_shack months_passed
+        *set rent_paid_month_town_decent_shack + 10
+        
+        *page_break
+        *goto town_square_house_shopping
+    *selectable_if ((inventory_ectoplasm >= 80) and (key_owned_ghost_key)) #Haunted house [-80 Ectoplasm for 10 Month of rents, Requires Ghost Key]
+        Sorry, that's under renovation
+        
+        *page_break
+        *goto town_square_house_shopping
+
+*label town_square_library
+
+*if (has_mabel_library_pass)
+    *goto town_square_library_has_pass
+
+*set visited_town_library true
+
+This library is a lot bigger than the one at the orphanage. However, you need a library pass to be able to rent out books here. You should ask Mabel if you can get one of the ones that the orphanage has on file.
+
+*page_break
+
+*goto town_square
+
+*label town_square_library_has_pass
+
+Your library pass gets you in. "Greetings," says the librarian at the front desk. "What can we help you with today?"
+
+Keep in mind you have a Research Speed of ${research_speed}. This essentially means that you can read 100 pages a month if the book's pages were the same as their number of research points.
+
+*if ((book_checked_out_town_library_1_research_points_left = 0) and (not (book_checked_out_town_library_1 = "nothing")))
+    You return the book you checked out on Mabel's library pass, since you're done with it.
+    
+    *set book_checked_out_town_library_1 "nothing"
+    
+    You get 20 Experience for finishing a town library book!
+    
+    [+20 Experience]
+    *set experience + 20
+    
+    *set achievement_well_read_trigger true
+
+Hint: If you research indexing, you can browse the [i]complete[/i] library inventory and see what each research does.
+
+*label town_square_library_choice
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (researched_indexing)
+        #Read through the library catalog with ALL possible books in this library to see summaries of the effects of each (warning, a lot of choices!).
+            *goto town_square_library_catalog
+    #Check out a book on an unused library card
+        *goto town_square_library_check_out
+    #Return an unfinished book (and keep none of the progress in it)
+        *goto town_square_library_unfinished_return
+    *if (focus_points_town_square_library >= 1)
+        #Focus [${focus_points_town_square_library} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_square_library} Focus Points]
+            *set focus_points + focus_points_town_square_library
+            *set focus_points_town_square_library 0
+            
+            *goto town_square_library_choice
+
+*label town_square_library_catalog
+
+You were warned.
+
+*comment TODO: Indexing for orphanage books, too
+
+*choice
+    #Construction I, also known as "The Subtle Arts of Constructing an Outpost: Foundations" by Robert Wayne.
+        Construction I allows you to build a covering for your base, which will allow further construction of new and improved parts of the base, like a place for basic refining of materials, a garden, and more.
+        
+        Prerequisites: None
+        
+        *goto town_square_library_catalog
+    #Exploration II, also known as "Finding your way around with Explorer Tso!" by George's father.
+        You can now find an additional 5 encounters in each layer.
+        
+        Prerequisites: Exploration I, Reading I 
+        
+        To research this, you must find and return a copy of it to the orphanage library, then research there.
+        
+        *goto town_square_library_catalog
+    #Monsters and Fighting I, also known as "When the Authors of the Monster Book are Pussies, and the Authors of the Fighting Book Know Nothing about Monsters, we Published This" by an anonymous group.
+        This book (notorious for attacking the pacifist ideals of the authors of Monsters I) allows you to approximate the statistics of your opponents in a fight.
+        
+        Prerequisites: Fighting I, Monsters I
+        
+        *goto town_square_library_catalog
+    #Basic Social Etiquette, also known as "Basic Social Etiquette: The Handbook" by George Washington (it's an old book)
+        This allows you to pass certain special checks in social interactions that you would otherwise miss, causing you to get more bonuses in such situations. Certain options also require knowledge of social etiquette.
+        
+        Prerequisites: None
+        
+        *goto town_square_library_catalog
+    #Basic Social Cues, also known as "101 Fundamental Social Cues" by youtuber 101thingsForEverything.
+        You will only notice some things if you have researched this.
+        
+        Prerequisites: Basic Social Etiquette, Observation I
+        
+        *goto town_square_library_catalog
+    #Reduced Clothing Price I, also known as "Finding the Common Thread in Price Negotiations" by Mae Bell.
+        Reduces clothing prices by 20%.
+        
+        Prerequisites: Basic Social Etiquette, Good Habits I
+        
+        *goto town_square_library_catalog
+    #Reading II, also known as "Training the Novice Reader: An Exploration into Essays on Observation, Botany, and Construction" By Jim Prodigy.
+        Increases research speed by 20. Also is a prerequisite to many more advanced researches.
+        
+        Prerequisites: Botany II, Observation I, Reading I
+        
+        *goto town_square_library_catalog
+    #Foresight I, also known as "Foresight is Tracking, or did you not know?" by Mr. Cryptic.
+        A book by a cryptic person with a cryptic title, this allows you to see one objective further rather than just seeing the current objective.
+        
+        Prerequisites: Good Habits I, Tracking I
+        
+        *goto town_square_library_catalog
+    #Legalese I, also known as "The Art of Word Wars" by Penjamin Swordklin.
+        This is important for advancing your knowledge for government and law-based jobs.
+        
+        Prerequisites: Fighting I, Basic Social Etiquette
+        
+        *goto town_square_library_catalog
+    #Cartography I, also known as "Teleportation for dummies" by Einstein.
+        Allows you more fast-travel options than previously available with just a basic or advanced map kit. For example, once you also unlock Construction I, you can build a tunnel to fast-travel to your base in layer 1 without spending Equipments. Requires an advanced map kit to research.
+        
+        Prerequisites: Tracking I, Monsters I, Advanced Map Kit
+        
+        *goto town_square_library_catalog
+    #History I, also known as "What to Repeat, and What not to Repeat" by Trevor Oldman.
+        Unlocks various lore-based passages. Also important for further research.
+        
+        Prerequisites: Reading II, Artifacts II
+        
+        *goto town_square_library_catalog
+    #Exploration III, also known as "The Intermediate Explorer's Friend" by Lona Jones.
+        Unlocks 5 more additional encounters in each layer.
+        
+        Prerequisites: History I, Cartography I, Exploration II
+        
+        *goto town_square_library_catalog
+    #Gifts I, also known as "Grants for the Education I" by the Government's Education Aid Bureau.
+        Grants you a lot of items for meeting a government program's education requirements or something like that. You will receive:
+        
+        50 Blue Coins
+        *line_break
+        20000 Doubloons
+        *line_break
+        1000 Experience
+        
+        Prerequisites: Reading II, Basic Social Cues
+        
+        *goto town_square_library_catalog
+    #Art I, also known as "Music, Drawing, and More" by Amanda R. Terris.
+        Allows you to visit the Artist's corner in town square. Also unlocks many further researches.
+        
+        Prerequisites: Basic Social Cues, Construction I
+        
+        *goto town_square_library_catalog
+    #4'33 Transcribed, also known as "" by .
+        Allows you to remain silent in some dialog choices.
+        
+        Prerequisites: Art I
+        
+        *goto town_square_library_catalog
+    #Fashion I, also known as "Why Orange is the Worst Color, and More Essays on Fashion" by The Fashion Literacy Publishing Group.
+        Opens up another backroom for the Blue Coin Clothing shop.
+        
+        Prerequisites: Art I, Reduced Clothing Price I
+        
+        *goto town_square_library_catalog
+    #Creative Writing I, also known as "Did you know that you can Write?" by Bruh Dude and Guy Broski.
+        Allows you to leave notes in various places in the story.
+        
+        Prerequisites: Art I, Legalese I
+        
+        *goto town_square_library_catalog
+    #Indexing, also known as "The Library User's Manual" by none other than your local librarian!
+        Unlocks the ability to read book descriptions and see a library's full catalog.
+        
+        Prerequisites: None
+        
+        *goto town_square_library_catalog
+    #Artifacts II, also known as "The Bible of Known Layer 1 and Layer 2 Artifacts" by the great explorer Deppkins.
+        Adds an Encyclopedia section to your stats screen with all the layer 1 and layer 2 artifacts in the game (including found ones).
+        
+        Prerequisites: Artifacts I, Exploration I
+        
+        *goto town_square_library_catalog
+    #Cultural Studies I, also known as "Complete Bullshit, 2nd Edition" by a pretentious asshole.
+        Unlocks further researches.
+        
+        Prerequisites: Good Habits I, Basic Social Etiquette
+        
+        *goto town_square_library_catalog
+    #Pacifism, also known as "Peace and why you should keep it" by the Pacifist Political Party.
+        A prerequisite for joining the Pacifist Political Party.
+        
+        Prerequisites: Monsters I, Legalese I, Cultural Studies I
+        
+        *goto town_square_library_catalog
+    #Materials I, also known as "Rocks, Rocks, Rocks" by The Rock.
+        Unlocks the ability to spot cool rocks on your journeys.
+        
+        Prerequisites: Botany I
+        
+        *goto town_square_library_catalog
+    #Fitness I, also known as "Keeping up with the Jones" by Runner Jones.
+        Unlocks more workouts.
+        
+        Prerequisites: Good Habits I, Fighting I
+        
+        *goto town_square_library_catalog
+    #Construction II, also known as "Bringing your Outpost to a whole new Level" by Klonan the Lesser.
+        You can now build an upstairs level to your base, complete with a bedroom that can be used more and more times as you upgrade it.
+        
+        Prerequisites: Materials I, Fitness I, Construction I
+        
+        *goto town_square_library_catalog
+    #Artifacts III, also known as "A Deep Dive into the Speculations of a Monster's Hoard" by Jacques Bob.
+        Allows you to recognize speculated artifacts in monster hoards better.
+        
+        Prerequisites: Exploration II, Monsters I, Artifacts II, Reading II
+        
+        *goto town_square_library_catalog
+    #Artifacts IV, also known as "The Implications of Artifacts on Society" by First Post.
+        Unlocks more artifacts or smth idk.
+        
+        Prerequisites: Cultural Studies I, History I, Artifacts III
+        
+        *goto town_square_library_catalog
+    #Botany II, also known as "More Flowers? Really?" by someone under the pseudonym of "Petal".
+        You get to learn about the flowers specific to layer 2.
+        
+        Prerequisites: Construction I, Botany I
+        
+        *goto town_square_library_catalog
+    #Botany III, also known as "Now we're Obsessed with Fruits" by TDNF.
+        Many fruits are required for basic cooking tasks
+        
+        Prerequisites: Reading II, Botany II, Tracking II
+        
+        *goto town_square_library_catalog
+    #Back to Main Library Menu
+        *goto town_square_library_choice
+
+*label town_square_library_check_out
+
+*temp card_to_check_out_on ""
+*temp card_to_check_out_on_time_var ""
+
+What card would you like to use to check out the book?
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (book_checked_out_town_library_1 = "nothing")
+        #Mabel's library card
+            *set card_to_check_out_on "book_checked_out_town_library_1"
+            *set card_to_check_out_on_time_var "book_checked_out_town_library_1_research_points_left"
+            
+            *goto town_square_library_check_out_2
+
+*label town_square_library_check_out_2
+
+What book would you like to check out?
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((not (researched_construction_1)) and (layer_1_base_visits >= 1))
+        #Construction I [1243 Research Points]
+            You rent out the book on Construction I. This will allow you to work on more complex projects.
+            
+            *set {card_to_check_out_on} "researched_construction_1"
+            *set {card_to_check_out_on_time_var} 1243
+            
+            *goto town_square_library_choice
+    *if ((researched_exploration_1) and (not (researched_exploration_2)))
+        #Exploration II [855 Research Points]
+            "Sorry, we seem to be missing that book. You'll probably have to find it elsewhere."
+            
+            *goto town_square_library_choice
+    *if (((researched_fighting_1) and (researched_monsters_1)) and (not (researched_fighting_monsters_1)))
+        #Monsters and Fighting I [666 Research Points]
+            Your rent out the book about monsters and fighting, which will give you more information about your foes' weak points and attacks.
+            
+            *set {card_to_check_out_on} "researched_fighting_monsters_1"
+            *set {card_to_check_out_on_time_var} 666
+            
+            *goto town_square_library_choice
+    *if (not (researched_basic_social_etiquette))
+        #Basic Social Etiquette: The Handbook [2001 Research Points]
+            You rent out the book on basic social etiquette.
+            
+            *set {card_to_check_out_on} "researched_basic_social_etiquette"
+            *set {card_to_check_out_on_time_var} 2001
+            
+            *goto town_square_library_choice
+    *if (((researched_basic_social_etiquette) and (researched_observation_1)) and (not (researched_basic_social_cues)))
+        #101 Fundamental Social Cues [3388 Research Points]
+            You rent out the book on basic social cues.
+            
+            *set {card_to_check_out_on} "researched_basic_social_cues"
+            *set {card_to_check_out_on_time_var} 3388
+            
+            *goto town_square_library_choice
+    *if (((researched_good_habits_1) and (researched_basic_social_etiquette)) and (not (researched_clothing_price_reduction_1)))
+        #Reduced Clothing Price I [5555 Research Points]
+            You rent out the book on reducing clothing prices.
+            
+            *set {card_to_check_out_on} "researched_clothing_price_reduction_1"
+            *set {card_to_check_out_on_time_var} 5555
+            
+            *goto town_square_library_choice
+    *if ((((researched_botany_2) and (researched_observation_1)) and (researched_reading_1)) and (not (researched_reading_2)))
+        #Reading II [10000 Research Points]
+            You start reading the book about reading right away.
+            
+            *set {card_to_check_out_on} "researched_reading_2"
+            *set {card_to_check_out_on_time_var} 10000
+            
+            *goto town_square_library_choice
+    *if (((researched_good_habits_1) and (researched_tracking_1)) and (not (researched_foresight_1)))
+        #Foresight I [762 Research Points]
+            You always knew you'd find this book.
+            
+            *set {card_to_check_out_on} "researched_foresight_1"
+            *set {card_to_check_out_on_time_var} 762
+            
+            *goto town_square_library_choice
+    *if (((researched_fighting_1) and (researched_basic_social_etiquette)) and (not (researched_legalese_1)))
+        #Legalese I [4433 Research Points]
+            *set {card_to_check_out_on} "researched_legalese_1"
+            *set {card_to_check_out_on_time_var} 4433
+            
+            *goto town_square_library_choice
+    *if (((inventory_map_kit) and ((researched_tracking_1) and (researched_monsters_1))) and (not (researched_cartography_1)))
+        #Cartography I [1093 Research Points]
+            *set {card_to_check_out_on} "researched_cartography_1"
+            *set {card_to_check_out_on_time_var} 1093
+            
+            *goto town_square_library_choice
+    *if (((researched_reading_2) and (researched_artifacts_2)) and (not (researched_history_1)))
+        #History I [7785 Research Points]
+            *set {card_to_check_out_on} "researched_history_1"
+            *set {card_to_check_out_on_time_var} 7785
+            
+            *goto town_square_library_choice
+    *if ((((researched_history_1) and (researched_cartography_1)) and (researched_exploration_2)) and (not (researched_exploration_3)))
+        #Exploration III [12800 Research Points]
+            *set {card_to_check_out_on} "researched_exploration_3"
+            *set {card_to_check_out_on_time_var} 12800
+            
+            *goto town_square_library_choice
+    *if (((researched_reading_2) and (researched_basic_social_cues)) and (not (researched_gifts_1)))
+        #Gifts I [25025 Research Points]
+            *set {card_to_check_out_on} "researched_gifts_1"
+            *set {card_to_check_out_on_time_var} 25025
+            
+            *goto town_square_library_choice
+    *if (((researched_basic_social_cues) and (researched_construction_1)) and (not (researched_art_1)))
+        #Art I [4554 Research Points]
+            *set {card_to_check_out_on} "researched_art_1"
+            *set {card_to_check_out_on_time_var} 4554
+            
+            *goto town_square_library_choice
+    *if ((researched_art_1) and (not (researched_433_transcribed)))
+        #4'33 Transcribed [1 Research Points]
+            *set {card_to_check_out_on} "researched_433_transcribed"
+            *set {card_to_check_out_on_time_var} 1
+            
+            *goto town_square_library_choice
+    *if (((researched_art_1) and (researched_clothing_price_reduction_1)) and (not (researched_fashion_1)))
+        #Fashion I [6036 Research Points]
+            *set {card_to_check_out_on} "researched_fashion_1"
+            *set {card_to_check_out_on_time_var} 6036
+            
+            *goto town_square_library_choice
+    *if (((researched_art_1) and (researched_legalese_1)) and (not (researched_creative_writing_1)))
+        #Creative Writing I [9989 Research Points]
+            *set {card_to_check_out_on} "creative_writing_1"
+            *set {card_to_check_out_on_time_var} 9989
+            
+            *goto town_square_library_choice
+    *if (not (researched_indexing))
+        #Indexing [302 Research Points]
+            *set {card_to_check_out_on} "researched_indexing"
+            *set {card_to_check_out_on_time_var} 302
+            
+            *goto town_square_library_choice
+    *if (((researched_artifacts_1) and (researched_exploration_1)) and (not (researched_artifacts_2)))
+        #Artifacts II [758 Research Points]
+            *set {card_to_check_out_on} "researched_artifacts_2"
+            *set {card_to_check_out_on_time_var} 758
+            
+            *goto town_square_library_choice
+    *if (((researched_good_habits_1) and (researched_basic_social_etiquette)) and (not (researched_cultural_studies_1)))
+        #Cultural Studies I [2055 Research Points]
+            *set {card_to_check_out_on} "researched_cultural_studies_1"
+            *set {card_to_check_out_on_time_var} 2055
+            
+            *goto town_square_library_choice
+    *if ((((researched_monsters_1) and (researched_legalese_1)) and (researched_cultural_studies_1)) and (not (researched_pacifism)))
+        #Pacifism [455 Research Points]
+            *set {card_to_check_out_on} "researched_pacifism"
+            *set {card_to_check_out_on_time_var} 455
+            
+            *goto town_square_library_choice
+    *if ((researched_botany_1) and (not (researched_materials_1)))
+        #Materials I [609 Research Points]
+            *set {card_to_check_out_on} "researched_materials_1"
+            *set {card_to_check_out_on_time_var} 609
+            
+            *goto town_square_library_choice
+    *if (((researched_good_habits_1) and (researched_fighting_1)) and (not (researched_fitness_1)))
+        #Fitness I [533 Research Points]
+            *set {card_to_check_out_on} "researched_fitness_1"
+            *set {card_to_check_out_on_time_var} 533
+            
+            *goto town_square_library_choice
+    *if ((((researched_materials_1) and (researched_fitness_1)) and (researched_construction_1)) and (not (researched_construction_2)))
+        #Construction II [4404 Research Points]
+            *set {card_to_check_out_on} "researched_construction_2"
+            *set {card_to_check_out_on_time_var} 4404
+            
+            *goto town_square_library_choice
+    *if (((((researched_exploration_2) and (researched_monsters_1)) and (researched_artifacts_2)) and (researched_reading_2)) and (not (researched_artifacts_3)))
+        #Artifacts III [7580 Research Points]
+            *set {card_to_check_out_on} "researched_artifacts_3"
+            *set {card_to_check_out_on_time_var} 7580
+            
+            *goto town_square_library_choice
+    *if ((((researched_cultural_studies_1) and (researched_history_1)) and (researched_artifacts_3)) and (not (researched_artifacts_4)))
+        #Artifacts IV [17580 Research Points]
+            *set {card_to_check_out_on} "researched_artifacts_4"
+            *set {card_to_check_out_on_time_var} 17580
+            
+            *goto town_square_library_choice
+    *if (((researched_construction_1) and (researched_botany_1)) and (not (researched_botany_2)))
+        #Botany II [876 Research Points]
+            *set {card_to_check_out_on} "researched_botany_2"
+            *set {card_to_check_out_on_time_var} 876
+            
+            *goto town_square_library_choice
+    *if (((researched_reading_2) and (researched_tracking_2)) and (not (researched_botany_3)))
+        #Botany III [7876 Research Points]
+            *set {card_to_check_out_on} "researched_botany_3"
+            *set {card_to_check_out_on_time_var} 7876
+            
+            *goto town_square_library_choice
+    *if (((num_times_visited_town_outskirts_gym >= 1) and (researched_fighting_1)) and (not (researched_fighting_2)))
+        #Fighting II [303 Research Points]
+            *set {card_to_check_out_on} "researched_fighting_2"
+            *set {card_to_check_out_on_time_var} 303
+            
+            *goto town_square_library_choice
+
+*label town_square_library_unfinished_return
+
+What would you like to return?
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (not (book_checked_out_town_library_1 = "nothing"))
+        #The ${book_checked_out_town_library_1} on Mabel's library card.
+            *set book_checked_out_town_library_1 "nothing"
+            *set book_checked_out_town_library_1_research_points_left 0
+            *goto town_square_library_choice
+
+*label town_square_park
+
+*if (focus_points_town_square_park = 0)
+    There are no more Focus Points here, but it's nice to watch the birds and trees and people walk by
+    
+    *page_break
+    
+    *goto town_square
+
+This would be the perfect place to focus.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Focus [${focus_points_town_square_park} Focus Points Available]
+        *set objective_times_focused_var + 1
+        [+${focus_points_town_square_park} Focus Points]
+        *set focus_points + focus_points_town_square_park
+        *set focus_points_town_square_park 0
+        
+        *goto town_square
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Residential Bit
+*comment ////////////////////////////////////////////////////////////
+
+*label residential
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (person_ghost_seller_first_talk)
+        #Visit the ghost seller's home
+            The ghost seller explains that he's on the verge of curing mortality, and he just needs a few things. You ask why he's doing that when people are already immortal in this story and he says that some literary tropes transcend reason.
+            
+            The first thing he'd like you to bring him is a single mother of specters.
+            
+            *if (not (knowledge_mother_of_specters))
+                You look at him curiously. "Well, then, if you don't know what it is go find out!" Then he kicks you out.
+            
+            *page_break
+            *goto residential
+    *if ((has_shopping_attire) and (rent_paid_month_town_crusty_shack = 0))
+        #Tour: Crusty old shack
+            The crusty old shack comes with many, uhhh, amenities. Like an infestation. You'll never be alone? I really don't know how to spin this in a positive way.
+            
+            Well, it's got some energies to focus on at least. And a place to sleep.
+            
+            *page_break
+            *goto residential
+    *if (rent_paid_month_town_crusty_shack > 0)
+        #Visit my property: Crusty old shack
+            *goto residential_shack
+    *if ((has_shopping_attire) and (rent_paid_month_town_decent_shack = 0))
+        #Tour: Slightly decent shack
+            The slightly decent shack is actually a pretty big upgrade over the crusty old shack and boasts several new amenities.
+            
+            1. A customizable front door sign
+            *line_break
+            2. Old silverware laying around
+            *line_break
+            3. Half-used candles
+            *line_break
+            4. A box of matches, but they're all burnt out
+            *if (town_decent_shack_taken_matchbox)
+                (Scratch that, they seem to be gone)
+            *line_break
+            5. A completely empty fireplace
+            *line_break
+            6. A door with no locks
+            *line_break
+            7. A window that you can see through.
+            *line_break
+            8. Only one mouse rather than an infestation. Her name is Alicia and don't worry she pays rent.
+            
+            However, it doesn't have a bed or anywhere good to sleep, so no resting place here, for whatever reason.
+    *if (rent_paid_month_town_decent_shack > 0)
+        #Visit my property: Slightly decent shack
+            *goto residential_decent_shack
+    
+*label residential_shack
+*page_break
+
+[i]Rice cracks under your feet[/i]
+*line_break
+[i]and mice squeak to a hip hop beat,[/i]
+*line_break
+[i]You see these mice who eat the rice[/i]
+*line_break
+[i](with only a bit of spice),[/i]
+
+[i]Are rock mice, yes they rock, and they roll[/i]
+*line_break
+[i]and they often go for a stroll,[/i]
+*line_break
+[i]Out of their home in the walls they roam[/i]
+*line_break
+[i]to feed from the 2-year-old rice bowl.[/i]
+*line_break
+[i]Cuz these be rockin' and rollin' mice ballin' music machines.[/i]
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (energy < 2) #Rest [Regenerates energy up to 2]
+        *set energy 2
+        [2 Energy]
+        
+        *goto residential_shack
+    *if (focus_points_town_crusty_shack >= 1)
+        #Focus [${focus_points_town_crusty_shack} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_crusty_shack} Focus Points]
+            *set focus_points + focus_points_town_crusty_shack
+            *set focus_points_town_crusty_shack 0
+            
+            *goto residential_shack
+    *selectable_if (doubloons >= 460) #Pay 10 Months of rent [-460 Doubloons]
+        *set doubloons - 460
+        *set rent_paid_month_town_crusty_shack + 10
+        
+        Rent is now paid until Month ${rent_paid_month_town_crusty_shack}.
+        
+        *goto residential_shack
+    *selectable_if (doubloons >= 4600) #Pay 100 Months of rent [-4600 Doubloons]
+        *set doubloons - 4600
+        *set rent_paid_month_town_crusty_shack + 100
+        
+        Rent is now paid until Month ${rent_paid_month_town_crusty_shack}.
+        
+        *goto residential_shack
+
+*label residential_decent_shack
+*page_break
+
+You enter through a front door with a sign saying "${town_decent_shack_front_door_sign}". Just your home.
+
+*comment TODO: implement fireplace, also implement Alicia
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Customize the front door sign
+        What would you like the new sign to say?
+        
+        *input_text town_decent_shack_front_door_sign
+        
+        *goto residential_decent_shack
+    #Collect some old silverware
+        *if ((town_decent_shack_silverware_counter modulo 6) = 0)
+            You find a spork.
+        *if ((town_decent_shack_silverware_counter modulo 6) = 1)
+            You find a knife.
+        *if ((town_decent_shack_silverware_counter modulo 6) = 2)
+            You find a spoon.
+        *if ((town_decent_shack_silverware_counter modulo 6) = 3)
+            You find a spoon.
+        *if ((town_decent_shack_silverware_counter modulo 6) = 4)
+            You find a fork.
+        *if ((town_decent_shack_silverware_counter modulo 6) = 5)
+            You find a knife.
+        *set town_decent_shack_silverware_counter + 1
+        
+        *goto residential_decent_shack
+    #Light a candle
+        Those are Alicia's actually, you should ask before touching someone else's stuff.
+        
+        *goto residential_decent_shack
+    *if (not (town_decent_shack_taken_matchbox))
+        #Take the match box [+1 Burnt Out Match Box]
+            *set town_decent_shack_taken_matchbox true
+            
+            [+1 Burnt Out Match Box] [i](Rare)[/i]
+            *set inventory_burnt_match_box + 1
+
+            Note that "rare" doesn't always mean "good".
+
+            *goto residential_decent_shack
+    *selectable_if (false) #Light the fireplace [-1 Firewood]
+        Not implemented
+        
+        *goto residential_decent_shack
+    #Lock the door
+        It doesn't have a lock…
+        
+        *goto residential_decent_shack
+    #Look through the window
+        So, apparently the window is see-through, but only from the other side.
+        
+        *goto residential_decent_shack
+    #Talk to Alicia
+        She squeaks at you, but you haven't researched animal linguistics yet, so you can't communicate back with this mere rodent.
+        
+        *comment When Alicia does speak, make her absolutely trash talk and wreck you
+        
+        *goto residential_decent_shack
+    *selectable_if (doubloons >= 1780) #Pay 10 Months of rent [-1780 Doubloons]
+        [-1780 Doubloons]
+        *line_break
+        [+10 Months of Rent]
+        *set doubloons - 1780
+        *set rent_paid_month_town_decent_shack + 10
+        
+        Rent is now paid until Month ${rent_paid_month_town_decent_shack}.
+        
+        *goto residential_decent_shack
+    *selectable_if (doubloons >= 17800) #Pay 100 Months of rent [-17800 Doubloons]
+        [-17800 Doubloons]
+        *line_break
+        [+100 Months of Rent]
+        *set doubloons - 17800
+        *set rent_paid_month_town_decent_shack + 100
+        
+        Rent is now paid until Month ${rent_paid_month_town_decent_shack}.
+        
+        *goto residential_decent_shack
+    *if (focus_points_town_decent_shack >= 1)
+        #Focus [${focus_points_town_decent_shack} Focus Points Available]
+            You should talk to your roommate, Alicia, first for permission.
+            
+            *goto residential_decent_shack
+
+*comment ////////////////////////////////////////////////////////////
+*comment // The Streets
+*comment ////////////////////////////////////////////////////////////
+
+*label streets_home_base
+*page_break
+
+*gosub_scene logic home_base_updates
+
+*comment TODO: Revise
+
+[b]Back at… wait, you don't have a home? No parent or home, eh? Well, then, let's follow nobody back to nowhere so she can do nothing![/b]
+
+*choice
+    #Take a trip to the Tunnel
+        You can't take trips to the Tunnel from here.
+        
+        *page_break
+        *goto streets_home_base
+    #Go into main part of town
+        *goto main
+    #Visit the orphanage
+        The orphanage won't let you visit until you get your shit together.
+        
+        *goto streets_home_base
+
+*label streets
+
+*if (layer_1_shrine_of_good_bad_deed = "")
+    *set layer_1_shrine_of_good_bad_deed "Visited a bad part of town."
+    *set layer_1_shrine_of_good_bad_deed_month months_passed
+
+You start down a shady dark alley when you realize it's a dead end. You turn around only to find…
+
+*temp was_robbed
+*rand was_robbed 1 3
+
+*page_break
+
+*if (was_robbed = 1)
+    A shady figure standing at the other end.
+    
+    *comment TODO: Need a special type of weapon for the Streets
+    
+    He beats you up and steals your money.
+    
+    *if (doubloons < 200)
+        "Wait, you don't have enough doubloons!" Says the figure. "Go figure!"
+        
+        Then he beats you up as well. Then, he walks you back home since you're too tired to be in such a dangerous place after the beating he gave you.
+        
+        [-${doubloons} Doubloons]
+        *set doubloons 0
+        
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (doubloons >= 200)
+        [-200 Doubloons]
+        *set doubloons - 200
+*if (was_robbed > 1)
+    …that you weren't robbed. Phew.
+
+*label streets_choice
+
+What would you like to do now that you're here?
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (not (streets_sketchy_fighting_taught))
+        *selectable_if (reputation >= 250) #Learn fighting from a sketchy guy on the street [+1 Month, Requires 250 Reputation]
+            *set streets_sketchy_fighting_taught true
+            
+            He actually turns out to be pretty nice.
+            
+            [+1 Base Fighting Power]
+            *set can_fight true
+            
+            *gosub_scene logic month_passed
+            
+            *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (energy >= 3) #Commit a Crime [+2 Months, -3 Energy]
+        *gosub_scene logic month_passed
+        *gosub_scene logic month_passed
+        
+        [-3 Energy]
+        *set energy - 3
+        
+        *goto streets_crime
+    *if (focus_points_town_the_streets >= 1)
+        *selectable_if (reputation >= 20000) #Focus [${focus_points_town_the_streets} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_the_streets} Focus Points]
+            *set focus_points + focus_points_town_the_streets
+            *set focus_points_town_the_streets 0
+            
+            *page_break
+            *goto streets_choice
+
+*label streets_crime
+
+You do one of the most horrendous things known to man…
+
+*temp crime_committed 0
+*rand crime_committed 1 14
+
+*page_break
+
+*if (crime_committed = 1)
+    *set diary ("I put pineapple on pizza today. I had to eat it since no one would allow it in their trash cans.[n/][n/]" & diary)
+    You put pineapple on pizza.
+*if (crime_committed = 2)
+    *set diary ("When I stopped four fifths of the way through walking an old lady across the street, she turned around, walked all the way back, and then waved for someone else to help her walk the full way across.[n/][n/]" & diary)
+    You walk an old lady four fifths of the way across the street and then leave.
+*if (crime_committed = 3)
+    *set diary ("I jaywalked today. The worst part is that no one was around, so they'll never know I'm supposed to be arrested![n/][n/]" & diary)
+    You jaywalk.
+*if (crime_committed = 4)
+    *set diary ("Tbh I look kinda good in these short shorts.[n/][n/]" & diary)
+    You wear shorts that cut off above finger length.
+*if (crime_committed = 5)
+    *set diary ("I said 'frick' today and you know what? I don't give a fuck what other people think![n/][n/]" & diary)
+    You say the "F" word (frick).
+*if (crime_committed = 6)
+    *set diary ("I'll change that guy's clock back on Monday. I don't want them to be late for work or anything.[n/][n/]" & diary)
+    You set someone's clock 8 minutes ahead.
+*if (crime_committed = 7)
+    *set diary ("I'm gonna show this sentence I wrote to everyone at the orphanage. Their'll hate it![n/][n/]" & diary)
+    You write "their" in a place where "there" is more grammatically correct.
+*if (crime_committed = 8)
+    *set diary ("After getting up and disturbing the cat on my lap, I cried three days straight. How could I do this?[n/][n/]" & diary)
+    You let a cat sit on your lap, and then get up.
+*if (crime_committed = 9)
+    *set diary ("I couldn't stop snickering after telling someone my favorite color was orange today.[n/][n/]" & diary)
+    You tell someone your favorite color is orange.
+*if (crime_committed = 10)
+    *set diary ("I called a baby ugly today. I wasn't even lying; its nose was asymmetrical.[n/][n/]" & diary)
+    You call a baby ugly.
+*if (crime_committed = 11)
+    *set diary ("I used my index finger as if I were giving someone the middle finger.[n/][n/]" & diary)
+    You point your index finger at the sky so that it looks like you're giving someone the middle finger.
+*if (crime_committed = 12)
+    *set diary ("Next time I walk into that room, I'm gonna break the fifth wall too.[n/][n/]" & diary)
+    You go into a room and break the first, second, and third walls. (The fourth wall was already broken).
+*if (crime_committed = 13)
+    *set diary ("I commited a crime today.[n/][n/]" & diary)
+    You spell a variable named "crime_committed" without the second "t", causing your interactive novel to crash.
+*if (crime_committed = 14)
+    *set diary ("Thank god my clackadoo feather is still here.[n/][n/]" & diary)
+    [-1 Clackadoo Feather]
+    
+    You scare the reader.
+
+In return, you gain some street reputation, which is the "currency" around here. (Reputation decays by 10 each month).
+
+[+120 Reputation]
+*set reputation + 120
+
+*goto_scene {home_base_scene} {home_base_label}
+
+*comment ////////////////////////////////////////////////////////////
 *comment // Market
 *comment ////////////////////////////////////////////////////////////
 
-*label market_main
+*label market
+*page_break
 
-What would you like to do at the market? There's always the general store, the biggest in town, that buys and sells most things for a flat rate, especially gathered goods.
+*gosub_scene logic update_total_lemens
+*temp total_lemens_including_immortal total_lemens
+*set total_lemens_including_immortal + inventory_lemens_immortal
 
-*choice
-    #Buy and sell gathered goods to the general store.
+*if ((not (unlocked_town_market_lemen_collective)) and (total_lemens_including_immortal >= 35))
+    *set diary ("I was approached by this weird Lemen-loving guy. I wonder what he wants.[n/][n/]" & diary)
+    
+    You're approached by a secretive man with a glowing face and a bright yellow suit. He sort of looks like a bulbous lemen.
+    
+    "Hey, I hear you've been collecting plenty of lemens. Well, visit us in the brightest part of the market's corner where all the lemens are, and we can have a talk."
+    
+    Then he backs off.
+    
+    *set unlocked_town_market_lemen_collective true
+    
+    *page_break
+
+*if (skip_mode = "normal")
+    What would you like to do at the market? There's always the general store, the biggest in town, that buys and sells most things for a flat rate, especially gathered goods.
+
+*if (skip_mode = "skip")
+    *if (decision_point = "32")
+        *set decision_point "33"
         *goto market_general_store
+    *if (decision_point = "52")
+        *set decision_point "53"
+        *goto market_general_store
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Go to the general store
+        *goto market_general_store
+    *if (unlocked_market_square_booth)
+        #Go to the Market Square Booths
+            *goto market_square_booths
+    *if (unlocked_town_market_lemen_collective)
+        #Go to the Town Lemen Collective for Tender Love and Care of Lemens
+            *goto market_lemen
+    *if (knowledge_blue_coins)
+        #Go to the Blue Coin Clothing Store
+            *goto market_clothes
+    *if (pass_unlocked_blue)
+        #Go to the Equipment Store
+            *goto market_equipment
+    *if (unlocked_market_garden_store)
+        #Go to Aunt Petunia's Garden Shop
+            *goto market_garden_shop
+    *if (months_passed >= 200)
+        #Go to the Armory
+            *goto market_armory
+    *if ((unlocked_trainings) and (knowledge_blue_coins))
+        #Go to the Yummy Doubloons Personal Trainer
+            *goto market_trainer
+    *if (specific_event_orphanage_three_research_shop)
+        #Go to that bruh dude's gatherer's shop
+            *goto market_gatherer
 
 *label market_general_store
+*comment No page break here because most items aren't significant enough to warrant that
+
+*comment Have the store manager greet you
+*comment TODO: Greeting depends on past interactions
 
 *temp rosalia_market_price 0
 *if (months_passed modulo 13) = 4
@@ -28,94 +1822,2378 @@ What would you like to do at the market? There's always the general store, the b
 
 *label market_general_store_determined_rosalia_market_price
 
+*gosub_scene logic update_total_lemens
+
+*if (((not (met_troy_general_store)) and (met_troy)) and (months_passed < troy_orphaned_month))
+    *set diary ("Next time I see Troy I need to let him know everything's fine between us.[n/][n/]" & diary)
+    
+    *if (skip_mode = "normal")
+        You spot Troy at the General Store one day.
+
+        "Hey!" You say, smiling and waving. Troy smiles back. "What are you doing here, Troy?"
+
+        "Fetching some equipments for my parents. They're explorers!"
+
+        "Wait, your parents are explorers?"
+
+        "Yeah."
+
+        "I'm one, too!" You say.
+
+        Troy looks at you dumbfounded. "No way, you're way too young."
+
+        "The best explorers start young," you say with a wink. "Say, I didn't know you were in an explorer family."
+
+        "Yeah, but my parents won't let me explore until I'm older. You must be lucky to have ones that let you explore now!" He says excitedly.
+
+        "Well," you start, looking down, "you see, my parents are dead. I'm an orphan."
+
+        "Oh," Troy says. Then, there's an awkward silence. "I'm sorry."
+
+        "No it's fine," you say, hoping you didn't make things weird. That hope is crushed, though, when you see Troy rush out the door.
+
+        *set met_troy_general_store true
+
+        *page_break
+
+*if ((not (specific_event_general_store_position_offered)) and (months_passed >= 222))
+    *set specific_event_general_store_position_offered true
+    *set job_offered_general_store_grunt true
+    "Hey kid, I'm starting to have difficulties running this store on my own. My daughter got sick and I need to take care of her, and I can't just afford to be out here at the desk all the time. You want a job here? Just apply in the job board in town. Really would like some help!"
+    
+    [Job Offer: General Store Grunt]
+
+*if (skip_mode = "normal")
+    What would you like to buy?
+
+*temp lemen_price 43
+*temp lemen_price_modifier 1
+*set lemen_price_modifier + town_general_store_num_times_bought_lemens_this_month
+*if (lemen_price_modifier > 10)
+    *set lemen_price_modifier 10
+*set lemen_price_modifier * total_lemens
+
+*if (artifact_has_lemen_ten_fold_way)
+    *set lemen_price + lemen_price_modifier
+
+*if (lemen_price > 200)
+    "I don't care how hard you worked to jack up my lemen prices, I can't afford to be buying lemens at a price higher than 20 a piece. 200 Doubloons for 10 or no deal."
+    
+    (You'll need to find a bulk Lemen buyer for this, like the ones found in the City).
+    
+    *set lemen_price 200
+
+*temp equipment_store_price 0
+*set equipment_store_price equipments_price
+*set equipment_store_price * 10
+*if (has_job_general_store_grunt)
+    *set equipment_store_price * 0.3
+    
+*comment TODO: Store shutting down and blacklisting meaning not being able to come here
+
+*if (skip_mode = "skip")
+    *if (decision_point = "33")
+        *set decision_point "34"
+        *goto market_general_store_buy_equipments
+    *if (decision_point = "34")
+        *set decision_point "35"
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (decision_point = "53")
+        *set decision_point "54"
+        *goto market_general_store_rest
+    *if (decision_point = "54")
+        *set decision_point "55"
+        *goto main
 *choice
-    *selectable_if (inventory_lemens >= 10)  #Sell 10 Lemens [-10 Lemens, +43 Doubloons]
-        *set inventory_lemens - 10
-        *set doubloons + 43
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (total_lemens >= 10) #Sell 10 Lemens [-10 Lemens, +${lemen_price} Doubloons]
+        *set town_general_store_num_times_bought_lemens_this_month + 1
+        
+        [-10 Lemens]
+        *line_break
+        [+${lemen_price} Doubloons]
+        *set logic_lemens_to_remove 10
+        *gosub_scene logic remove_lemens
+        *set doubloons + lemen_price
+        
+        ——————————————————————————————
         *goto market_general_store
     *selectable_if (inventory_clackadoo_feather >= 1) #Sell 1 Clackadoo Feather [-1 Clackadoo Feather, +3309 Doubloons]
+        *comment TODO: More subtleties and options here
+        *if (general_store_stole_clackadoo_feather)
+            It wouldn't be wise to try to sell clackadoo feathers to someone you stole one from. Best to find another buyer.
+            
+            *page_break
+            *goto market_general_store
+        
+        *goto market_general_store_clackadoo_confirm
+    *if (inventory_purple_coin >= 1)
+        #Sell a Purple Coin [-1 Purple Coin, +22800 Doubloons]
+            [-1 Purple Coin]
+            *line_break
+            [+22800 Doubloons]
+            *set inventory_purple_coin - 1
+            *set doubloons + 22800
+            
+            "I feel bad taking this off you for such a low price," Says the shopkeeper, gently handling the purple coin into a special case.
+            
+            *page_break
+            *goto market_general_store
+    *if (knowledge_rosalia)
+        *selectable_if ((inventory_rosalia >= 2) and (rosalia_market_price > 0)) #Sell 2 Rosalia [-2 Rosalia, +${rosalia_market_price} Doubloons, must be between May and August (price is higher in May and lower in August)]
+            *set layer_1_perpetual_progress_point_sold_rosalia_general_store true
+            
+            [-2 Rosalia]
+            *line_break
+            [+${rosalia_market_price} Doubloons]
+            *set inventory_rosalia - 2
+            *set doubloons + rosalia_market_price
+            
+            ——————————————————————————————
+            *goto market_general_store
+    *if (unlocked_new_general_store_items)
+        *selectable_if (doubloons >= 182) #One-use torch [-182 Doubloons, +1 Torch]
+            *set town_general_store_bought_something true
+            
+            [-182 Doubloons]
+            *line_break
+            [+1 Torch]
+            *set doubloons - 182
+            *set inventory_torch + 1
+            
+            ——————————————————————————————
+            *goto market_general_store
+    *if (unlocked_orphanage_garden)
+        *selectable_if (doubloons >= 143) #Basic Flower Seeds [-143 Doubloons, +3 Basic Flower Seed]
+            *set town_general_store_bought_something true
+            
+            [-143 Doubloons]
+            *line_break
+            [+3 Basic Flower Seeds]
+            *set doubloons - 143
+            *set inventory_flower_seeds_1 + 3
+            
+            ——————————————————————————————
+            *goto market_general_store
+    *if ((unlocked_new_general_store_items) and (not (inventory_map_kit)))
+        *selectable_if (doubloons >= 1185) #Advanced map kit [-1185 Doubloons, +4 Experience, Acquire Map Kit]
+            *set town_general_store_bought_something true
+            
+            [-1185 Doubloons]
+            *line_break
+            [+4 Experience]
+            *line_break
+            [Acquired Map Kit]
+            *set doubloons - 1185
+            *set experience + 4
+            *set inventory_map_kit true
+            
+            The general store manager shows you a place someone helped map on this kit. Apparently, they sell keys there if you give them dirt.
+            
+            *if (mapped_layer_1_keys)
+                You already know what he's talking about, though.
+            *if (not (mapped_layer_1_keys))
+                You make sure to check it out next time you go to the tunnel.
+                
+                [Mapped Location]
+            
+            *page_break
+            *goto market_general_store
+    *if (((unlocked_new_general_store_items) and (knowledge_petunal_blossoms)) and (town_market_general_store_petunal_blossoms_in_stock >= 1))
+        *selectable_if (doubloons >= 83) #Buy a Petunal Blossom (${town_market_general_store_petunal_blossoms_in_stock} Left!) [-83 Doubloons, +1 Petunal Blossom]
+            *set town_market_general_store_petunal_blossoms_in_stock - 1
+            *set town_general_store_bought_something true
+            
+            "Really desperate for those petunal blossoms, eh?" Says the shopkeeper.
+            
+            [-83 Doubloons]
+            *line_break
+            [+1 Petunal Blossom]
+            *set doubloons - 83
+            *set inventory_petunal_blossoms + 1
+            
+            ——————————————————————————————
+            *goto market_general_store
+    *if (unlocked_support_self)
+        *selectable_if (doubloons >= equipment_store_price) #Buy 10 Equipments [-${equipment_store_price} Doubloons, +10 Equipments]
+                *goto market_general_store_buy_equipments
+    *if ((not (town_general_store_sold_goblin_meat)) and (inventory_goblin_meat >= 4))
+        #Sell 4 Goblin Meat [-4 Goblin Meat, +727 Doubloons]
+            *set town_general_store_sold_goblin_meat true
+            
+            [-4 Goblin Meat]
+            *set inventory_goblin_meat - 4
+            
+            You plop down the goblin arm proudly on the sales desk of the general store guy.
+            
+            "Hey, kid, I know you don't mean it this way, so I'm not gonna report this to the authorities, just gonna dispose of this for you, but, uh, selling goblin meat is illegal and has been illegal for over 20 years now since the Goblin Equality and Protection Act passed. You could get in a lot of trouble for this." Then he looks both ways and throws the arm in the dump out back. "Just don't let me catch you with this again."
+            
+            (You get no money).
+            
+            *page_break
+            *goto market
+    *selectable_if (doubloons >= 32000) #Bribe the guy selling stuff for his very dapper hat. [-32000 Doubloons (it's very dapper)]
+        *set diary ("I'm shocked that the shopkeeper's hat was so poor quality even though it looked so dapper.[n/][n/]" & diary)
+        
+        "I mean, if you really want it that bad you can have it for free. I bought it off ebay for, like, 40 Doubloons. Piece of crap really."
+        
+        You later throw out the hat after finding a maggot in it.
+        
+        *page_break
+        *goto market_general_store
+    *if ((not (mentioned_sword_shopkeeper)) and (layer_1_kiwi_sword_seen))
+        #Mention that weird sword you found to the shopkeeper
+            *set diary ("I had a very interesting conversation about that one sword in the stone with the shopkeeper.[n/][n/]" & diary)
+            
+            *set mentioned_sword_shopkeeper true
+            *goto market_general_store_sword
+    *if (unlocked_focus)
+        *if (focus_points_town_general_store >= 1)
+            #Focus [${focus_points_town_general_store} Focus Points Available]
+                *if (not (town_general_store_bought_something))
+                    The sales dude owner mcperson doesn't want you doin your thing without providing him some monetary benefit through the action of buying his items.
+
+                    Buy something from the shop first!
+
+                    *page_break
+                    *goto market_general_store
+
+                *set objective_times_focused_var + 1
+                [+${focus_points_town_general_store} Focus Points]
+                *set focus_points + focus_points_town_general_store
+                *set focus_points_town_general_store 0
+
+                ——————————————————————————————
+                *goto market_general_store
+    
+*label market_general_store_buy_equipments
+
+*set town_general_store_bought_something true
+
+[-${equipment_store_price} Doubloons]
+*line_break
+[+10 Equipments]
+*set doubloons - equipment_store_price
+*set inventory_equipments + 10
+
+*if (skip_mode = "normal")
+    ——————————————————————————————
+*goto market_general_store
+
+*label market_general_store_clackadoo_confirm
+
+Are you sure?
+
+*choice
+    #No
+        *goto market_general_store
+    #Yes
+        *comment TODO: Add some condition for when your character is actually able to get their own clackadoo feathers so that they don't trigger this
+        *set town_market_sold_clackadoo true
         *set inventory_clackadoo_feather - 1
         *set doubloons + 3309
         *goto market_general_store
-    *comment In the following if statement, rosalia can only be sold in the months of may, june, july, or august, and has varying prices in each month
-    *if (knowledge_rosalia)
-        *selectable_if ((inventory_rosalia >= 2) and (rosalia_market_price > 0)) #Sell 2 Rosalia [-2 Rosalia, +${rosalia_market_price} Doubloons, must be between May and August (price is higher in May and lower in August)]
-            *set inventory_rosalia - 2
-            *set doubloons + rosalia_market_price
-            *goto market_general_store
-    *selectable_if (doubloons >= 182) #One-use torch [-182 Doubloons]
-        *set doubloons - 182
-        *set inventory_torch + 1
-        *goto market_general_store
-    *selectable_if (doubloons >= 4000) #Bribe the guy selling stuff for his very dapper hat. [-32000 Doubloons (it's very dapper)]
-        "I mean, if you really want it that bad you can have it for free. I bought it off ebay for 32 Doubloons. Piece of crap really."
-        
-        You later throw out the hat after finding a maggot in it.
-        *goto market_general_store
-    #Return to main market area
-        *goto market_main
-    #Return home
+    
+*label market_general_store_sword
+
+The shopkeeper's eyes widen. "Yeah I've heard about that one. It's basically the only artifact truly left in layer one. No one's been able to pick it up. And finding it is quite rare. Congrats on you!"
+
+"Wish I had a pass to go see it. Say, what did it look like?" He goes on and on with questions. Eventually, you start to feel exhausted, but comforted in this shopkeeper's interest in your adventures. You even find new Focus Points in his shop!
+
+[+4 Focus Points to General Store]
+*set focus_points_town_general_store + 4
+
+*if (not (unlocked_focus))
+    (It looks like you don't know what focus points are. Then don't worry about this just yet!)
+
+He also mentions some Priest at the temple in the town outskirts to go to if you've unlocked that. Apparently, there might be some more answers there.
+
+*goto market_general_store
+
+*label market_square_booths
+
+*comment The wandering merchants only arrive between the months of March and Octember
+*if ((months_passed modulo 13) <= 2) or ((months_passed modulo 13) >= 11)
+    *goto market_square_booths_closed
+*else
+    *goto market_square_booths_open
+
+*label market_square_booths_closed
+
+You arrive in the market square where the booths are usually held and kick yourself for forgetting that the merchants don't stop by in the Winter months.
+
+*goto market
+
+*label market_square_booths_open
+
+*if (months_passed = town_market_square_booths_last_month_visited)
+    Unfortunately, after your last visit, the booths are all sold out for the month. Better check it out next month!
+    *goto market
+
+*if ((months_passed modulo 13) = 3)
+    Woah, there's this guy giving out free doubloons!
+
+*if ((months_passed modulo 13) = 8)
+    The summer ghost seller is out. This guy isn't a ghost, but he got some pale-ass skin, so that's how everyone at the orphanage refers to him. You don't really know what he sells, but he demands ghostly ectoplasm instead of the usual doubloons.
+    
+    *if (key_owned_ghost_key)
+        Unfortunately, you already have a ghost key and only need one, so there's nothing to buy.
+
+*if (((months_passed modulo 13) = 10) and (not (knowledge_rosalia)))
+    The merchant at the town market square explains to you this thing he's selling, which is called rosalia, since you seem not to know it. It's usually only valuable in the summer months, which is why he's having a flash sale now.
+
+(If there are no choices, you may already have the thing on sale that month).
+
+*choice
+    #Back
+        *goto main
+    #Back home
         *goto_scene {home_base_scene} {home_base_label}
+    *if ((months_passed modulo 13) = 3)
+        #Collect the free doubloons [+30 Doubloons]
+            *set diary ("I got the free Doubloons that the Market Square guy gives out in March!![n/][n/]" & diary)
+            
+            [+30 Doubloons]
+            *set doubloons + 30
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if (((months_passed modulo 13) = 4) and (not (research_unlocked_exploration_2)))
+        *selectable_if (doubloons >= 501) #Collect a new book for the orphanage [-501 Doubloons, Can now research Exploration II in the orphanage with proper prerequisites]
+            *set diary ("I bought a new book for the orphanage. It's 'Exploration II', by Todd McGuire.[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-501 Doubloons]
+            *line_break
+            [Unlocked Research: Exploration 2]
+            *set doubloons - 501
+            *set research_unlocked_exploration_2 true
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if ((months_passed modulo 13) = 5)
+        *selectable_if (doubloons >= 103) #Buy a few building materials [-103 Doubloons, +6 Building Materials]
+            *set diary ("I bought some building materials in bulk. Maybe I can make a tweehouse uwu?[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-103 Doubloons]
+            *line_break
+            [+5 Building Materials]
+            *set doubloons - 103
+            *set inventory_building_materials + 5
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if (((months_passed modulo 13) = 5) and ((layer_2_mangrove_quest_given = 1) and (not (layer_2_mangrove_quest_completed))))
+        #Complete QuestGiver's quest
+            [QuestGiver Quest Completed]
+            *set layer_2_mangrove_quest_completed true
+            
+            ——————————————————————————————
+            *goto market_square_booths
+    *if ((months_passed modulo 13) = 6)
+        *selectable_if (doubloons >= 340) #Buy some cheap, slightly spoiled Lemens [-340 Doubloons, +100 Lemens]
+            *set diary ("The merchant in the Market Square who sold me these Lemens said they were somewhat spoiled, but I wonder how spoiled they really are?[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-340 Doubloons]
+            *line_break
+            [+100 Lemens]
+            *set doubloons - 340
+            *set inventory_lemens_5 + 100
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if ((months_passed modulo 13) = 7)
+        *selectable_if (doubloons >= 96) #Buy discounted basic seeds [-96 Doubloons, +2 Basic Flower Seeds]
+            *set diary ("I'm so glad to have snagged these seeds from Market Square rather than the General Store where they're so expensive.[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-96 Doubloons]
+            *line_break
+            [+2 Basic Flower Seeds]
+            *set doubloons - 96
+            *set inventory_flower_seeds_1 + 2
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if (((months_passed modulo 13) = 8) and (not (key_owned_ghost_key)))
+        *selectable_if (inventory_ectoplasm >= 5) #Buy the Ghost Seller's Ghost Key [-5 Ectoplasm, Acquire Ghost Key]
+            *set diary ("I bought the ghost key. Spooky.[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-5 Ectoplasm]
+            *line_break
+            [Acquired Ghost Key]
+            *line_break
+            [Encyclopedia Entry: Ghost Key]
+            *set inventory_ectoplasm - 5
+            *set key_owned_ghost_key true
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if ((((months_passed modulo 13) = 8) and (layer_1_gravestone_grave_ghost_visits >= 1)) and (not (person_ghost_seller_first_talk)))
+        #Ask the ghost seller about any sidequests *wink*
+            *set person_ghost_seller_first_talk true
+            
+            "Oh, haha, just because I have pale skin and sell a ghost key, well that doesn't mean that I'm a ghost-y person. Ghosts aren't real, anyways. Though I may have some things to help cure mortality if you're up to fetch them for me. I'd pay a good price for 'em. Just visit me at my house in the residential part of town. Hoo ha."
+            
+            *page_break
+            *goto market_square_booths_open
+    *if ((months_passed modulo 13) = 9)
+        *selectable_if (doubloons >= 355) #Buy bulk discounted equipments [-355 Doubloons, +50 Equipments]
+            *set diary ("So glad I snagged these equipments from Market Square when they were cheap![n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-355 Doubloons]
+            *line_break
+            [+50 Equipments]
+            *set doubloons - 355
+            *set inventory_equipments + 50
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if ((months_passed modulo 13) = 10)
+        *selectable_if (doubloons >= 55) #Buy rosalia [-25 Doubloons, +3 Rosalia]
+            *set diary ("Went by Market Square. Just got a bit of Rosalia~[n/][n/]" & diary)
+            
+            *set layer_1_perpetual_progress_point_buy_from_market_booths true
+            
+            [-55 Doubloons]
+            *line_break
+            [+3 Rosalia]
+            *set doubloons - 55
+            *set inventory_rosalia + 3
+            
+            *set town_market_square_booths_last_month_visited months_passed
+            
+            *goto market
+    *if (focus_points_town_market_square >= 1)
+        #Focus [${focus_points_town_market_square} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_market_square} Focus Points]
+            *set focus_points + focus_points_town_market_square
+            *set focus_points_town_market_square 0
+            
+            ——————————————————————————————
+            *goto market_square_booths
+
+*label market_clothes
+
+*if (has_street_attire)
+    *goto market_clothes_store
+
+You approach a large, blue door. It's very round, almost like a hobbit door but larger. Not quite that round, though, and it's metal rather than wood. In the center is a large protruding spike with a slot for a coin. There's a sign right above it that reads in scratchy writing, "Insert one blue coin to enter."
+
+*choice
+    #Back
+        *goto market
+    *selectable_if (inventory_blue_coins >= 1) #Insert a blue coin [-1 Blue Coin]
+        *set inventory_blue_coins - 1
+        *goto market_clothes_enter
+
+*label market_clothes_enter
+
+*set visits_blue_coin_clothes_shop + 1
+
+*if (visits_blue_coin_clothes_shop = 1)
+    You are immediately assaulted with a heavy smell of perfume as you enter. A large frail, creepy young man with many adjectives apparently turns to you from talking to a young woman with wayyy too much makeup and says, "yes?" Then he turns away and holds his nose (as if he could smell [i]anything[/i] in here).
+    
+    "No no! This will not do. Do you have 5 Blue Coins? That is all for me to furnish this one with decent clothing. Only five! Now go!!"
+*if (not (visits_blue_coin_clothes_shop = 1))
+    As soon as he sees you he turns away. "My eyes! Do you have the blue coins yet?"
+
+*choice
+    *selectable_if (inventory_blue_coins >= 5) #Hand over 5 blue coins [-5 Blue Coins]
+        *set inventory_blue_coins - 5
+        
+        *goto market_clothes_intro
+    #Leave and get your blue coin back [+1 Blue Coin]
+        *set inventory_blue_coins + 1
+        
+        *goto market
+
+*label market_clothes_intro
+
+*comment TODO: What if you're kicked out of the orphanage by now?
+
+*if (not ((home_base_scene = "orphanage") and (home_base_label = "orphanage_home_base")))
+    A time fracture has occurred… Events are out of order and things are not as they should be.
+    *finish
+
+*set diary ("Wow this Clothes shopkeeper is so rude...[n/][n/]" & diary)
+
+"Oh dear, put these on!" And then the frail man (who, honestly, seems like more of a frail old boy than anything) throws you some weird-looking striped and polka dotted clothes. You stare at them, but then realize that he's not budging until you put them on. So you literally just put them on top of your old clothes, and the moment the shirt slips onto your torso, he speaks again.
+
+"Now dear goodness thank you! I hate these blue coins, but I had to ask for something in return for good clothes, and I know you orphan boys have nothing in the way of doubloons. You can have all these back, actually, I hate the color blue."
+
+[+6 Blue Coins]
+*set inventory_blue_coins + 6
+
+"Why do you have a blue door then that asks for…" You start to ask.
+
+"Because it's what's in style! It doesn't matter what I personally like or dislike. Why dear! I forget how out of it the orphan children are! You forget to wear your street clothes sometimes even, just like now. Say, you wouldn't even know which color the prisoners in Terny Correctional are supposed to wear nowadays?" After a period of silence, he continues, "Dear gosh, it's orange. [i]Orange[/i] of all colors! I say black is the new criminal color, maybe gray to show the turn to innocence as they get better or what have you at the facility… not that any of those filth are getting any better. Say, why didn't you answer me? I'm sure you have plenty of friends there."
+
+"My orphanage forbids any sort of crimes. If you're caught so much as begging in the wrong part of town, you're kicked out and no one else at the orphanage can speak to you again. It's very strict."
+
+"Oh, sure it is. That's why little orphan children always come in here to steal my wares. Costs me thousands of doubloons a day! And then you somehow don't even have those same wares when you wander into my shop. Tell me, little orphan child, what did you do with them?"
+
+*fake_choice
+    #I tell him to shut his mouth and wait until I'm rich and powerful
+    #I threaten to kill him in his sleep
+    #I politely let him know that he can fuck off
+        
+As you finish your eloquent little speech, you notice his gaze is not on you, though, but rather on someone behind you much taller. You look around to see the slender figure of Mabel, the librarian and assistant director of the orphanage.
+
+"Hello, Gillian!" Screams Mabel in the most flirtatious, bubbly voice you'd ever seen her put on.
+
+"Oh Mae, I was just talking to one of your little orphan children, before you oh so rudely interrupted!" The slender man you now know as Gillian says playfully. "Now, I was soooo overwhelmed by the smell of that new tea, I completely missed what you said little one." Then he turns to you. You honestly can't tell if he's toying with you or actually ridiculously oblivious to the situation.
+
+"I… uhh…" You start.
+
+"Oh it's fine, I've been encouraging my children to get out more anyways. And of course, they need hip clothes for that! I hope this one's been all kind to you." Mabel finishes with a wink.
+
+"Oh wonderful! Extra dessert I say!" You quietly think about how you don't get dessert at the orphanage. "Anyways, here is that extra large payment of 120,000 Doubloons for those tea leaves!"
+
+"Oh Gillian Vormutruse the IV of Mount Hampshire on his Father's side, and of the 44th Street Gang With All The Money on his Mother's, you did NOT have to do this!" Squeaks Mabel. "I only asked for 85,000 Doubloons, that's such a tip!"
+
+"Oh, well, Mabel, you know how I am." Gillian flushes. They perform one of the biggest monetary transactions you've ever seen and then Mabel leaves (but not without giving you a wink and one of her more normal, stern smiles).
+
+You now have street clothes, which means you can visit town square whenever you want (usually they don't allow the "low types" there, but with these clothes you should pass off as decent). To travel more places, like the city, you will need even better clothes. Just be careful, clothes are expensive.
+
+[Acquired Street Clothes]
+*line_break
+(You may now access Town Square from the main Town menu).
+*set has_street_attire true
+
+Also, since this is such a big accomplishment, here's a load of experience.
+
+[+25 Experience]
+*set experience + 25
+
+Now back to the shop that you just unlocked!
+
+*set diary ("I just got my first pair of street clothes! Moving up in the world, yeehaw. (But seriously, why can't I just wear my regular clothes?..)[n/][n/]" & diary)
+
+*label market_clothes_store
+
+"So, what would you like to buy?" Asks Gillian. "There are, of course, more items than this measly selection, but I'd like to see some proof of solid employment if I'm to believe you can afford them. Can't have put in a resignation notice either."
+
+*comment TODO: Real choices here
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (doubloons >= 12000) #A Lemen outfit [-12000 Doubloons]
+        "Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store
+    *selectable_if (doubloons >= 3600) #A purple feather suit [-3600 Doubloons]
+        "Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store
+    *selectable_if (doubloons >= 15000) #A speckled lemur-bird feather [-15000 Doubloons]
+        Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store
+    *selectable_if (doubloons >= 57000) #A Clackadoo Feather (comes with vintage note with handwriting similar to George's) [57000 Doubloons]
+        Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store
+    *if (unlocked_focus)
+        *if (focus_points_town_blue_coin_clothing_store >= 1)
+            #Focus [${focus_points_town_blue_coin_clothing_store} Focus Points Available]
+                "Oh, dear orphan, you'd need wizard robes for that! Go find some first."
+
+                *page_break
+                *goto market_clothes_store
+    *selectable_if (num_full_time_jobs >= 1) #Show Gillian your proof of employment to see the back of the shop [Requires having a full-time Job, you bum-ass]
+        *goto market_clothes_store_2
+
+*label market_clothes_store_2
+
+Gillian leads you into the "back" of the store, which really just feels like another front. There's an open door and you can see layers after layers of new rooms. Gillian quickly rushes over and closes it. "My bad, sorry about that. Now what would you like? As you can see, the options here for working-class folk like yourself are a lot more serious."
+
+*comment At each layer, only allow going back one layer, so it feels claustrophobic (maybe trap the character in a loop eventually)
+*comment TODO: Option to focus
+
+*choice
+    #Go back to the main room
+        *goto market_clothes_store
+    *selectable_if (doubloons >= 1750) #Buy a Social Vest (for social outtings) [-1750 Doubloons]
+        Gillian looks all over for the social vest but can't find it. "Oh, it appears a little orphan stole it," He says. "Guess you'll have to find that item somewhere else."
+        
+        *page_break
+        *goto market_clothes_store_2
+    *selectable_if (doubloons >= 2200) #Buy a Shopper's Gown (for accessing the higher tier shops in market square and for buying an apartment) [-2200 Doubloons, +15 Experience]
+        [-2200 Doubloons]
+        *line_break
+        [Acquired Shopper's Gown]
+        *line_break
+        [+15 Experience]
+        *set doubloons - 2200
+        *set has_shopping_attire true
+        *set experience + 15
+        
+        Wow you bought it. Here's some text. Are you happy, newfound shopper? I sure am. Whee, diddly, dondit.
+        
+        *page_break
+        *goto market_clothes_store_2
+    *selectable_if ((doubloons >= 10300) and (pass_unlocked_yellow)) #Buy a pair of Traveller's Self-Shining Shoes (for travelling to places far away) [-10300 Doubloons, Requires Yellow Pass]
+        "Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store_2
+    *selectable_if (doubloons >= 15000) #Buy a Business Suit [-15000 Doubloons]
+        "Oh that's actually not for sale, here's your doubloons back."
+        
+        *page_break
+        *goto market_clothes_store_2
+    *if (knowledge_starblossom)
+        *selectable_if ((inventory_starblossom >= 2) and (doubloons >= 8900)) #Buy a Party Outfit (for better results at events) [-8900 Doubloons, must supply 2 Starblossoms for decoration as well]
+            "Oh that's actually not for sale, here's your doubloons back."
+            
+            *page_break
+            *goto market_clothes_store_2
+
+*label market_lemen
+
+You approach a large, bright booth.
+
+You still got enough lemens, right chief? You need 35 to be in this part of town.
+
+*gosub_scene logic update_total_lemens
+*temp total_lemens_including_immortal total_lemens
+*set total_lemens_including_immortal + inventory_lemens_immortal
+
+*if (total_lemens_including_immortal < 35)
+    You realize you don't have enough lemens to go back into the collective and walk away, ashamed.
+    *goto market
+
+You nod, opening your trenchcoat to reveal exactly ${total_lemens_including_immortal} lemens. The big brutus guy who called you chief, whose name is actually Honduras, opens a wooden door behind the booth that's lined with lemens. And you enter the Town Lemen Collective.
+
+*page_break
+
+*if (town_lemen_collective_level = 0)
+    
+    The tall guy with the yellow suit and black hair swoops in to greet you. "I see you took us up on our offer," He says, tantalizingly. "You see, I was wondering one day, what is the point of life?" Before you get the chance to answer, he goes on, "LEMENS! You see, I was wondering about something to devote my life to once I became the richest member of this town." Wait, who did he say he was? "Well, obviously money didn't make me happy, and neither do lemens, but the thought of devoting my life to something does! So I just settled on one of the easiest things to settle on: lemens. That way, I can devote my life to something and not have to think about anything else."
+    
+    "And so, I started the lemen society, bought this building with all my money and made sort of like a lemen religion." That explains why the building is so bright. "I have so many lemens. Now, I don't need your lemens, I just need your recognition that lemens are the complete and only element to a person's self worth. That is, how good of a person you are is solely determined by how many lemens you possess. For example, I am magnificent. Do you agree with all of that?"
+    
+    *comment TODO: A way past having to say yes
+    *choice
+        #Yes [+1000 Doubloons]
+            *goto market_lemen_yes
+        #No
+            "Well, then get out of here," says the dude. "In fact, you're so worthless to me now that I'm going to completely forget we even had this interaction."
+            
+            Brutus, or, err, Honduras comes in and quite literally throws you out.
+            *goto market
+    
+    *label market_lemen_yes
+    
+    *set diary ("Holy shit, this lemen guy just gave me 1000 Doubloons.[n/][n/]" & diary)
+    
+    "Well, then here's some useless coins as a symbol of good will. I understand as someone who hasn't yet fully converted to the cause, these may still be of use to you." And then he straight up hands you a half year's worth of labor for some people.
+    
+    [+1000 Doubloons]
+    *set doubloons + 1000
+    
+    "So, to summarize, lemens are what determines your worth here. You got a lot of lemens, you got a lot of bonuses from this place. Bah duh boom, bah duh bang." Then he leaves you on your own.
+    
+    *set town_lemen_collective_level 1
+
+*label market_lemen_1
+
+*gosub_scene logic update_total_lemens
+*temp total_lemens_including_immortal total_lemens
+*set total_lemens_including_immortal + inventory_lemens_immortal
+    
+You look to the left and see the wall of Great Lemen Holders. Apparently, this is the list of people with at least one million lemens. One million? What.
+
+You look around a little more. It's a magnificent, well-lit, golden building. Except upon closer inspection the gold is more of a lemen-y yellow. Anyways! What would you like to do?
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (doubloons >= town_lemen_collective_doubloon_cost) #Throw doubloons on the floor in representation of you giving up your old doubloon-loving lifestyle. [-${town_lemen_collective_doubloon_cost} Doubloons]
+        You throw away some doubloons.
+        
+        [-${town_lemen_collective_doubloon_cost} Doubloons]
+        *set doubloons - town_lemen_collective_doubloon_cost
+        
+        *if (town_lemen_collective_doubloon_cost = 1)
+            *set diary ("Heck, why not throw money on the floor for Lemen bonuses? Especially if it's just one Doubloon.[n/][n/]" & diary)
+            
+            As a reward, you are taught new lemen-gathering techniques that increase your lemen gathering skill by 5.
+            *set lemen_fetch_skill + 5
+        *if (town_lemen_collective_doubloon_cost = 10)
+            *set diary ("This whole concept of giving up my Doubloons for Lemens is weird. Welp, there goes 10 more Doubloons.[n/][n/]" & diary)
+            
+            Any mini lemen gardens you plant will now yield an extra 2 Lemens each time you visit.
+        *if (town_lemen_collective_doubloon_cost = 100)
+            *set diary ("I feel like I should feel bad for throwing money away as an orphan child who watches children outside starve on the daily, but hey now my Lemens last longer! So worth.[n/][n/]" & diary)
+            
+            Lemens don't age in October or Octember.
+        *if (town_lemen_collective_doubloon_cost = 1000)
+            *set diary ("These Lemen upgrades are starting to get expensive. I wonder what this Lemen bank is all about...[n/][n/]" & diary)
+            
+            You now have access to the lemen bank in the back.
+        *if (town_lemen_collective_doubloon_cost = 10000)
+            *set diary ("I just threw an incredibly large number of coins on the floor. I basically had to bring in a wheelbarrow. Now they're just sitting there? What am I doing with my life.[n/][n/]" & diary)
+            
+            You are given 35 immortal lemens. These cannot be used or sold but will never expire and permanently count toward your number of lemens.
+        *if (town_lemen_collective_doubloon_cost = 100000)
+            *set diary ("100,000 Doubloons... gone. This better be worth it.[n/][n/]" & diary)
+            
+            You have now thrown in as many coins as the floor can hold. You have now gained the title of lemen ascetic, which is needed to trigger some secret events.
+        
+        *set town_lemen_collective_doubloon_cost * 10
+        
+        *page_break
+        *goto market_lemen_1
+    *if (town_lemen_collective_doubloon_cost >= 10000)
+        #Visit the Lemen bank in the back
+            *comment TODO
+            Kyle hasn't written this yet
+            
+            *goto market_lemen_1
+    *if (unlocked_focus)
+        *if (focus_points_town_lemen_collective >= 1)
+            #Focus [${focus_points_town_lemen_collective} Focus Points Available]
+                *set objective_times_focused_var + 1
+                [+${focus_points_town_lemen_collective} Focus Points]
+                *set focus_points + focus_points_town_lemen_collective
+                *set focus_points_town_lemen_collective 0
+
+                ——————————————————————————————
+                *goto market_lemen_1
+    *selectable_if (town_lemen_collective_level > 1) #Go up to the next floor [Requires Lemen Level 2]
+        *goto market_lemen_2
+
+*label market_lemen_2
+
+It's empty! Kyle hasn't written it yet!
+
+*goto market
+
+*label market_equipment
+
+You walk into the most down-to-Earth store you've ever seen. It's a bit musky, but the vibe is chill and serious. "It's time for us to conquer this tunnel" is what this store's endless racks of supplies says to you. Of course, most of it is off limit to blue pass holders, and you need a blue pass to even be in here. It's a pretty advanced shop.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((knowledge_starblossom) and (not (inventory_shtg2)))
+        *selectable_if ((doubloons >= 2000) and (task_experience_gardening >= 15)) #Buy an SHTG2 [-2000 Doubloons, +15 Experience, Requires 15 Gardening Experience]
+            *set diary ("Just got a hold of an SHTG2. Booyah.[n/][n/]" & diary)
+            
+            [-2000 Doubloons]
+            *line_break
+            [Acquired SHTG2]
+            *line_break
+            [+15 Experience]
+            *set doubloons - 2000
+            *set experience + 15
+            *set inventory_shtg2 true
+            
+            This is actually a pretty important upgrade so I'm going to take the time to write down something really deep and important here that took a lot of time to make.
+            
+            Nah. Let's not, actually.
+            
+            *page_break
+            *goto market_equipment
+    *if (knowledge_blue_coins)
+        *selectable_if (doubloons >= 3200) #Buy a blue coin pickaxe [-3200 Doubloons]
+            Just be sure to come back here when it breaks!
+            
+            [+1 Blue Coin Pickaxe] (25 Uses)
+            *set inventory_blue_coin_pickaxe_uses + 25
+            
+            ——————————————————————————————
+            *goto market_equipment
+    *if ((not (town_market_blue_pass_shop_blue_coin_bought)) and (knowledge_blue_coins))
+        *selectable_if (doubloons >= 200) #Buy the desperation Blue Coin [-200 Doubloons]
+            *set diary ("I was really desperate for a blue coin. Just dropped 200 doubloons for one![n/][n/]" & diary)
+            
+            *set town_market_blue_pass_shop_blue_coin_bought true
+            
+            [-200 Doubloons]
+            *line_break
+            [+1 Blue Coin]
+            *set doubloons - 200
+            *set inventory_blue_coins + 1
+            
+            "Wow, I didn't think anyone would buy that."
+            
+            ——————————————————————————————
+            *goto market_equipment
+    *if (not (inventory_shovel))
+        *selectable_if (doubloons >= 550) #Buy a double shovel to gather Special Dirt better. [-550 Doubloons, +5 Experience]
+            *set diary ("This shovel will definitely help me rake in the Special Dirt a lot better.[n/][n/]" & diary)
+            
+            [-550 Doubloons]
+            *line_break
+            [Acquired Shovel]
+            *line_break
+            [+5 Experience]
+            *set doubloons - 550
+            *set inventory_shovel true
+            *set experience + 5
+            
+            Double Shovels allow you to collect double the Special Dirt at once!
+            
+            If only they doubled my word count…
+            
+            *page_break
+            *goto market_equipment
+    #Focus [${focus_points_town_market_equipment_store} Focus Points Available]
+        Unfortunately, this requires the yellow pass.
+        
+        *page_break
+        *goto market_equipment
+
+*label market_garden_shop
+
+"Sorry, hun, our inventory ain't the biggest at the moment."
+
+*if (((not (town_garden_shop_blue_coin_collected)) and (knowledge_blue_coins)) and (artifact_has_language_orb))
+    *set town_garden_shop_blue_coin_collected true
+    
+    Your language orb starts to glows and you pull it out to see some words inscribed on the transaction table. You read them out loud, "If you can read this, I'll give you a Blue Coin."
+    
+    Petunia smiles. "Well here you go".
+    
+    [+1 Blue Coin]
+    *set inventory_blue_coins + 1
+
+*if ((not (job_offered_petunia_assistant)) and (gardens_orphanage_num_times_harvested >= 7))
+    "Hey, I hear from Ms. Bee that you've been using the Orphanage's garden a lot. You should come work here. Go to the town job offers page and we'll have you growing a green thumb right away."
+    
+    [Job Offer: Aunt Petunia Shop Assistant]
+    
+    *set job_offered_petunia_assistant true
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (doubloons >= 106) #Buy a petunal blossom seed [-106 Doubloons, +1 Petunal Blossom Seed (Takes 8 months to grow, +6 Gardening Experience when Harvested, gives 11 Petunal blossoms)]
+        [-106 Doubloons]
+        *line_break
+        [+1 Petunal Blossom Seed]
+        *set doubloons - 106
+        *set inventory_petunal_seeds + 1
+        
+        ——————————————————————————————
+        *goto market_garden_shop
+    *if (knowledge_blue_coins)
+        *selectable_if (doubloons >=16) #Buy a Blue Coin seed [-16 Doubloons, +1 Blue Coin Seed (Takes 10 months to grow, +0 Gardening Experience when Harvested, gives 1 Blue Coin)]
+            [-16 Doubloons]
+            *line_break
+            [+1 Blue Coin Seed]
+            *set doubloons - 16
+            *set inventory_blue_coin_seed + 1
+            
+            ——————————————————————————————
+            *goto market_garden_shop
+    *selectable_if ((doubloons >= 309) and (town_market_garden_shop_fertilizers_left > 0)) #Fertilizer (Only ${town_market_garden_shop_fertilizers_left} left in stock!) [-309 Doubloons, +1 Fertilizer (Causes most plants to grow instantly at the cost of 3 Gardening Experience)]
+        [-309 Doubloons]
+        *line_break
+        [+1 Fertilizer]
+        *set town_market_garden_shop_fertilizers_left - 1
+        *set doubloons - 309
+        *set inventory_fertilizer + 1
+        
+        ——————————————————————————————
+        *goto market_garden_shop
+    *if (unlocked_focus)
+        #Focus [${focus_points_town_petunia_shop} Focus Points Available]
+            "No," she says.
+
+            "So, what do I have to do this time to unlock focusing here?"
+
+            "I said no. Never. You expect every place you visit to have a Focus option that will work eventually? Well, not in Aunt Petunia's shop!"
+
+            *page_break
+            *goto market_garden_shop
+    *if (has_job_petunia_assistant)
+        #Access your employee garden plot
+            *set logic_garden_plot "gardens_petunia_plot_1"
+            *set logic_garden_plot_timer "gardens_petunia_plot_1_ready_to_harvest"
+            *set logic_return_scene "town"
+            *set logic_return_label "market_garden_shop"
+            *goto_scene logic manage_garden
+
+*label market_armory
+
+*if (town_market_armory_pacified)
+    *goto market_armory_shop
+
+*if (town_market_armory_angered)
+    *goto market_armory_buy_access
+
+You nearly run into a huge, busk burly man when you enter the place. You know, the type with little stubs of hair coming out of his head and a long moo-stache, and a shirt so ripped since his chest and arms are so BIG. Is this the guy who runs this place?
+
+"Sorry," he says, "Didn't see you miss."
+
+"Hm?" Says a very small elderly lady with curly silver hair. She must have been at least a thousand months old and no higher than five feet.
+
+"No, I was speaking to the orphan girl here." Says the big dude. "Anyways, are you sure you don't need me to carry this out for you?" He says gesturing at a new hand axe in a glass case.
+
+"No, no, that won't be necessary." She answers. "I can do this myself."
+
+*choice
+    #Pressure the old lady into accepting the big dude's help.
+        *set town_market_armory_angered true
+        *goto market_armory_angered
+    #Ask the big dude if there are any daggers for sale.
+        *set town_market_armory_angered true
+        *goto market_armory_angered
+    #Ask the old lady if she can help you out after she's done with the big guy.
+        *set town_market_armory_pacified true
+        *goto market_armory_shop
+
+*label market_armory_angered
+
+The old lady turns to you and you see her big eyes. They're filled with rage. She picks up the axe and starts wiggling it at you the way Mabel would wiggle her pen at students when they got in trouble.
+
+"You little orphan scumbag, you, you think you can walk right in here and insult a warrior like me just because she's old and female? You orphan children have no respect! I guess I better beat it into you." The big buff guy shuffles to the side, offering no help. Then, the old woman goes into a stance, breathes in softly, winds her arm back with the axe, and…
+
+*page_break
+
+[i]Thud[/i]
+
+You're still alive. You look behind you and see the axe has lodged itself in the center of a target on the far wall.
+
+"Sorry, sir, I'll get that axe re-polished and returned to you immediately. You know how a bad temper can get to you?" Says the lady.
+
+"Uh, no, I don't." Says the buff guy before rolling his eyes and walking out.
+
+"Oh dear, I hope I didn't anger him! You know how people can be when they're put in a box based on appearance." She stresses that last word. Appearance. Then she stares at you for quite a hot second.
+
+"Anyways, needless to say, I'm the shop owner, I don't need help with handling any of the weapons here thank-you-very-much, and how may I assist you?"
+
+You open your mouth before she quickly adds on, "No wait. Why should I assist an orphan scumbag who insulted me? No, I'll want a Starblossom from you before you can shop here."
+
+*label market_armory_buy_access
+
+"So," she says after a bit, "You got that Starblossom?"
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (inventory_starblossom >= 1) #Give her a Starblossom as an apology [-1 Starblossom]
+        She takes the starblossom lightly with her hands. Despite her old age, her hands move with intent and don't dilly dally or shake.
+        
+        "So today we learned not to judge someone by their background." She says. Then she hands you back the starblossom. "Here, I called you an orphan scumbag. And even assumed you to be disrespectful because of that background you had. How rude! I hope you'll accept my apology."
+        
+        [+1 Starblossom]
+        
+        *page_break
+        *goto market_armory_shop
+
+*label market_armory_shop
+
+"Now what can I do for you today?" Says the old lady, smiling.
+
+*comment TODO: Old lady also accepts ducats
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (doubloons >= 170) #Buy a dagger [-170 Doubloons, +1 Dagger (+2 base fighting strength if you have at least 1 dagger)]
+        [-170 Doubloons]
+        *line_break
+        [+1 Dagger]
+        *set doubloons - 170
+        *set inventory_dagger + 1
+        
+        ——————————————————————————————
+        *goto market_armory_shop
+    *selectable_if (doubloons >= 1700) #Buy a two-handed sword [-1700 Doubloons, +1 Two-Handed Sword (+5 base fighting strength, but can't use other hand weapons like daggers)]
+        [-1700 Doubloons]
+        [+1 Two-Handed Sword]
+        *set doubloons - 1700
+        *set inventory_two_handed_sword + 1
+        
+        ——————————————————————————————
+        *goto market_armory_shop
+    *if (unlocked_focus)
+        *if (focus_points_town_market_armory >= 1)
+            #Focus [${focus_points_town_market_armory} Focus Points Available]
+                *set objective_times_focused_var + 1
+                [+${focus_points_town_market_armory} Focus Points]
+                *set focus_points + focus_points_town_market_armory
+                *set focus_points_town_market_armory 0
+
+                ——————————————————————————————
+                *goto market_armory_shop
+
+*label market_trainer
+
+You visit a little corner of the market with a gal flipping a blue coin.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (yummy_doubloon_num_trainings = 0)
+        *selectable_if (inventory_blue_coins >= 10) #Buy a Training [-10 Blue Coins, Training]
+            *set yummy_doubloon_num_trainings + 1
+            
+            You received a training!!!
+            
+            [-10 Blue Coins]
+            *line_break
+            [Training]
+            *set inventory_blue_coins - 10
+            *set exploration_trainings + 1
+            
+            *page_break
+            *goto market_trainer
+    *if (yummy_doubloon_num_trainings = 1)
+        *selectable_if (inventory_blue_coins >= 50) #Buy a Training [-50 Blue Coins, Training]
+            *set yummy_doubloon_num_trainings + 1
+            
+            You received another training!!!!
+            
+            [-50 Blue Coins]
+            *line_break
+            [Training]
+            *set inventory_blue_coins - 50
+            *set exploration_trainings + 1
+            
+            *page_break
+            *goto market_trainer
+    #Ask why she's the "yummy doubloons" trainer if she only accepts blue coins
+        She explains to you that she got annoyed at the blue coin clothing store owner only accepting doubloons despite the shop's name, so she decided to rename her services similarly in order to piss him off.
+        
+        *page_break
+        *goto market_trainer
+    #Focus [${focus_points_town_market_trainer} Focus Points Available]
+        Technically, this is not a place, it just happens to be where Meredith is flipping her coin, so I don't have to allow you to focus here.
+        
+        *page_break
+        *goto market_trainer
+
+*label market_gatherer
+
+This bruh likes to gather things. He's, like, hairy, super hairy legs at least. But he can't grow a beard. Idk, just imagine that. Lame-o. Jk beards suck.
+
+Also, he likes round numbers. He doesn't understand all the weird numbers elsewhere.
+
+*gosub_scene logic update_kiwi_level
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (lemen_fetch_skill >= 3) #Sell Lemen Fetch Skill (makes no sense but ok) [-3 Lemen Fetch Skill, +250 Doubloons]
+        [-3 Lemen Fetch Skill]
+        *line_break
+        [+250 Doubloons]
+        *set lemen_fetch_skill - 3
+        *set doubloons + 250
+        
+        ——————————————————————————————
+        *goto market_gatherer
+    *selectable_if (kiwi_level >= 1) #Sell Kiwi [-1 Kiwi, +100 Doubloons, Requires Kiwi Level 1 or higher]
+        [-1 Kiwi]
+        *line_break
+        [+100 Doubloons]
+        *set inventory_kiwi - 1
+        *set doubloons + 100
+        
+        ——————————————————————————————
+        *goto market_gatherer
+    *selectable_if (kiwi_level >= 2) #Sell Kiwi Trifecta [-3 Kiwi, +500 Doubloons, Requires Kiwi Level 2 or higher]
+        [-3 Kiwi]
+        *line_break
+        [+500 Doubloons]
+        *set inventory_kiwi - 3
+        *set doubloons + 500
+        
+        ——————————————————————————————
+        *goto market_gatherer
+    *selectable_if (inventory_ectoplasm >= 5) #Sell Ectoplasm [-5 Ectoplasm, +100 Doubloons]
+        [-5 Ectoplasm]
+        *line_break
+        [+100 Doubloons]
+        *set inventory_ectoplasm - 5
+        *set doubloons + 100
+        
+        ——————————————————————————————
+        *goto market_gatherer
+    *if (inventory_andellise)
+        #Andellise [-1 Andellise, +500 Doubloons]
+            That's a grade A squirrel right there. The bruh pays top dollar for his tasty dinner.
+
+            [-1 Andelisse]
+            *line_break
+            [+500 Doubloons]
+            *set inventory_andellise false
+            *set doubloons + 500
+
+            ——————————————————————————————
+            *goto market_gatherer
+    *if (unlocked_focus)
+        #Focus [${focus_points_town_market_gatherer} Focus Points Available]
+            "Ooh, do I get to choose a sidequest now?" Pipes up the hairy bruh. How about you have at least 10,000 doubloons. Should be easy with me just throwing them out left and right."
+
+            *if (doubloons < 10000)
+                Unfortunately, it doesn't appear like it's as easy as this bruh thinks. You don't got it.
+
+                ——————————————————————————————
+                *goto market_gatherer
+
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_market_gatherer} Focus Points]
+            *set focus_points + focus_points_town_market_gatherer
+            *set focus_points_town_market_gatherer 0
+
+            ——————————————————————————————
+            *goto market_gatherer
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Outskirts
+*comment ////////////////////////////////////////////////////////////
+
+*label outskirts
+*page_break
+
+The outskirts house various buildings and areas that you usually need some special key or other such object to access.
+
+*comment TODO: A default option?
+
+*temp is_winter_month false
+*if (((months_passed modulo 13) <= 2) or ((months_passed modulo 13) >= 11))
+    *set is_winter_month true
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (key_owned_town_gym) #Visit the gym. [Needs Key]
+        *goto outskirts_gym
+    *if (not (randy_burned))
+        *selectable_if (key_owned_gas_station) #Visit the "gas station", whatever that is [Needs Key]
+            *if (town_outskirts_randy_guess_correctly)
+                As soon as Randy sees you coming, he shuts the door.
+
+                *goto outskirts
+            *if (town_outskirts_randy_cheated_goblin_month = months_passed)
+                You find the door locked, and can smell the putrid odor of goblin meat cooking from outside. You should probably just come back next month.
+
+                *goto outskirts
+
+            *goto outskirts_gas_station
+    *if (randy_burned)
+        #Visit the remains of Randy's home
+            *goto outskirts_gas_station_remains
+    *selectable_if ((key_owned_town_outskirts_cold_topic) and (is_winter_month)) #Visit Cold Topic [Needs Key, Must be a Winter Month]
+        *goto outskirts_cold_topic
+    *selectable_if (key_owned_town_outskirts_community_garden) #Visit the community garden [Needs Key]
+        *goto outskirts_community_garden
+    *selectable_if (key_owned_town_outskirts_tea_shop) #Visit Leif's Tea Shop
+        *goto outskirts_tea_shop
+    *if (not (town_outskirts_temple_warned))
+        *selectable_if (key_owned_town_outskirts_temple) #Visit the temple. [Needs Key]
+            *goto outskirts_temple
+    #Head to the big tree in the middle of the area
+        *goto outskirts_tree
+    
+*label outskirts_gym
+
+You enter the gym and are met with the bark of a loud, fluffy, large certified good boy. This pupper needs some love!
+
+You can unlock various training programs at the gym, or if you get physically fit enough, get a job here. At first, you only have one training program available. You can only visit any gym once in a year (13 months). Gym trainings can be completed multiple times.
+
+*comment TODO: An option to check when you last visited the gym in stats
+
+*temp months_since_last_visit months_passed
+*set months_since_last_visit - month_gym_last_visited
+
+*if (months_since_last_visit < 13)
+    Unfortunately, it's been less than 13 months since your last visit to a gym.
+    
+    *goto outskirts
+*if (energy < 5)
+    You need to be well-rested to visit the gym.
+    
+    *goto outskirts
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (energy >= 8) #Basic training [+1 Month, -8 Energy, +10 Nimblicity Skill, +15 Experience]
+        *set diary ("Starting to get into shape with some basic training![n/][n/]" & diary)
+        
+        *set num_times_visited_town_outskirts_gym + 1
+        *gosub_scene logic month_passed
+        
+        [-8 Energy]
+        *line_break
+        [+10 Nimblicity Skill]
+        *line_break
+        [+15 Experience]
+        *set energy - 8
+        *set nimblicity_skill + 10
+        *set experience + 15
+        *set layer_1_perpetual_progress_point_visit_town_outskirts_gym true
+        *set month_gym_last_visited months_passed
+        
+        You're now nimbler.
+        
+        *goto outskirts
+    *if (can_fight)
+        #Basic constitution [+1 Month, -12 Energy, +1 Max Health, +30 Experience]
+            *set diary ("I'm getting stronger and able to handle harder blows![n/][n/]" & diary)
+            
+            *set num_times_visited_town_outskirts_gym + 1
+            *gosub_scene logic month_passed
+            
+            *set energy - 12
+            *set max_health + 1
+            [-12 Energy]
+            *line_break
+            [+1 Max Health]
+            *line_break
+            [+30 Experience]
+            *set experience + 30
+            *set health max_health
+            *set layer_1_perpetual_progress_point_visit_town_outskirts_gym true
+            *set month_gym_last_visited months_passed
+            
+            *goto outskirts
+    #Pet the pupper
+        *set diary ("I pet a dog![n/][n/]" & diary)
+        
+        She barks at you and pants excitedly.
+        
+        ——————————————————————————————
+        *goto outskirts_gym
+    *if (focus_points_town_outskirts_gym >= 1)
+        #Focus [${focus_points_town_outskirts_gym} Focus Points available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_outskirts_gym} Focus Points]
+            *set focus_points + focus_points_town_outskirts_gym
+            *set focus_points_town_outskirts_gym 0
+            
+            ——————————————————————————————
+            *goto outskirts_gym
+
+*label outskirts_gas_station
+
+The outskirts gas station is a little shack with a big overhanging roof-thing and a bunch of machines out front with pumps. No one knows what it's for, but legend has it that it's been here since the dawn of time. Regardless, it looks human-constructed.
+
+Despite its obvious purpose as a historical structure, some random dude, unironically named Randy, was able to move in as a squatter and set up shop there. Yeah, he runs a shop that usually sells absolute rip-off items, but hey at least they're cheap.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Play Randy's "Guess a number" game
+        *if (town_outskirts_randy_cheated)
+            "Ha, you think I'll play my game with you after sharing my little secret? No way!" Mocks Randy.
+            
+            ——————————————————————————————
+            *goto outskirts_gas_station
+        
+        Randy explains the game to you. He writes down a single digit number and you have to guess it. He'll give you 20,000 Doubloons if you guess correctly.
+        
+        *choice
+            *selectable_if (doubloons >= 20) #I want to play the game [-20 Doubloons]
+                *if (months_passed <= 215)
+                    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Some sucker named Lauren paid 20 Doubloons for the chance to play my game. LOL. Gotta pay it back one day though. [Lauren - 20 Doubloons]")
+                
+                [-20 Doubloons]
+                *set doubloons - 20
+                
+                *goto outskirts_gas_station_randy_game
+            #Nah
+                "Your loss," says Randy, shrugging.
+                
+                ——————————————————————————————
+                *goto outskirts_gas_station
+    *if ((not (town_outskirts_randy_blue_coin_bought)) and (knowledge_blue_coins))
+        *selectable_if (doubloons >= 35) #Buy a Blue Coin [-35 Doubloons, +1 Blue Coin]
+            *if (months_passed <= 215)
+                *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Not sure if this counts but I sold this useless-looking coin to a bum named Lauren. I'll put down to pay her back 20 Doubloons when I get rich, since I feel sorta bad about feeding into those negative Tunnel habits. [Lauren - 10 Doubloons]")
+            
+            *set town_outskirts_randy_blue_coin_bought true
+            
+            "Oh this thing," says Randy, holding up the blue coin, "piece o' junk really. Just like anything or anyone who comes from the Tunnels. Picked it up one day off the street and thought some dumbass like you might pay me money for it."
+            
+            [-35 Doubloons]
+            *line_break
+            [+1 Blue Coin]
+            *set doubloons - 35
+            *set inventory_blue_coins + 1
+            
+            ——————————————————————————————
+            *goto outskirts_gas_station
+    *selectable_if (doubloons >= 72) #50 Doubloons [-72 Doubloons, +50 Doubloons]
+        *if (months_passed <= 215)
+            *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Lauren just paid me 72 Doubloons for 50 Doubloons. Tbh it wasn't really a cheat since I literally told the little shit the whole transaction. If orphans can't do math that ain't my fault. [Lauren - 0 Doubloons]")
+            
+        [-72 Doubloons]
+        *line_break
+        [+50 Doubloons]
+        *set doubloons - 70
+        *set doubloons + 50
+            
+        "Ha! I knew you'd fall for it! Thanks for the doubloons." Then Randy hands 50 of your 72 doubloons back.
+        
+        ——————————————————————————————
+        *goto outskirts_gas_station
+    *selectable_if (doubloons >= 100) #Give Randy a Loan [-100 Doubloons]
+        [-100 Doubloons]
+        *set doubloons - 100
+        
+        "Thanks." Randy says.
+        
+        ——————————————————————————————
+        *goto outskirts_gas_station
+    *if (inventory_goblin_meat >= 1)
+        #Sell 1 Goblin Meat to Randy [-1 Goblin Meat, +80 Doubloons]
+            *if (months_passed <= 215)
+                *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I went back to make sure I paid Lauren correctly and I miscounted! Locked the doors in shame. Will pay her back once I'm rich, as usual. [Lauren - 2 Doubloons]")
+            
+            *set diary ("Really, Randy? You gonna cheat me on two doubloons?[n/][n/]" & diary)
+            
+            *comment He only gives you 78 Doubloons
+            *set doubloons + 78
+            *set town_outskirts_randy_cheated_goblin_month months_passed
+            
+            "Wow, thanks, I haven't had a good meal like this in years," says Randy. With how money-grubbing this dude was (especially with his pointy ears too), you were surprised he wasn't a goblin. But watching him stick a whole goblin arm in the oven seems to debunk this theory.
+            
+            "Just don't let anyone know about our little… deal. Alright?" Randy says, smiling wickedly. "You know how all those pro-goblin SJW's can be with that save-the-goblins act, alright? I think it'd be best if you left while I'm cooking this too." You nod and leave the store.
+            
+            Later, when you're counting the number of doubloons he gave you outside, you find it's only 78.
+            
+            *goto_scene {home_base_scene} {home_base_label}
+    *if (focus_points_town_outskirts_gas_station >= 1)
+        #Focus [${focus_points_town_outskirts_gas_station} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_outskirts_gas_station} Focus Points]
+            *set focus_points + focus_points_town_outskirts_gas_station
+            *set focus_points_town_outskirts_gas_station 0
+
+            ——————————————————————————————
+            *goto outskirts_gas_station
+
+*label outskirts_gas_station_randy_game
+
+It'll cost 100 Doubloons to play. The 20 doubloons was just to have the option to play.
+
+*temp num_randy_guesses 0
+
+*choice
+    *selectable_if (doubloons >= 100) #Play the game [-100 Doubloons]
+        *if (months_passed <= 215)
+            *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Another 100 Doubloons from that lucrative game I like to get people to play with me. [Lauren - 100 Doubloons]")
+        
+        [-100 Doubloons]
+        *set doubloons - 100
+        
+        *goto outskirts_gas_station_randy_game_play
+    #Fuck no
+        *goto outskirts_gas_station
+
+*label outskirts_gas_station_randy_game_play
+
+*set num_randy_guesses + 1
+
+So, what'll your guess be?
+
+*temp randy_number_guess
+*input_number randy_number_guess 0 1000000
+
+*if (not (randy_number_guess = 600000))
+    "Ha! That's not it. But I'll let you guess again for another 100 Doubloons.
+    
+    *if (randy_number_guess > 9)
+        Randy's voice sounds a little off, though. He doesn't seem to have expected you to write down such a large number.
+    
+    *if (num_randy_guesses < 10)
+        *temp super_temp_var 10
+        *set super_temp_var - num_randy_guesses
+        
+        "I'll even show you my number if you guess ${super_temp_var} times." He goes on.
+    
+    *choice
+        #Sure [-100 Doubloons]
+            *goto outskirts_gas_station_randy_game_play
+        *if (num_randy_guesses < 10)
+            #Nah
+                *goto outskirts_gas_station
+        *if (num_randy_guesses >= 10)
+            #Have Randy show his number (and stop the game)
+                *goto outskirts_gas_station_randy_game_cheated
+
+*set town_outskirts_randy_cheated true
+
+*if (months_passed <= 215)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Ugh, how'd she know? Now I owe Lauren so much. Gotta kick her out until I can pay up. [Lauren - 20000 Doubloons]")
+
+*set diary ("Randy is such a scumbag! I need to get my revenge.[n/][n/]" & diary)
+
+He looks up at you and shakes his head. "Uh, that isn't it."
+
+"Then turn over the piece of paper." You say, determined.
+
+He rips it up. "That's not even a single-digit number, you dumbass orphan! Don't you know what a single digit number is?" Then he kicks you out of his store. "And never come back!" He yells out the front door of the gas station before slamming it shut.
+
+One day, you'll get revenge.
+
+*set town_outskirts_randy_guess_correctly true
+
+*goto outskirts
+
+*label outskirts_gas_station_randy_game_cheated
+
+*set diary ("Randy is such a scumbag! I need to get my revenge.[n/][n/]" & diary)
+
+Randy shakes his head. "No, no, you see. I did write down a single digit number. I wrote down 600000. You get it? It only has one digit in it, the 6. Thanks for the cash." Then he smirks ear to ear.
+
+*set town_outskirts_randy_cheated true
+
+——————————————————————————————
+*goto outskirts_gas_station
+
+*label outskirts_gas_station_remains
+
+You look around at the remains of a man's home. A cheat, an investor, a victim and a bully. You know there is more to Randy's story. But that is for another time, a time when Kyle has more written.
+
+*goto outskirts
+
+*label outskirts_cold_topic
+
+*comment TODO: Ability to work at this location in future
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (not (has_streets_clothes))
+        *selectable_if (doubloons >= 230) #Buy Streets Clothes [230 Doubloons, +7 Experience]
+            *set diary ("I actually look pretty good in these.[n/][n/]" & diary)
+            
+            *set doubloons - 230
+            *set experience + 7
+            
+            You can now travel The Streets (note that "Streets Clothes" are different from "street attire").
+            
+            Also, something something plot reason why just having clothes is enough to visit the dangerous part of town without getting kicked out of the orphanage.
+            
+            *page_break
+            *goto outskirts_cold_topic
+    #Sleep on one of the mattresses for sale [Nap]
+        "Oh no, you can only sleep on those in summer months," says a manager who is rushing over.
+        
+        "But you're closed then?" You point out. The manager doesn't answer.
+        
+        ——————————————————————————————
+        *goto outskirts_cold_topic
+
+*label outskirts_community_garden
+
+*comment TODO: Encounter where you choose whether to steal someone else's plants
+
+It's the community garden! Right now, the garden plots aren't open, but you can cash in fetch skill points for the more advanced plants you unlock during Botany II for some abilities.
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (focus_points_town_community_garden_chair >= 1)
+        #Focus [${focus_points_town_community_garden_chair} Focus Points Available]
+            *if (task_experience_gardening < 20)
+                You sit down in a gardening chair to focus and get yelled at. Apparently, only people with at least 20 gardening experience are allowed to sit there.
+                
+                *page_break
+                *goto outskirts_community_garden
+            
+            *set objective_times_focused_var + 1
+            [+${focus_points_town_community_garden_chair} Focus Points]
+            *set focus_points + focus_points_town_community_garden_chair
+            *set focus_points_town_community_garden_chair 0
+            
+            ——————————————————————————————
+            *goto outskirts_community_garden
+
+*label outskirts_tea_shop
+
+Here, you can trade in rosalia leaves for low quality teas. (You can find higher quality teas with master tea makers, like Mabel, but that requires some cha-ching).
+
+*if (not (unlocked_tea_storage))
+    It looks like you haven't put tea in your inventory before. Well, it works a little differently from most things. You might want to check out the encyclopedia page on it.
+    
+    [Encyclopedia Entry: Tea Storage]
+    *set unlocked_tea_storage true
+
+*if (not (container_owned_tea_box_outskirts))
+    It looks like this is your first visit to Leif's Tea Shop. Here's a free tea box on us!
+    
+    [Tea Box: Leif's Tea Shop]
+    *set container_owned_tea_box_outskirts true
+
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Add Black Tea to your tea box [34 Doubloons/Unit]
+        *goto outskirts_tea_shop_fill
+    #Dump out all the contents of your tea box
+        [Outskirts Tea Box Dumped]
+        *set container_contents_tea_box_outskirts "none"
+        *set container_occupancy_tea_box_outskirts 0
+        
+        ——————————————————————————————
+        *goto outskirts_tea_shop
+
+*label outskirts_tea_shop_fill
+
+*temp max_fill container_capacity_tea_box_outskirts
+*set max_fill - container_occupancy_tea_box_outskirts
+
+How much would you like to fill the tea box? You have ${max_fill} units of space left and the cost is 34 doubloons per unit of space. (Put in zero to go back).
+
+*temp amount_to_fill
+*input_number amount_to_fill 0 max_fill
+
+*temp cost 34
+*set cost * amount_to_fill
+
+*if (amount_to_fill = 0)
+    You don't fill the tea box with anything.
+    
+    ——————————————————————————————
+    *goto outskirts_tea_shop
+*if (cost >= doubloons)
+    You don't have enough doubloons for that.
+    
+    ——————————————————————————————
+    *goto outskirts_tea_shop_fill
+
+[-${cost} Doubloons]
+[+${amount_to_fill} Units of Black Tea]
+*set doubloons - cost
+*set container_occupancy_tea_box_outskirts + amount_to_fill
+*set container_contents_tea_box_outskirts "black_tea"
+
+——————————————————————————————
+*goto outskirts_tea_shop
+
+*label outskirts_temple
+
+*set diary ("That was such a weird interaction with Ms. Bee... I wonder what's in the temple that she doesn't want me to see?[n/][n/]" & diary)
+
+You head down the alleyway that will take you to the raggedy temple when you're intercepted by Ms. Bee.
+
+"I had a suspicion." She says as she eyes you up and down. "Orphan kids aren't allowed at this temple." She squints more harshly at you. "You know what they'd do if they figured out where you're from?" She asks.
+
+"N..n..no" You stammer, hoping not to get a whooping even though you were never told this area was against the rules.
+
+"I should make it more clear to those who are out exploring when I have those PSA's about the old temple, I suppose. Now that I think about it, you were out every time I had one. Well, now you know, and off you go. Never, never return here."
+
+*set town_outskirts_temple_warned true
+
+*goto outskirts
+
+*label outskirts_tree
+
+*if (unlocked_squirrel_war)
+    There's just a sign in squirrel handwriting that says "out for war" on the tree. Nothing much else to do here.
+    
+    *goto outskirts
+
+*if (town_outskirts_tree_talk)
+    "So do you got the blue coin? I'm gettin' hungers."
+    
+    *goto outskirts_tree_choice
+
+*set town_outskirts_tree_talk true
+
+While you're sitting at the tree, a nut falls on your head. Ow! A squirrel yells down at you, "Hey, buddy, that's my nut, pass it back!" Wait, did a squirrel just talk to you? "Hey! I said give it back!"
+
+You reach down and pick up the nut, then hand it to the squirrel. "Thank you bud," he says, before squirming his way back inside.
+
+"Wait," you stammer, "did you just speak to me."
+
+The squirrel comes out and looks at you like your dumb. "Yeah, you never heard of the fifth layer squirrels?"
+
+"Uh, no. Wouldn't those be in the fifth layer anyways?"
+
+"No, gosh I don't have time to explain these things to you. Come back with a blue coin and we'll chat. I hear Josh is giving away a whole Nut for one!"
+
+*label outskirts_tree_choice
+
+*choice
+    *selectable_if (inventory_blue_coins >= 1) #Give the squirrel a blue coin [-1 Blue Coin, Gain knowledge]
+        *goto outskirts_tree_knowledge
+    #No
+        *goto outskirts
+
+*label outskirts_tree_knowledge
+
+[-1 Blue Coin]
+*set inventory_blue_coins - 1
+
+The squirrel throws an Encyclopedia page titled "The Squirrel Wars" at you and then says, "Here, read this. I ain't got time for explaining this to every damn human who passes by. Anyhoo, I gotta go fetch my Nut and then I'm off to battle. Off with you!"
+
+[Encyclopedia Entry: Squirrel Wars]
+*set unlocked_squirrel_war true
+
+*goto outskirts
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Job
 *comment ////////////////////////////////////////////////////////////
 
-*label job
+*comment TODO: A job that only gives equipments, not money
 
-What job do you plan on doing?
+*label job
+*page_break
+
+*comment TODO: Customize this more
+
+*if (skip_mode = "normal")
+    What job do you plan on doing?
+
+*if (artifact_has_magic_scythe)
+    Note: You will earn quadruple the pay displayed as a lousy farm hand and triple the farm experience displayed as an advanced farm hand due to owning the magic scythe.
+
+*temp farm_hand_supervisor_pay 14
+*set farm_hand_supervisor_pay * job_experience_farm_hand
+
+*temp tea_delivery_pay 7
+*set tea_delivery_pay * job_town_tea_rosalia_required
+*set tea_delivery_pay * job_town_tea_rosalia_required
+
+*if (skip_mode = "skip")
+    *if (decision_point = "26")
+        *set decision_point "27"
+        *goto job_farm_hand_work
+    *if (decision_point = "29")
+        *set decision_point "30"
+        *goto job_farm_hand_work
+    *if (decision_point = "56")
+        *set decision_point "57"
+        *goto job_farm_hand_work
+*choice
+    #Back
+        *goto main
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Review job offers, applications, and resignations
+        *goto job_applications
+    *if (has_job_farm_hand_supervisor)
+        #Visit my office as a farm hand supervisor
+            *goto job_farm_hand_supervisor_office
+    *if (unlocked_job_farm_hand)
+        *selectable_if (energy >= 5) #Work as a lousy farm hand. [+3 months, -5 Energy, +5 Experience, +2 Farm hand experience, +${job_pay_farm_hand} Doubloons]
+            *goto job_farm_hand_work
+    *if (job_passed_ers_servant)
+        *selectable_if (energy >= 2) #Work as an ers servant [+2 Months, -2 Energy, +3 Experience, +1 Secretary Experience, +${job_pay_ers_servant} Doubloons]
+            *set diary ("The ers building gives me chills for some reason... Not that it matters. As long as I'm getting paid for this secretarial servant job, I'm good![n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            [-2 Energy]
+            *line_break
+            [+3 Experience]
+            *line_break
+            [+1 Secretary Experience]
+            *line_break
+            [+${job_pay_ers_servant} Doubloons]
+            *set energy - 2
+            *set experience + 3
+            *set job_experience_secretary + 1
+            *set doubloons + job_pay_ers_servant
+            *goto job_ers_servant
+    *if (has_job_advanced_farm_hand)
+        *selectable_if (energy >= 5) #Work as an advanced farm hand. [+3 Months, -5 Energy, +4 Farm hand experience, +${job_pay_farm_hand_advanced} Doubloons]
+            *set diary ("Now that I'm an advanced farm hand and seeing all the mistakes the trainees are making, I understand why they yell at us so much![n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            [-5 Energy]
+            *line_break
+            [+3 Farm Hand Experience]
+            *line_break
+            [+${job_pay_farm_hand_advanced} Doubloons]
+            *set energy - 5
+            *set job_experience_farm_hand + 4
+            *set doubloons + job_pay_farm_hand_advanced
+            
+            *if (artifact_has_magic_scythe)
+                You earn triple the farm hand experience due to having Magic Scythe.
+                
+                [+6 Farm Hand Experience]
+                *set job_experience_farm_hand + 6
+            
+            *goto job_farm_hand_advanced_work
+    *if (has_job_farm_hand_supervisor)
+        *selectable_if (energy >= 3) #Work as a farm hand supervisor. [+3 Months, -3 Energy, +1 Farm Hand Experience, +${farm_hand_supervisor_pay} Doubloons]
+            *set diary ("I sat on my chair outside and shouted at basic farm hands all day.[n/][n/]" & diary)
+            
+            *set town_farm_hand_supervisor_times_worked_without_quitting + 1
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            [-3 Energy]
+            *line_break
+            [+1 Farm Hand Experience]
+            *line_break
+            [+${farm_hand_supervisor_pay} Doubloons]
+            *set energy - 3
+            *set job_experience_farm_hand + 1
+            *set doubloons + farm_hand_supervisor_pay
+            
+            *comment TODO: Flesh out
+            
+            You supervise farm hands and stuff.
+            
+            *if (((job_experience_farm_hand >= 20) and (town_farm_hand_supervisor_times_worked_without_quitting >= 3)) and (not (job_offered_farmer)))
+                *comment TODO: Make this actually work once the technical school is implemented
+                
+                *set diary ("[i]Another[/i] promotion? I'm baller![n/][n/]" & diary)
+                
+                Your boss comes up to you and offers you a promotion. This time to a bona fide farmer! But you have to attend the technical school in town square for your application to go through. (That is, if you don't have a degree already!)
+                
+                *set job_offered_farmer true
+                
+                In the meantime, here's a bonus!
+                
+                [+420 Doubloons]
+                *set doubloons + 420
+            
+            *if ((unlocked_trainings) and (not (farm_supervisor_sam_training)))
+                Oh, yeah, and some dude named Sam at the farm supervisor thing place offers you a training or something such.
+                
+                [Training]
+                *set farm_supervisor_sam_training true
+                *set exploration_trainings + 1
+            
+            *goto job
+    *if (has_job_petunia_assistant)
+        *selectable_if (energy >= 3) #Work at Aunt Petunia's [+2 Monts, -3 Energy, +2 Gardening Experience, +1 Doubloon Seeds]
+            *set petunia_assistant_times_worked + 1
+            
+            *if (petunia_assistant_times_worked = 1)
+                You walk into the back of the store to help Petunia with some soil tilling, or something gardening related (if only I knew gardening…), but then you see rows and rows of seeds, plants, fertilizers… you name it. "How come you don't sell this stuff?" You ask her.
+                
+                "This stuff is for the family," She answers. "We are the family, the people who work here."
+                
+                "But if you don't sell all this stuff, how do you afford it?"
+                
+                "Oh, don't worry about that honey. The plot is simpler and more interesting this way." You nod. "Now down this hallway." She leads you around yet another corner, just past some plants with gnarly teeth that almost try to take a bite at you before seeing the new "Aunt Petunia's assistant" badge on your outfit. Then, you finally exit into a field of 6 gardens.
+                
+                "This, is Sam's." Petunia, begins, gesturing at the closest one. "That one is Amanda's," she says as she points at the one to the right of Sam's. Then she goes on with the middle row, "And then there's Kyle's and Varik's," and then "mine and now yours!" She says excitedly. You can't help but feel like someone's missing. It's almost as if they're on a trip to Las Vegas to see their girlfriend, but you can't quite place their name or what the fuck Las Vegas is.
+                
+                "So there are 4 other people who work here?"
+                
+                "No, 3. Kyle is my dog."
+                
+                "So, um, who plants Kyle's garden."
+                
+                "Kyle does. He's just not a person. Needs extra help with some things due to the lack of thumbs and such. But I let him pick out the seeds and everything else." You decide not to press it. "Anyways, let's get started on miscellaneous_gardening_task_1 right now!" Cheers Petunia.
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            [-3 Energy]
+            *line_break
+            [+2 Gardening Experience]
+            *line_break
+            [+1 Doubloon Seed]
+            *set energy - 3
+            *set task_experience_gardening + 2
+            *set inventory_doubloon_seeds + 1
+            
+            *goto job
+    *if (has_job_tea_shop)
+        *selectable_if ((inventory_rosalia >= job_town_tea_rosalia_required) and (energy >= 1)) #Work as a Tea Deliverer [+${tea_delivery_pay} Doubloons, +1 Month, -1 Energy, -${job_town_tea_rosalia_required} Rosalia]
+            *goto outskirts_tea_deliverer
+    *if (has_job_general_store_grunt)
+        *selectable_if (energy >= 2) #Work at the market general store [-2 Energy, +4 Months, +506 Doubloons, +22 Experience, +30 Sales Experience]
+            *goto job_general_store_grunt
+
+*label job_general_store_grunt
+
+*set job_town_general_store_num_times_worked + 1
+
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+
+*if ((town_market_sold_clackadoo) and (not (job_general_store_clackadoo_stolen_choice_presented)))
+    *set job_general_store_clackadoo_stolen_choice_presented true
+    
+    You notice the clackadoo feather you sold your boss behind the desk, still here. Do you take it?
+    
+    *choice
+        #Yes
+            You silently pocket the clackadoo.
+            
+            [+1 Clackadoo Feather]
+            *set inventory_clackadoo_feather + 1
+            
+            *set general_store_stole_clackadoo_feather true
+            *goto job_general_store_grunt_effects
+        #No
+            *goto job_general_store_grunt_effects
+
+*label job_general_store_grunt_effects
+
+[-2 Energy]
+*line_break
+[+506 Doubloons]
+*line_break
+[+22 Experience]
+*line_break
+[+30 Sales Experience]
+*set energy - 2
+*set doubloons + 506
+*set experience + 22
+*set job_experience_sales + 30
+
+*goto job
+
+*label job_ers_servant
+
+*if (job_experience_secretary = 1)
+    *set diary ("And that concludes my first shift as an ers servant. Wasn't too bad.[n/][n/]" & diary)
+    
+    This is your first time with anything secretarial, so you're worried at first, but it turns out to be an easy job. It's all just checking documents and seeing if they "look right". You quickly learn that everything looks right, it's just a mandate by the dome's government that even the small towns do some basic sanity checks on their documents for some sort of thing. No one around here really knows, and the government funding keeps streaming in, so no one asks any questions. It's a super chill job.
+    
+You sort through papers and papers, raking in some of that sweet government coin, then head back to the orphanage.
+
+*goto job
+
+*label job_farm_hand_work
+
+*set diary ("Work as a farm hand is hard![n/][n/]" & diary)
+
+*set town_farm_hand_total_times_worked + 1
+
+*if ((researched_reading_1) and (not (job_offered_ers_servant)))
+    *set diary ("I was told about a possible new lucrative ers servant job that I could do with my reading skills... hmmmm.[n/][n/]" & diary)
+    
+    One of your fellow farm hands notices you reading a book in your free time. It's one that you had to use to get through your "Reading 1" research, and now you're quite fond of it. She points out that you can probably get a better job at the ers building in town square, unless you just want to be a farm hand your whole life.
+    
+    *if (not (has_street_attire))
+        Oh, you didn't know about town square? Well, usually orphans aren't allowed in since it's supposed to be majestic and stuff, but I'm sure if you got a nicer pair of clothes on they wouldn't mind. Just got to find or buy a more dapper outfit.
+        
+    In fact, this farm hand buddy of yours, Nancie, as she calls herself (and yes she hates the way her parents spelled her name), has a "friend" at the ers who could hook you up and land you an offer. You don't even have to have access to town square yet, if you don't have it. There's always the back entrance for the grunt labor like you.
+    
+    Just check job offers if you want to apply.
+    
+    *set job_offered_ers_servant true
+
+*if (town_farm_hand_total_times_worked = 1)
+    *set diary ("Ugh, I hate that I have to work to do Tunnel visits now. It sucks![n/][n/]" & diary)
+    
+    Your first time as a job hand is rough. You don't get paid much, but it's a lot more still than gathering flowers. You sweat so much out in the field. You never knew you could sweat so much.
+    
+    *if (not (met_troy)) and (months_passed < troy_orphaned_month)
+        *set diary ("At least I found a new friend today.[n/][n/]" & diary)
+        
+        However, Troy is there to lighten up your day. He's another farmhand you met on the job who started a few months prior. He's a little quiet and awkward, but he warms up to you.
+
+        *set met_troy true
+
+*if ((met_troy_general_store) and (not (encounter_troy_work_2)))
+    *set diary ("Oh no. I hope things are fine with Troy.[n/][n/]" & diary)
+    
+    *set encounter_troy_work_2 true
+    
+    *if (skip_mode = "normal")
+        You try to find Troy to tell him you're sorry but can't find him. When you ask the supervisor on duty, he says Troy was fired for crying too much at work and not getting anything done.
+        
+        "Yeah, something about his parents going missing." The supervisor says.
+    
+*if (job_experience_farm_hand >= 2)
+    *if (skip_mode = "normal")
+        You get to take home some seeds as a novice farm hand. The super new folk get nothing, though. Even the advanced farm hands aren't given seeds, considering they already get paid twice as much.
+    
+    [+1 Basic Flower Seeds]
+    *set inventory_flower_seeds_1 + 1
+
+*if ((job_experience_farm_hand >= 6) and (not (job_offered_advanced_farm_hand)))
+    *set diary ("I was just offered a promotion to an advanced farm hand![n/][n/]" & diary)
+    
+    *if (skip_mode = "normal")
+        You're offered a promotion.
+    
+    [Job Offer: Advanced Farm Hand]
+    *line_break
+    [Encyclopedia Page: Full-time Jobs]
+    
+    *set job_offered_advanced_farm_hand true
+
+*comment TODO: Revise
+*if (town_farm_hand_total_times_worked = 5)
+    You keep working as a basic farm hand. One of the other farm hands, who's wearing an orange bandana, looks at you. You think he winks, but you're not sure. Then he says, "Say, you're pretty experienced, why do you keep working as one of the grunts instead of the big boy job?"
+    
+    *choice
+        *if (artifact_has_magic_scythe)
+            #I hold up my Magic Scythe and smile
+                He looks at you perplexed.
+                
+                "Anyways, have I got a job for you!"
+                *goto job_farm_hand_offer_weed_farm
+        #I don't feel like commitments
+            "Well, I know the job for you then. Higher pay then this, kushier benefits (*wink*), and you can come in whenever you want."
+            *goto job_farm_hand_offer_weed_farm
+        #I... I don't know
+            "Yeah, work sucks, right? So, here me out about this new offer I got for you."
+            *goto job_farm_hand_offer_weed_farm
+                
+    *label job_farm_hand_offer_weed_farm
+    
+    "Come see me at the streets. The plot of this story will tell you where to go, you just gotta hit that choice that says 'See the sketchy guy from the farm at the Streets' and you'll know where to go."
+    
+    Then he winks again, gives you a creepy smile, and goes back to work.
+    
+    *set job_offered_town_weed_farmer true
+
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+
+[-5 Energy]
+*line_break
+[+5 Experience]
+*line_break
+[+2 Farm Hand Experience]
+*line_break
+[+${job_pay_farm_hand} Doubloons]
+*set energy - 5
+*set experience + 2
+*set job_experience_farm_hand + 2
+*set doubloons + job_pay_farm_hand
+
+*if (artifact_has_magic_scythe)
+    You earn even more pay because of having Magic Scythe.
+    
+    *temp extra_job_pay_farm_hand_scythe job_pay_farm_hand
+    *set extra_job_pay_farm_hand_scythe * 3
+    [+${extra_job_pay_farm_hand_scythe} Doubloons]
+    *set doubloons + extra_job_pay_farm_hand_scythe
+
+*comment TODO: Some sort of encounters here
+
+*goto job
+
+*label job_farm_hand_advanced_work
+
+You work as an advanced farm hand, supervising all the lesser junior farmhands.
+
+*comment TODO: More dialog
+
+*set town_farm_hand_advanced_times_worked + 1
+
+*if ((not (job_offered_tea_shop)) and (inventory_rosalia >= 5))
+    *set job_offered_tea_shop true
+    
+    "Hey," Says Leif, one of the other advanced farm hands, "I notice how hard you're working. I own a tea shop down in the outskirts. We could use some hard workers like you. And bring some of that rosalia there." He gestures at the teas. "You'll have to use it whenever you work."
+    
+    [Unlocked Tea Leaf Deliverer]
+    
+    (Note: Even though this job is in the outskirts, it is still accessed through the job menu).
+
+*if (((town_farm_hand_advanced_times_worked >= 3) and (not (job_offered_farm_hand_supervisor))) and (job_offered_once_farm_hand_supervisor))
+    You're offered the farm hand supervisor position again.
+    
+    *set job_offered_farm_hand_supervisor true
+
+*if (((town_farm_hand_advanced_times_worked >= 3) and (not (job_offered_farm_hand_supervisor))) and (not (job_offered_once_farm_hand_supervisor)))
+    *set diary ("Another promotion! Working my way up the farming ranks.[n/][n/]" & diary)
+    
+    It's your third shift without quitting, actually, and your boss, a scruffy old dude in plaid, walks up to you one day while you're out in the fields showing an newbie how to use their hands on a farm.
+    
+    "You've been pretty reliable, chuck." He says.
+    
+    "That's not my name." You answer.
+    
+    "So, Chuck, what do you say?"
+    
+    "I have no idea what you're talking about; you didn't ask me anything."
+    
+    "Oh right, well, Chuck, you see, we have an opening." Your ears perk up. "You can be a farm hand [i]supervisor[/i] now if you accept the job. It'll bump you up a tier and you'll be let go from this one, but you won't be blacklisted or anything. You also will need to return to this job if you ever quit, since we won't promote you back up to supervisor right away again. Supervisors get paid a lot more but do a lot less, which means less experience, but you also don't have to rest so much. Their pay is based off experience, so you might even want to rake up some experience here first. Also, you get your own office that you can use!
+    
+    Offices often have their own perks, including mini garden plots, locations with more Focus Points, entrances to other places, built-in shops, and more. I can tell you right now that yours is pretty plain, though. But it's something.
+    
+    Just go to the job offers page to accept next time you're in that area.
+    
+    *set job_offered_farm_hand_supervisor true
+
+*goto job
+
+*label job_farm_hand_supervisor_office
+
+It's a pretty cramped office. More like a closet really. But, hey, it's [i]your[/i] closet.
+
+The office comes with two things: A shop where you can turn seeds into sweet, sweet farm hand experience, and a broken coffee machine.
+
+*if ((unlocked_squirrel_war) and (not (collected_town_farm_hand_supervisor_office_nut)))
+    *set collected_town_farm_hand_supervisor_office_nut true
+    
+    Oh, and hey there's a Nut in here.
+    
+    [+1 Nut]
+    *set inventory_nuts + 1
+    
+*choice
+    #Back
+        *goto job
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    #Go to the seed to experience shop
+        *goto job_farm_hand_supervisor_office_experience_shop
+    #Use the coffee machine.
+        Didn't I tell you? It's broken.
+        
+        *page_break
+        *goto job_farm_hand_supervisor_office
+
+*label job_farm_hand_supervisor_office_experience_shop
+
+*gosub_scene logic update_kiwi_level
+
+*temp kiwi_seed_experience kiwi_level
+*set kiwi_seed_experience * 2
 
 *choice
-    *if (unlocked_job_farm_hand) #Work as a lousy farm hand. [+3 months,
-        
-    #Actually nevermind, I don't want to go to work today.
+    #Back
+        *goto job_farm_hand_supervisor_office
+    #Back home
         *goto_scene {home_base_scene} {home_base_label}
+    *selectable_if (inventory_flower_seeds_1 >= 1) #Trade in 1 Basic Flower Seed for 1 Farm Hand Experience [-1 Basic Flower Seed, +1 Farm Hand Experience]
+        *set inventory_flower_seeds_1 - 1
+        *set job_experience_farm_hand + 1
+        *goto job_farm_hand_supervisor_office_experience_shop
+    *selectable_if (inventory_kiwi_seeds >= 3) #Trade in 3 Kiwi seeds for 2 Farm Hand Experience per Kiwi level you currently have [-3 Kiwi Seeds, +${kiwi_seed_experience} Farm Hand Experience]
+        *set inventory_kiwi_seeds - 3
+        *set job_experience_farm_hand + kiwi_seed_experience
+        *goto job_farm_hand_supervisor_office_experience_shop
 
+*label outskirts_tea_deliverer
 
+*if (job_town_tea_rosalia_required = 5)
+    You're sort of disappointed about the pay. All that work for 175 Doubloons? You wince as you think about how selling the Rosalia at the right time in the general store would result in the exact same number of Doubloon, without wasting a Month of time or Energy. You talk to Leif about whether you could be let off the hook early, since you feel led on, but he shakes his head. However, he does present you with a new opportunity.
 
+    "You know, the more Rosalia you bring me, the more my business grows, and the more Rosalia I need. I can even charge more per tea as the demand grows higher and I push out the competitors. You know what that means? Higher pay. So, what do you say?
 
+    *choice
+        #Have a raise from 175 Doubloons per delivery to 252 Doubloons per delivery, but now you have to deliver 6 Rosalia per delivery.
+            *set job_town_tea_rosalia_required + 1
+            *goto outskirts_tea_deliverer_raise_eval
+        #Keep the current pay
+            *goto outskirts_tea_deliverer_raise_eval
 
+*if (job_town_tea_rosalia_required = 6)
+    "You know, business is starting to pick up," says Leif. You mind picking up the extra deliveries?"
 
+    *choice
+        #Job pay 252 --> 343, number of Rosalias needed 6 --> 7
+            *set job_town_tea_rosalia_required + 1
+            *goto outskirts_tea_deliverer_raise_eval
+        #Keep the current pay
+            *goto outskirts_tea_deliverer_raise_eval
 
+*if (job_town_tea_rosalia_required = 7)
+    You notice as you deliver the latest batch of Rosalia that all the Leif has installed some more chairs for guests to wait as he finishes their tea leaf orders.
 
+    "Ah, orphan girl, I was wondering if you could deliver even more Rosalia?
 
+    *choice
+        #Job pay 343 --> 448, number of Rosalias needed 7 --> 8
+            *set job_town_tea_rosalia_required + 1
+            *goto outskirts_tea_deliverer_raise_eval
+        #Keep the current pay
+            *goto outskirts_tea_deliverer_raise_eval
 
+*if (job_town_tea_rosalia_required = 8)
+    There's a line out the back of Leif's tea store the next time you visit. Leif says he's starting to need a [i]lot[/i] more Rosalia.
 
+    *choice
+        #Job pay 448 --> 700, number of Rosalias needed 8 --> 10
+            *set job_town_tea_rosalia_required + 2
+            *goto outskirts_tea_deliverer_raise_eval
+        #Keep the current pay
+            *goto outskirts_tea_deliverer_raise_eval
 
+*if (job_town_tea_rosalia_required = 10)
+    Leif barely has time to speak to you through all the hustle and bustle. He tells you to come back in the evening.
 
+    When you do, he informs you that he plans to open a new branch, but that he's already got some deliverers in line for that. "Don't worry," he goes on, "this branch is in the city, so it's not like you're being replaced. We'll still need this home hub running in the town."
 
+    "Speaking of which, I'm going to leave someone in charge here. I really need you to just pick up the delivery pace one last time. If you don't, I won't really feel comfortable to leave it in her hands. You think you can do that for me?"
 
+    *comment TODO: More consequences if you don't show up to work after agreeing to this
 
+    *choice
+        #Job pay 700 --> 1183, number of Rosalias needed 10 --> 13
+            *set job_town_tea_rosalia_required + 3
+            *goto outskirts_tea_deliverer_raise_eval
+        #Keep the current pay
+            *goto outskirts_tea_deliverer_raise_eval
 
+*if (job_town_tea_rosalia_required = 13)
+    You deliver your 13 Rosalia and rake in that fat cash.
 
+*label outskirts_tea_deliverer_raise_eval
 
+*gosub_scene logic month_passed
 
+[-1 Energy]
+*line_break
+[-${job_town_tea_rosalia_required} Rosalia]
+*line_break
+[+${tea_delivery_pay} Doubloons]
+*set energy - 1
+*set inventory_rosalia - job_town_tea_rosalia_required
+*set doubloons + tea_delivery_pay
 
+*goto job
 
+*label job_applications
 
+Would you like to apply to any jobs or accept any job offers? At first, there will be no options. Go explore the world to find some!
 
+*comment TODO: Need to get another offer for advanced farmhand if you quit
 
+*choice
+    #Back
+        *goto job
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((job_offered_advanced_farm_hand) and (num_full_time_jobs < max_num_full_time_jobs))
+        #Accept the offer to work as an advanced farm hand
+            [Hired: Advanced Farm Hand]
+            
+            *set job_offered_advanced_farm_hand false
+            *set has_job_advanced_farm_hand true
+            *set num_full_time_jobs + 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (has_job_advanced_farm_hand)
+        #Quit my Advanced Farm Hand job
+            *gosub_scene logic confirm_job_resignation
+            *if (not (logic_confirm))
+                *goto job_applications
+            
+            [Resigned: Advanced Farm Hand]
+            
+            *set has_job_advanced_farm_hand false
+            *set num_full_time_jobs - 1
+            *set town_farm_hand_advanced_times_worked 0
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if ((job_offered_farm_hand_supervisor) and (num_full_time_jobs < (max_num_full_time_jobs + 1)))
+        #Accept the promotion to farm hand supervisor
+            [Hired: Farm Hand Supervisor]
+            
+            *set has_job_advanced_farm_hand false
+            *set job_offered_farm_hand_supervisor false
+            *set has_job_farm_hand_supervisor true
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (has_job_farm_hand_supervisor)
+        #Quit my Farm Hand Supervisor Job
+            *gosub_scene logic confirm_job_resignation
+            *if (not (logic_confirm))
+                *goto job_applications
+            
+            [Resigned: Farm Hand Supervisor]
+            
+            *set has_job_farm_hand_supervisor false
+            *set num_full_time_jobs - 1
+            *set town_farm_hand_supervisor_times_worked_without_quitting 0
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if ((job_offered_petunia_assistant) and (num_full_time_jobs < max_num_full_time_jobs))
+        #Accept the offer as an assistant at Aunt Petunia's Garden shop
+            [Hired: Aunt Petunia's Garden Shop Assistant]
+            
+            *set job_offered_petunia_assistant false
+            *set has_job_petunia_assistant true
+            *set num_full_time_jobs + 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (has_job_petunia_assistant)
+        # Quit my Assistant position at Aunt Petunia's (Make sure you harvest your plants in your employee garden first!)
+            *gosub_scene logic confirm_job_resignation
+            *if (not (logic_confirm))
+                *goto job_applications
+            
+            [Resigned: Aunt Petunia's Garden Shop Assistant]
+            
+            *set job_offered_petunia_assistant true
+            *set has_job_petunia_assistant false
+            *set num_full_time_jobs - 1
+            *set gardens_petunia_plot_1 "nothing"
+            *set gardens_petunia_plot_1_ready_to_harvest 0
+            
+            Aunt Petunia let's you stop working immediately. "Come back whenever you want!" She says. "Just don't expect whatever you were growing in your garden to still be there."
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if ((job_offered_tea_shop) and (num_full_time_jobs < max_num_full_time_jobs))
+        *selectable_if (inventory_rosalia >= 12) #Accept the offer to work as a tea deliverer for Leif
+            [Hired: Leif's Tea Shop Delivery]
+            
+            *set job_offered_tea_shop false
+            *set has_job_tea_shop true
+            *set num_full_time_jobs + 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (has_job_tea_shop)
+        #Resign from my position as a Tea deliverer
+            *gosub_scene logic confirm_job_resignation
+            *if (not (logic_confirm))
+                *goto job_applications
+            
+            [Resigned: Leif's Tea Shop Delivery]
+            
+            *set job_offered_tea_shop true
+            *set has_job_tea_shop false
+            *set num_full_time_jobs - 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if ((job_offered_general_store_grunt) and (num_full_time_jobs < max_num_full_time_jobs))
+        #Accept the offer for grunt work at the general store
+            [Hired: General Store Grunt]
+            
+            *set job_offered_general_store_grunt false
+            *set has_job_general_store_grunt true
+            *set num_full_time_jobs + 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (has_job_general_store_grunt)
+        #Resign from my position doing grunt work at the general store
+            *gosub_scene logic confirm_job_resignation
+            *if (not (logic_confirm))
+                *goto job_applications
+            
+            [Resigned: General Store Grunt]
+            
+            *set job_offered_general_store_grunt true
+            *set has_job_general_store_grunt false
+            *set num_full_time_jobs - 1
+            
+            ——————————————————————————————
+            *goto job_applications
+    *if (((job_offered_ers_servant) and (job_test_next_offered_ers_servant <= months_passed)) and (not (job_passed_ers_servant)))
+        #Take the ers servant's test for a position as a servant at ers.
+            *goto job_applications_ers_servant_test
 
+*label job_applications_ers_servant_test
 
+The first question is: [b]What color is a blue coin?[/b]
 
+*choice
+    #Blue
+        *goto job_applications_ers_servant_test_q2
+    #Crimson
+        *goto job_applications_ers_servant_test_failed
 
+*label job_applications_ers_servant_test_q2
 
+The second question is: [b]According to the stats screen's inventory page, how many lemens do you have?[/b]
 
+*gosub_scene logic update_total_lemens
 
+*choice
+    #Indeterminate
+        *goto job_applications_ers_servant_test_failed
+    *if (not (total_lemens = 12))
+        #12
+            *goto job_applications_ers_servant_test_failed
+    #${total_lemens}
+        *goto job_applications_ers_servant_test_passed
+    *if (total_lemens = 12)
+        #11 
+            *goto job_applications_ers_servant_test_failed
 
+*label job_applications_ers_servant_test_passed
 
+*set diary ("I passed the ers servant test. Now I can move up in the world with a better job![n/][n/]" & diary)
 
+You passed!
 
+*set job_passed_ers_servant true
 
+You can now work as an ers servant whenever you want.
 
+*page_break
+*goto job_applications
 
+*label job_applications_ers_servant_test_failed
 
+*set diary ("How did I fail the ers servant test? It's so frickin easy.[n/][n/]" & diary)
 
+You failed. The next time you can take the test again is 6 months from now.
 
+*set job_test_next_offered_ers_servant months_passed
+*set job_test_next_offered_ers_servant + 6
 
-
-
-
-
-
-
+*page_break
+*goto job_applications

@@ -1,0 +1,665 @@
+*label rest_explanation
+
+— Implemented "rest" mechanic: you now lose some rest each time you do an action that takes energy. You can keep doing some things if your rest is less than zero, but you will be less effective at tasks and may not notice some secret features of the environment!
+
+Unfortunately, your character has insomnia and cannot sleep in the Tunnel, and also cannot get a truly restful sleep in the same place more than once (though finding something comforting in an area may allow them to rest there more times). This will force you to find new places if you want your character to be in their best shape.
+
+You start off with an ample amount of rest for a while, and resting only gives you up to 24 rest or +15 rest, whichever is smallest, so you get the max rest when you wait until you have 9 or less rest to sleep. However, some special events only occur with at least 15 rest, so there's a tradeoff between being the most rested all the time and using your resting places wisely.
+
+Finally, resting always costs a month of time, even if nothing already says so, so keep that in mind.
+
+*label important
+
+I love you Kyle (: 
+
+*label orphanage_past_update_unlock
+
+*temp months_passed_to_unlock_support_self 0
+*set months_passed_to_unlock_support_self starting_months_passed
+*set months_passed_to_unlock_support_self + 6
+*if (months_passed >= months_passed_to_unlock_support_self)
+    *if not (unlocked_support_self)
+        *set diary ("The stupid orphanage is tired of paying for my exploring expenses. Might have to get a job, ugh.[n/][n/]" & diary)
+        
+        The orphanage tells you it's really stressing out and needs you to help pay for yourself. Now, you will need to help pay for the travel supplies. Regardless of time spent in each travel, the number of [i]travel equipments[/i] you'll need only depends on the layer you go into. Farther layers will require exponentially more equipment.
+        
+        To help support your expensive tunneling hobby, the orphanage also recommends some farmers nearby needing farmhands, but also more strongly recommends to not dilly dally your life away collecting flowers in the tunnel.
+        *set unlocked_support_self true
+        *set unlocked_job_farm_hand true
+
+*temp months_passed_to_unlock_market 0
+*set months_passed_to_unlock_market starting_months_passed
+*set months_passed_to_unlock_market + 2
+*if (months_passed >= months_passed_to_unlock_market)
+    *if not (unlocked_town_market)
+        *set diary ("I'm allowed to visit the town market now. I'm so excited to buy all the trinkets there![n/][n/]" & diary)
+        
+        You just unlocked the ability to access the town market.
+        *set unlocked_town_market true
+        *goto orphanage_homebase_evaluated_market_unlock
+
+*label orphanage_homebase_evaluated_market_unlock
+
+*temp months_passed_to_unlock_study 0
+*set months_passed_to_unlock_study starting_months_passed
+*set months_passed_to_unlock_study + 3
+*if (months_passed >= months_passed_to_unlock_study)
+    *if not (unlocked_town_study)
+        *set diary ("The study's unlocked. Time to edumucate myself![n/][n/]" & diary)
+        
+        You just unlocked the ability to access the study.
+        *set unlocked_town_study true
+        *goto orphanage_homebase_evaluated_study_unlock
+
+*label orphanage_homebase_evaluated_study_unlock
+
+*temp months_passed_to_unlock_market_square_booth 0
+*set months_passed_to_unlock_market_square_booth starting_months_passed
+*set months_passed_to_unlock_market_square_booth + 4
+*if (months_passed >= months_passed_to_unlock_market_square_booth)
+    *if not (unlocked_market_square_booth)
+        *set diary ("They just set up the market square booths again. I should check on their offers.[n/][n/]" & diary)
+        
+        You just unlocked the ability to go to the market square.
+        *set unlocked_market_square_booth true
+        *goto orphanage_homebase_evaluated_market_square_booth_unlock
+
+*label orphanage_homebase_evaluated_market_square_booth_unlock
+
+*comment Above: 6 months to the "support self/job" unlock
+
+*temp months_passed_to_unlock_leveling_up 0
+*set months_passed_to_unlock_leveling_up starting_months_passed
+*set months_passed_to_unlock_leveling_up + 8
+*if (months_passed >= months_passed_to_unlock_leveling_up)
+    *if not (unlocked_level_up)
+        *set diary ("I'm allowed to get the Blue Pass once I bring back George some items. I won't let him down![n/][n/]" & diary)
+        
+        You just unlocked the ability to demonstrate your experience to George for a blue pass, which will allow you to go to the second layer by yourself!
+        *set unlocked_level_up true
+        *goto orphanage_homebase_evaluated_level_up_unlock
+
+*label orphanage_homebase_evaluated_level_up_unlock
+
+*temp months_passed_to_unlock_orphanage_garden 0
+*set months_passed_to_unlock_orphanage_garden starting_months_passed
+*set months_passed_to_unlock_orphanage_garden + 12
+*if (months_passed >= months_passed_to_unlock_orphanage_garden)
+    *if not (unlocked_orphanage_garden)
+        *set diary ("Apparently we have a garden. I'm gonna plant sooo many plants there.[n/][n/]" & diary)
+        
+        You're now old enough to use the orphanage's garden, where you can plant and grow seeds. Seeds can be found on your journeys or bought occasionally in the town market square booths. The general store even has the most basic of flower seeds, but sells them at an incredibly expensive price.
+        *set unlocked_orphanage_garden true
+        *goto orphanage_homebase_evaluated_orphanage_garden_unlock
+
+*label orphanage_homebase_evaluated_orphanage_garden_unlock
+
+*temp months_passed_to_unlock_new_general_store_items {starting_months_passed}
+*set months_passed_to_unlock_new_general_store_items + 15
+*if (months_passed >= months_passed_to_unlock_new_general_store_items)
+    *if not (unlocked_new_general_store_items)
+        *set diary ("I hear the general store is expanding.[n/][n/]" & diary)
+        
+        The general store has some new items in stock! Make sure to check them out.
+        *set unlocked_new_general_store_items true
+
+*label extraneous_orphanage_options
+
+    *if (not (george_gone))
+        *if ((experience >= 150) and (not (orphanage_haggled_george_yellow_pass)))
+            #Haggle George for a Yellow Pass [Unlocks at 150 Experience]
+                *set orphanage_haggled_george_yellow_pass true
+
+                George tells you he's not a high enough pass level to just be giving out yellow passes. You'll need to go to the Town Square and take a test, plus have enough trainings for that.
+
+                However, he can give you a training.
+                *if (not (unlocked_trainings))
+                    He quickly explains to you what a training is before you get started.
+
+                    [Encylopedia Entry]
+
+                [Training]
+                *set exploration_trainings + 1
+                *goto orphanage_home_base
+    *if (not (pass_unlocked_blue))
+        *selectable_if ((inventory_petunal_blossoms >= 2) and ((inventory_rosalia >= 1) and (experience >= 70))) #Show George blossoms and rosalia to demonstrate your readiness for a blue pass [-2 petunal blossoms, -1 rosalia, requires 70 Experience, gain blue pass]
+                *goto orphanage_level_up_blue
+    *if ((pass_unlocked_blue) and (pass_lost_blue_from_cave))
+        *selectable_if (inventory_petunal_blossoms >= 5) #Pay 5 Petunal Blossoms for another Blue Pass [-5 Petunal Blossoms]
+            *set inventory_petunal_blossoms - 5
+            *set pass_lost_blue_from_cave false
+            
+            *goto orphanage_home_base
+    *if (has_streets_clothes)
+        *selectable_if (rest > 0) #Visit The Streets [Chance of being robbed each visit, Requires at least 1 Rest]
+            *goto_scene town streets
+    *if (has_street_attire)
+        #Visit Town Square [Requires Street Attire]
+            *goto_scene town town_square
+    *if ((job_offered_town_weed_farmer) and (not (town_weed_farmer_orphanage_denied)))
+        #Choose the option 'See the sketchy guy from the farm at the Streets'
+            Wait, did that option say he was in the Streets? You're not allowed there. It's the dangerous part of town. Not to mention he's sketchy and his bandana was orange of all colors.
+            
+            Still, though, you are curious. But you know you'd be kicked out from the orphanage if you were caught wandering off to such a sketchy part of town. Better just to not risk it.
+            
+            *if (has_streets_clothes)
+                Wait, what's that? You have Streets Clothes? Well, then go to the Streets and see him yourself!
+            
+            *set town_weed_farmer_orphanage_denied true
+            *page_break
+            *goto orphanage_home_base
+
+*label hints
+
+*temp random_hint 0
+*temp num_hints_applicable 0
+*if (months_passed < 190)
+    *set num_hints_applicable 0
+*rand random_hint 1 num_hints_applicable
+*comment Hints applicable from the beginning
+
+*if (random_hint = 1)
+    Hint: Even if your adventures in "general exploring" don't turn out to be fruitful, you still gain experience, which unlocks new choices down the road. So, don't give up on that option!
+*if (random_hint = 2)
+    Hint: Sometimes, with increased skills, you may notice new things about places even if you've been there before.
+*if (random_hint = 3)
+    Hint: Try to be efficient with your actions. People don't live forever!
+*if (random_hint = 4)
+    Hint: Once you acquire a map-making kit and explore enough of an area, you can start charting the places you've been to in order to return there later!
+*if (random_hint = 5)
+    Hint: You can go to the stats screen and come back for a different hint each time!
+*if (random_hint = 6)
+    Hint: Some areas don't need a map to be able to travel to them directly, but some places do.
+*if (random_hint = 7)
+    Hint: Sometimes research is important to your advancement. Actually, this is often true!
+*if (random_hint = 8)
+    Hint: Make sure to check out the stats screen for important information about your character!
+*if (random_hint = 9)
+    Hint: Some effects are seasonal, and that's not just for the town market square.
+*if (random_hint = 10)
+    Hint: They say there's a lemen collective in the market area of town that only pays attention to people with enough lemens.
+*if (random_hint = 11)
+    Hint: Read the hints!
+*if (random_hint = 12)
+    Hint: If you harvest enough plants in the garden, you'll unlock a special gardening shop in town!
+*if (random_hint = 13)
+    Hint: In the beginning, Petunal Blossoms can often be harvested in the garden.
+*if (random_hint = 14)
+    Hint: Generally it's better to stay in one job for a long time than it is to do many different jobs for a short time, at least when it comes to raking in those sweet Doubloons!
+*if (random_hint = 15)
+    Hint: The Key Shop in the first layer can give you keys for a lot of new places to sleep if you're ever running out of places to nap!
+
+*if (random_hint = 13)
+    Hint: High kiwi levels require very specific amounts of kiwis. Sometimes, you'll want to throw away kiwis to attain desirable kiwi levels.
+*if (random_hint = 14)
+    Hint: The highest kiwi level is 10, but that requires exactly 59049 kiwis, or exactly 118098 kiwis, or exactly 177147 kiwis, or… (and so on). But you're probably not getting even a few hundred kiwis, much less tens of thousands (and you have to hit these numbers exactly), so kiwi level is practically infinite.
+*if (random_hint = 15)
+    Hint: Tracking in the first layer is the best way to get ectoplasm.
+*if (random_hint = 17)
+    Hint: Give a look at the achievements in the Helpful Info section of the statistics! They give special bonuses.
+*if (random_hint = 19)
+    Hint: Make sure to visit the blue coin Clothing Store for access to town square!
+*if (random_hint = 20)
+    Hint: Each time you find a new layer 2 encounter whilst doing general exploration there, you get a Blue Coin!
+*if (random_hint = 21)
+    Hint: A good rule of thumb is to wager health in a fight before rest! Just make sure you have enough health to still last the full battle.
+*if (random_hint = 22)
+    Hint: Gillian actually sells some cheaper clothing items, but he wants to make sure you have a job to pay for them first!
+*if (random_hint = 26)
+    Hint: Long fights require high fighting power, whereas short fights require high health and rest!
+
+*label finished_researching_fighting
+
+        *if (book_researching = "researched_fighting_2")
+            This book has taught you better fighting methods. You now have a higher base fighting power level.
+            
+            [+1 Base Fighting Power Level]
+
+*label old_orphanage_study_research_choices
+
+    *if ((not (researched_botany_1)) and (not (can_test_out_of_botany_1)))
+        #Research Botany I [+1 month]
+            *set diary ("I researched Botany I.[n/][n/]" & diary)
+            
+            *goto research_botany_1
+
+    *if ((not (researched_botany_1)) and (can_test_out_of_botany_1))
+        #Test out of Botany I since you know all the material in it already
+            *set diary ("LOL I tested out of Botany I. I'm so smart.[n/][n/]" & diary)
+            Mabel is very happy with you. She just points out some sloppiness in the Lemen knowledge section and gives you some tips there.
+            
+            [+2 Lemen Fetch Skill]
+            *set lemen_fetch_skill + 2
+            
+            *set researched_botany_1 true
+            *goto orphanage_home_base
+
+*label hint_garden_extra_hints
+
+*if (not (layer_1_hint_garden_hint_given_equipments))
+    *set layer_1_hint_garden_hint_given_equipments true
+    
+    Here's some equipments!
+    
+    [+2 Equipments]
+    *set inventory_equipments + 2
+    
+    *if (ghost_mode = "ghost")
+        *return
+    *goto_scene {home_base_scene} {home_base_label}
+*if ((not (researched_botany_1)) and (not (layer_1_hint_garden_hint_given_botany)))
+    *set layer_1_hint_garden_hint_given_botany true
+    
+    It looks like you haven't researched botany. This is a very important research! I won't research it for you, but here's a rosalia and the Encyclopedia page for it! I'll even unlock the Rosalia patch for you if it wasn't already unlocked.
+    
+    [+1 Rosalia]
+    *if (not (knowledge_rosalia))
+        *line_break
+        [+Encyclopedia Page]
+        *set knowledge_rosalia true
+    *if (not (found_layer_1_rosalia_patch))
+        *line_break
+        [Rosalia Patch Found]
+    *set inventory_petunal_blossoms + 1
+    *set knowledge_petunal_blossoms true
+    *set found_layer_1_rosalia_patch true
+    
+    *if (ghost_mode = "ghost")
+        *return
+    *goto_scene {home_base_scene} {home_base_label}
+
+*label orphanage_study_extra_text
+
+*label research_botany_1
+
+*set researched_botany_1 true
+*gosub_scene logic month_passed
+
+*temp no_previous_knowledge true
+
+The first part of the book is all about Lemens. What they are, how to find them, all sorts of things. Of course, you already know about them from your trips with George. Still, it gives some more tips on how to harvest them better.
+
+[+2 Lemen Fetch Skill]
+*set lemen_fetch_skill + 2
+
+*if (knowledge_petunal_blossoms)
+    Of course, the book covers petunal blossoms. It just talks about how they're found near caves, but other than that, no new information.
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_petunal_blossoms
+*else
+    *set diary ("I first learned about Petunal Blossoms.[n/][n/]" & diary)
+    
+    Apparently, there's a purple flower with yellow specks that can be found around the first layer. Its petals are apparently really nutritious. Your town is quite carnivorous, but you can think of a few vegetarians who would like the rare vitamins and minerals to be found in the petals. It says the petals are common and that you need a lot for a complete meal, however, so they won't fetch very much.
+    *set knowledge_petunal_blossoms true
+    *goto evaluated_botany_1_knowledge_petunal_blossoms
+    
+*label evaluated_botany_1_knowledge_petunal_blossoms
+    
+*if (knowledge_rosalia)
+    Of course, the book covers rosalia. All it has to say really is that picking skills are best improved with experience, which isn't very helpful.
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_rosalia
+*else
+    *set diary ("I first learned about Rosalia.[n/][n/]" & diary)
+    
+    The book then talks about a rose-like plant with big, broad leaves on its stem. It says that small parts of the leaves are used for expensive teas. You wonder if you've already seen any around while exploring the tunnel.
+    *set knowledge_rosalia true
+    *goto evaluated_botany_1_knowledge_rosalia
+    
+*label evaluated_botany_1_knowledge_rosalia
+
+*if (knowledge_starblossom)
+    The final part discusses starblossom, that one flower (why is it all about flowers?). The book mainly focuses on harvesting techniques, noting that a special harvest tool grade 2 is needed to pick the flower (SHTG2).
+    *set no_previous_knowledge false
+    *goto evaluated_botany_1_knowledge_starblossom
+*else
+    *set diary ("I first learned about Starblossoms. I think they're my favorite plant so far since they look so cool![n/][n/]" & diary)
+    
+    The final part discusses a rarer flower named the starblossom, whose petals are large and shaped like a five-pointed star. It is perpetually in bloom apparently, but survives much better in layers two and three, and thus is rare to find in layer one. Apparently, a special harvest tool called the SHTG2 is needed to scavenge it from the ground due to its deep roots.
+    *set knowledge_starblossom true
+    *goto evaluated_botany_1_knowledge_starblossom
+
+*label evaluated_botany_1_knowledge_starblossom
+
+*if (no_previous_knowledge)
+    *set diary ("I had to keep Mabel's book an extra month because it was so confusing. I hope I'm not stupid...[n/][n/]" & diary)
+    
+    Unfortunately, since you didn't know any of the topics in the book other than about Lemens, it takes you an extra month to complete it. Mabel lets you keep it for longer, but more of your youth has been wasted away.
+    *gosub_scene logic month_passed
+    *goto orphanage_home_base
+
+*goto orphanage_home_base
+
+*label research_artifacts_1
+
+You do some research into different artifacts in the tunnel. You find out about some.
+
+The first is about a stone of persuasion. Apparently they're found every once in a while and most sales jobs require one. They're the only type of artifact that regenerate, often found in caves. You didn't know that there were such artifacts. And they can be found in the first layer, too! You don't remember seeing any in the shops of the town, so you'll probably have to find one yourself.
+
+*comment Make the Stone of Persuasion in the cave encounter
+
+*set artifact_knowledge_persuasion_stone true
+
+You also read about persistence artifacts. Apparently, certain artifacts are known to appear after a certain number of trips to a given layer. As soon as you hit that number of trips, you get one. It says that most people receive a persistence artifact only 2 trips into the second layer! There's a gotcha though, you have to know about the persistence artifacts for the counter to start. Good thing you read this book!
+
+The third is about a special type of coin called the blue coin. Apparently, it's not really an artifact, just a type of currency that's only found in the tunnel or in special shops, but some places only take blue coins. They apparently look like pointy spheres, whatever that means.
+
+*comment Maybe have different colored coins and rarities
+
+*if (not (knowledge_blue_coins))
+    *set diary ("I never knew spheres could be pointy until I learned about Blue Coins today.[n/][n/]" & diary)
+
+*set knowledge_blue_coins true
+
+You even find a blue coin tucked away in the far back of the book.
+
+[+1 Blue Coin]
+*set inventory_blue_coins + 1
+
+*goto orphanage_home_base
+
+*label research_exploration_1
+
+The book details various ways to find new ways to explore the layers. You can now find 5 different new encounters in each layer!
+
+*goto orphanage_home_base
+
+*label research_reading_1
+
+You research reading skills. It mostly goes over advanced vocabulary and stuff in the more advanced research books. It's a pretty boring book.
+
+It does take you two months to research rather than one, but Mabel's fine with it, thank goodness.
+
+*goto orphanage_home_base
+
+*label research_good_habits_1
+
+The book teaches you how to be a better person and not have insomnia. Unfortunately, you only really follow through with the recommendations at the turn of each year with your New Year's Resolutions.
+
+Now, you will get +3 Rest when entering into January and +1 Rest when entering into February.
+
+*goto orphanage_home_base
+
+*label research_exploration_2
+
+You can now explore 5 new encounters in each layer!
+
+*goto orphanage_home_base
+
+*label research_tracking_1
+
+You research various tracking methods.
+
+[+Encyclopedia Entry]
+
+Tracking requires having good knowledge of the layer where you're tracking. You'll be asked two random questions (possibly with duplicates) about that layer. You must answer them all correctly to catch the animal.
+
+*goto orphanage_home_base
+
+*label advanced_farm_hand_offer
+
+    You're offered a promotion. You can now work the advanced farm hand job, which gives more farmhand experience (but no general experience), but you must go to work once every 6 months or else there will be consequences. You can terminate a job, but must give a 2 year's notice. Wow, this is like real life. Booooring.
+    
+    Oh, and make sure to check your stats every once in a while (the calendar under "helpful information") for the number of months you have until you need to do your next shift by.
+    
+    [Unlocked Advanced Job Hand]
+    
+    Finally, Advanced Job Hand is the only way you'll further your career in the farming industry. No more job offers from just being a regular farm hand! (Although the farmhand experience you get is still relevant).
+    
+*label ms_bee_dick_down_passsage
+
+    *if (not (tracking_upgrade_extra_orphanage_garden))
+        #Dick down Ms. Bee for another garden patch: Gain an extra garden patch at the orphanage
+            *set tracking_upgrade_extra_orphanage_garden true
+            
+            NO. NO. DO NOT!
+            
+            For ONE, you are GIRL, with no dick to speak of, for TWO…
+            
+            *choice
+                #Fine, then, I'll use a strap-on *wink*
+                    NOOO STOP.
+                    
+                    Here, I'll give you your extra fucking garden patch, but please, do not ever talk about "dicking down" another member of the orphanage again!
+                    
+                    *goto meat_skill_point_choice_return
+
+
+*comment Becoming Independent
+*label event_kicked_out
+
+*set diary ("Oh no, the orphanage might be shutting down.[n/][n/]" & diary)
+
+*set general_event_occurred_orphanage_financial_difficulties true
+
+Knock knock
+
+*page_break
+
+You wake up one day to find Hallie knocking on your door. Hallie is the financial overseer of the orphanage, and usually she only brings bad news. Her most often catchphrase is, "We can't afford to have you here any longer," which is what she says before a troublesome or otherwise expensive orphan is kicked out. But you can't imagine they'd kick out you.
+
+Right?
+
+*page_break
+
+Hallie guides you down to the orphanage office corridor and into your office. She motions for you to sit on the hard, creaky chair across from her. The last time you sat in this chair, the orphanage told you to start paying for your own Tunnel trips. Oh what a joy that's been…
+
+Hallie looks serious. She's actually quite young, but this job has set early wrinkles into her skin. "Director Dicky is stepping down." The cogs in your head turn as you process what that means. Dicky is the primary funder of the orphanage. If he's stepping down, that means he's becoming less involved, which probably means… She continues, "…and he's pulling out all his funding for this place."
+
+You gasp. You didn't think it would be that bad. Hallie's voice cracks a little as she says, "I'm losing my job, that's for sure. Mabel's teas bring in a very good deal of profit, too, but she can only really make a big batch once a year and the ingredients are expensive."
+
+"We need you to move out by your 300'th Month. This is pretty standard for most orphanages, we tried to break the mold and allow adult orphans since we know how hard it can be with all the anti-orphan discrimination in this town, but you're gonna have to the be first one to show others how to survive on their own around here. You think you can do that?"
+
+"Yes," you answer, knowing you have no other choice.
+
+*set rent_paid_month 300
+
+*page_break
+*return
+
+*comment Orphanage visit
+*label visit
+
+*comment EVENTS
+
+*if (artifact_lantern_month_end > 0)
+    You try to visit the orphanage, but Ms. Bee quickly gestures to the lantern and shuts the door before you can get close
+    
+    *page_break
+    *goto_scene {home_base_scene} {home_base_label}
+
+*gosub event_eval
+
+What would you like to do here at the orphanage?
+
+*choice
+    *if ((research_unlocked_exploration_2) and (not (researched_exploration_2)))
+        *selectable_if (((pass_unlocked_blue) and (researched_exploration_1)) and (researched_reading_1)) #Research Exploration II [+1 month, Requires Exploration 1, Reading 1, and a Blue Pass]
+            "I mean, you brought it back for us, so feel free to use it."
+            
+            *goto study_research_exploration_2
+    #Visit someone else's room
+        *goto orphanage_visit_room
+    *if (months_passed > 300)
+        *selectable_if (doubloons >= 3950) #Move back in [3950 Doubloons for 10 Months]
+            [-3950 Doubloons]
+            *set doubloons - 3950
+
+            *gosub_scene logic move_out
+
+            Your home base has been set back to the orphanage.
+
+            *set rent_paid_month months_passed
+            *set rent_paid_month + 10
+            *set home_base_scene "orphanage"
+            *set home_base_label "orphanage_home_base"
+
+            *goto_scene {home_base_scene} {home_base_label}
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+
+*label skip_intro
+
+[i]Advancing time…[/i]
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+
+[i]Fetching lemens with George…[/i]
+*line_break
+[Encyclopedia Entry: Lemens]
+*set knowledge_lemens true
+
+[i]Graduating to Green Pass with George…[/i]
+*line_break
+[+1 Clackadoo Feather] [i](Rare)[/i]
+*line_break
+[Encyclopedia Entry: Clackadoo Feather]
+*set inventory_clackadoo_feather + 1
+*set knowledge_clackadoo_feather true
+*set pass_unlocked_green true
+
+[i]Conducting first tunnel trip…[/i]
+*line_break
+[+${lemen_fetch_skill} Lemens]
+*line_break
+[+1 Lemen Fetch Skill]
+*set inventory_lemens_13 + lemen_fetch_skill
+*set lemen_fetch_skill + 1
+
+*set visits_orphanage_study + 1
+[i]Researching botany 1…[/i]
+*line_break
+[Researched: Botany I]
+*line_break
+[Encyclopedia Entry: Rosalia]
+*line_break
+[Encyclopedia Entry: Petunal Blossoms]
+*line_break
+[Encyclopedia Entry: Starblossom]
+*line_break
+[+2 Lemen Fetch Skill]
+*set researched_botany_1 true
+*set knowledge_rosalia true
+*set knowledge_petunal_blossoms true
+*set knowledge_starblossom true
+*set lemen_fetch_skill + 2
+
+[i]Going on a general exploration trip…[/i]
+*line_break
+[+2 Rosalia]
+*line_break
+[+4 Experience]
+*set inventory_rosalia + 2
+*set experience + 4
+*set unlocked_experience true
+*set unlocked_doubloons true
+
+[i]Working my first time as a lousy farm hand…[/i]
+*line_break
+[15 Rest]
+*line_break
+[+5 Experience]
+*line_break
+[+2 Farm Hand Experience]
+*line_break
+[+${job_pay_farm_hand} Doubloons]
+*set rest 15
+*set experience + 5
+*set job_experience_farm_hand + 2
+*set doubloons + job_pay_farm_hand
+*set unlocked_rest true
+*set town_farm_hand_total_times_worked + 1
+
+[i]Chewing on a tea leaf Troy gave me…[/i]
+*set met_troy true
+
+[i]Buying equipments…[/i]
+*line_break
+[-260 Doubloons]
+*line_break
+[+10 Equipments]
+*set doubloons - 260
+*set inventory_equipments + 10
+
+[i]Retrieving patience present…[/i]
+*line_break
+[+1 Starblossom]
+*set inventory_starblossom + 1
+
+*set unlocked_job_farm_hand true
+*set unlocked_support_self true
+
+*label artifact_dungeon
+
+In this dungeon, you will be asked to give up all your worldly possessions of a single type. If you do, you will receive an artifact, but only if you haven't gotten to that level of the dungeon before.
+
+So, for example, to get to level 1 of the dungeon, you must give up all your Lemens (excluding immortal lemens). If you've never gotten to level 1 before, you would then be rewarded with the artifact corresponding to that level and booted out of the dungeon. However, if you'd previously collected the level 1 artifact, then you would then be asked to give up all your Rosalia. And so on.
+
+Make sure that if you want the artifact, you are willing to lose all of the thing corresponding to the level you need to go to, AND each of the levels before it! Your current artifact dungeon level is ${layer_2_artifact_dungeon_level}. That means you would have to give up everything in the following list including and before this number to get a new artifact.
+
+The list? Right, the dungeon has 10 layers, that's 10 unique artifacts. And you can only come here by a random general exploration (one in twenty chance, by the way), so there's a high chance you're giving up something valuable here. Anyways, to get through the levels, you need…
+
+*comment Rearrange where "lose all energy" is
+1. Lose all Lemens
+*line_break
+2. Lose all Rosalia
+*line_break
+3. Lose all Petunal Blossoms
+*line_break
+4. Lose all Lemen Fetch skill
+*line_break
+5. Lose all Rosalia Fetch skill and forget the layer 1 Rosalia patch location
+*line_break
+6. Lose all energy
+*line_break
+7. Lose all equipments
+*line_break
+8. Lose blue coins
+*line_break
+9. Lose all doubloons
+*line_break
+10. Lose everything in your inventory (yes, everything)
+
+I know it's scary, but you get some really, [i]really[/i] good artifacts.
+
+*label old_employee_garden_logic
+
+*label market_garden_shop_employee_garden
+*page_break
+
+Tip: Doubloon seeds yield triple their normal value if harvested in your employee plot.
+
+*choice
+    #Back
+        *goto market_garden_shop
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (gardens_petunia_plot_1 = "nothing")
+        #Plant something in your employee plot
+            *set logic_garden_plot "gardens_petunia_plot_1"
+            *set logic_garden_plot_timer "gardens_petunia_plot_1_ready_to_harvest"
+            *gosub_scene logic garden_plant_seed
+            *goto market_garden_shop_employee_garden
+    *if ((not (gardens_petunia_plot_1 = "nothing")) and (gardens_petunia_plot_1_ready_to_harvest = 0))
+        #Harvest the plants in your employee plot
+            *set logic_garden_plot "gardens_petunia_plot_1"
+            *set logic_garden_plot_timer "gardens_petunia_plot_1_ready_to_harvest"
+            *gosub_scene logic harvest_plants
+            *goto market_garden_shop_employee_garden
+    *if (not (gardens_petunia_plot_1 = "nothing"))
+        #Check what you planted in your employee plot
+            *set logic_garden_plot "gardens_petunia_plot_1"
+            *set logic_garden_plot_timer "gardens_petunia_plot_1_ready_to_harvest"
+            *gosub_scene logic check_garden_plot
+            *goto market_garden_shop_employee_garden
+    *if ((not (gardens_petunia_plot_1 = "nothing")) and (not (gardens_petunia_plot_1_ready_to_harvest = 0)))
+        #Fertilize the plants in your employee plot
+            *set logic_garden_plot "gardens_petunia_plot_1"
+            *set logic_garden_plot_timer "gardens_petunia_plot_1_ready_to_harvest"
+            *gosub_scene logic apply_fertilizer
+            *goto market_garden_shop_employee_garden

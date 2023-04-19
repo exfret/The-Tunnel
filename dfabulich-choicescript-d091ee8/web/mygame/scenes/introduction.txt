@@ -1,74 +1,999 @@
-Your world is a small one. Ever since you were born, ever since the elders of the town were born, and ever since [i]their[/i] elders were born, well, everyone has been confined to this cave. It's a spacious cave, mysteriously lit, and stretching hundreds of miles in each direction and leaving plenty of space for a bustling city on one side and a vast sea of farms on the other, but it still confines its inhabitants. Many have tried digging their way out, but no tools seem strong enough to pierce through the stone walls. The only hope to escape, is the tunnel.
+*label start
 
-The tunnel is a huge hole, dozens of miles across, in the side of the cavern just outside the city. It is a sacred artifact of ancient times, and many believe that, deep inside, hides the secrets to their imprisonment. Many have tried to seek these answers, but if anyone has found them, none of those people returned to tell the tale. More often, the tunnel is a place to scavenge for ancient artifacts and other rarities that can only exist within its abyssal mouth. The deeper in you go, the rarer and more valuable the artifacts, but the higher the danger. No one has ever seen the other side of the tunnel. Some think it is infinite even. But most hold hope that one day, escape will be found.
+Where would you like to go?
+
+*choice
+    #Begin the Game (from the beginning)
+        *gosub_scene logic update_curr_month_string
+        *set hide_stats false
+        *goto intro
+    #Begin the Game (skip some parts)
+        *gosub_scene logic update_curr_month_string
+        *set hide_stats false
+        *goto skip
+
+*label skip
+
+Which "skip package" would you like to use?
+
+*choice
+    #The Intro Hater [Skip only the intro/tutorial bit]
+        *set diary ("I'm an Intro Hater.[n/][n/]" & diary)
+        
+        *gosub skip_intro
+        
+        *goto_scene orphanage orphanage_home_base
+    *selectable_if (false) #Past the Green Pass [Skip to Blue Pass] (Under Construction)
+        *set diary ("I just want to get straight to the juicy layer 2 stuff.[n/][n/]" & diary)
+        
+        *gosub skip_intro
+        
+        *page_break
+        
+        Now for some [i]real quick moves[/i]…
+        
+        *page_break
+        
+        *gosub skip_green_pass
+    #Back
+        *goto start
+
+*label skip_green_pass
+
+*set skip_mode "intro_skip"
+*set show_alerts false
+*set decision_point "0"
+
+*gosub_scene orphanage orphanage_home_base
+
+*set skip_mode "normal"
+*set show_alerts true
+
+[b]Simulations done![/b]
+
+*goto_scene orphanage orphanage_home_base
+
+*label skip_intro
+
+*set skip_mode "skip_intro"
+*set show_alerts false
+
+*gosub intro
+
+*set skip_mode "normal"
+*set show_alerts true
+
+*return
+
+*label intro
+
+*set diary ("I'm going to become the best Tunnel Explorer ever![n/][n/]" & diary)
+
+*if (skip_mode = "skip_intro")
+    [i]Exploring with George…[/i]
+
+*if (skip_mode = "normal")
+    "Hey, George," you shout, "I'm not as quick as you, slow down!" George turns and smiles at you, the Skylight dancing gently across his freckled cheeks. He waits for you at the top of the hill as the wind ruffles through his wavy brunette hair. George is your mentor, the one training you for a green pass so that you can travel to here, the first layer of the Tunnel, on your own. And as for you? Well, you're Lauren Aria. The soon-to-be famous-est and best-est Tunnel explorer there ever was, is, will, or has been! First, though, you have to figure out how to climb hills like this without getting so exhausted.
+    
+    Once you get to the top, you slouch your hands onto your knees and wheeze in and out. George softly states, "Don't worry, when I was your age, my stamina wasn't so great either." Then he chuckles. "You'll do just fine, Lauren." He makes it sound like he's had soooo much more time to progress, but really he's only 46 months older than you. He did have a lot more time with his parents, though, who were pretty significant figures in Tunnel exploring. You hear from some kids in the orphanage you share with George that they kicked someone out just to be able to let George in. All you know is that you're glad to have such a great mentor to teach you the ways of Tunnel exploring. What a great start for a soon-to-be renowned Tunnel explorer such as yourself.
+    
+    Once you're done panting, you look up and drop your mouth. George announces proudly, "I just wanted to show you the lemen patch I always like to use. She's a beauty, isn't she?" In front of you is the largest field of lemens, a bulbous, yellow, glowing, flowering plant, that you've ever seen. It must be at least a thousand meters in all directions.
+
+[Encyclopedia Entry: Lemens]
+*set knowledge_lemens true
+
+*if (skip_mode = "normal")
+    (See your encyclopedia entries by clicking "Show Stats", then choosing "Encyclopedia" — many game mechanics and lore are explained in the Encyclopedia in order to streamline gameplay, so checking on new entries can reduce future confusion).
+    
+    "This is where we'll be picking from after some rest," George continues, his face glowing almost as bright as the patch in front of you. You can't believe you get to harvest such a plump patch! You head back to camp with George, excited.
+    
+    Later, you sneak out from under your tarp and stare up at the ceiling of the Tunnel. You wonder what makes the air glow. Some speculate that it's actually the unbreakable, dark gray rock wall that surrounds the Dome and the Tunnel which glows. Others even swear the light comes from an outside source, beyond the Dome and the Tunnel, and that the light is the only thing that can pierce through that rock. But most people don't like to think about that. Considering how horrendous the later layers of the Tunnel are, it's scary to contemplate what any sort of exit would lead to.
+    
+    You don't care how scary it is though, you're not like most. You're going to find the other end of the Tunnel. You'll be the first, and you know it. However, for now, you should rest.
+    
+    *page_break
+
+*set diary ("I got a Clackadoo Feather from my mentor, George![n/][Rare Item Pickup][n/][n/]" & diary)
+
+*if (skip_mode = "normal")
+    Once you and George finish picking lemens, you head to the orphanage where you live together. It's fairly well-put-together for an orphanage; the other kids are well-mannered and the part of town where it's located isn't too bad. Still, not everyone seems to think that orphan kids can ever be "redeemed". There's a lot of prejudice toward people without parents. George seems to be an exception, since, well, he's George. But you're tired of facing so much discrimination. That's why you have to be the best explorer in history, so that the world sees that orphans can achieve great things too!
+    
+    When you return to the orphanage, George gives you a gift. It's a clackadoo feather.
+
+*if (skip_mode = "skip_intro")
+    [i]Graduating to green pass…[/i]
+
+[+1 Clackadoo Feather] [i](Rare)[/i]
+*line_break
+[Encyclopedia Entry: Clackadoo Feather]
+*set inventory_clackadoo_feather + 1
+*set knowledge_clackadoo_feather true
+
+*if (skip_mode = "normal")
+    "My father was great at catching clackadoo birds. He left me quite a few feathers when he went on his last trip into the Tunnel. I decided I'd give one to each mentee I had when they'd gotten their green pass. Well, here's your green pass." George wears an enormous grin on his face. "Congratulations," He says, "you're done with training." Then he pulls you in for a big hug.
+    
+*set pass_unlocked_green true
+
+*if (skip_mode = "normal")
+    *page_break
+    
+    After a month of resting, it's time to go back to the Tunnel again, but this time, on your own.
+
+*if (skip_mode = "skip_intro")
+    *goto intro_lemen_fetch
+*choice
+    #Fetch lemens [+1 month, +${lemen_fetch_skill} Lemens, +1 Lemen fetch skill]
+        *goto intro_lemen_fetch
+
+*label intro_lemen_fetch
+
+*set diary ("I fetched lemens on my own for the first time.[n/][n/]" & diary)
+
+*if (skip_mode = "normal")
+    You were able to pick ${lemen_fetch_skill} lemens.
+
+*if (skip_mode = "skip_intro")
+    [i]Fetching lemens on my own…[/i]
+
+[+${lemen_fetch_skill} Lemens]
+*set inventory_lemens_13 + lemen_fetch_skill
+
+*if (skip_mode = "normal")
+    Keep in mind that these lemens will spoil in 13 months (just lemens, though, other objects won't spoil). Speaking of months, another month passed by…
+
+*gosub_scene logic month_passed
+
+*if (skip_mode = "normal")
+    Finally, you also get another lemen fetch skillpoint to represent that you have gotten better at getting lemens, which means that the next time you fetch lemens, you will get one more lemen.
+
+[+1 Lemen Fetch Skill]
+*set lemen_fetch_skill + 1
+
+*if (skip_mode = "normal")
+    (You can check your lemen fetch skill by clicking the "Show Stats" button and choosing "Character").
+
+    Alright, now let's try something a little spicier, you'd like to venture into the Tunnel to explore and discover, not just to gather some dude's lemens. This time, let's choose the new option, "General exploration" when we go to the Tunnel.
+
+*if (skip_mode = "skip_intro")
+    *goto intro_tunnel_visit_1
+*choice
+    #Go to the Tunnel (layer 1)
+        *goto intro_tunnel_visit_1
+
+*label intro_tunnel_visit_1
+
+*temp encounter_0 0
+*rand encounter_0 1 3
+
+*if (skip_mode = "skip_intro")
+    *goto intro_general_exploration_1
+*choice
+    #General exploration [+1 Month]
+        *goto intro_general_exploration_1
+    *selectable_if (false) #Fetch lemens [+1 month, +${lemen_fetch_skill} Lemens, +1 Lemen fetch skill]
+        *goto intro_general_exploration_1
+
+*label intro_general_exploration_1
+
+*gosub_scene logic month_passed
+
+*set diary ("What's this weird plant?[n/][n/]" & diary)
+
+*if (skip_mode = "skip_intro")
+    [i]Skipping a weird plant…[/i]
+
+*if (skip_mode = "normal")
+    *if (encounter_0 = 1)
+        You come across some red-petal'ed flowers with a bitter smell. You're not sure what to do with them, so you move on.
+    *if (encounter_0 = 2)
+        You come across some violet flowers with yellow specks. You're not sure what to do with them, so you move on.
+    *if (encounter_0 = 3)
+        You come across a flower with very, very broad pointed leaves that resemble a five-pointed start. It is a deep purple. However, you're not sure what to do with it, so you move on.
+    
+    *page_break
+    
+    Looks like your character had some trouble with recognizing some plants. Luckily, there's a study in the orphanage where you can read up on some of those things!
+
+*if (skip_mode = "skip_intro")
+    *goto intro_study_botany
+*choice
+    *selectable_if (false) #Go to the Tunnel (layer 1)
+        *goto intro_study_botany
+    #Go to the orphanage's study
+        *goto intro_study_botany
+
+*label intro_study_botany
+
+*set diary ("I visited the orphanage's study for the first time.[n/][n/]" & diary)
+
+*set visits_orphanage_study + 1
+
+*if (skip_mode = "normal")
+    A young, thin woman with long, dark hair looks up from a desk at the front of the orphanage's study. "I'm Mabel. I heard you have been exploring quite a lot, recently. It would only make sense to give you access to our dismal collection of knowledge and folklore surrounding the Tunnel. You'll have to get access to the main town library for more in-depth knowledge. Just choose a subject to study and you can rent the book for a month."
+
+*if (skip_mode = "skip_intro")
+    *goto intro_study_botany_studied
+*choice
+    #Botany I [+1 Month]
+        *goto intro_study_botany_studied
+
+*label intro_study_botany_studied
+
+*set diary ("I researched Botany I and learned a lot about plants this month.[n/][n/]" & diary)
+
+*gosub_scene logic month_passed
+
+*if (skip_mode = "skip_intro")
+    [i]Researching Botany I…[/i]
+
+[Researched: Botany I]
+
+*if (skip_mode = "normal")
+    You study Botany I, which discusses three different types flowers: rosalia, petunal blossoms, and starblossoms.
+
+[Encyclopedia Entry: Rosalia]
+*line_break
+[Encyclopedia Entry: Petunal Blossoms]
+*line_break
+[Encyclopedia Entry: Starblossom]
+*set researched_botany_1 true
+*set knowledge_rosalia true
+*set knowledge_petunal_blossoms true
+*set knowledge_starblossom true
+
+*if (skip_mode = "normal")
+    It also teaches better gathering techniques of lemens.
+
+[+2 Lemen Fetch Skill]
+*set lemen_fetch_skill + 2
+
+*if (skip_mode = "normal")
+    *page_break
+
+*if (skip_mode = "normal")
+    Now, let's try that Tunnel encounter once more!
+
+*if (skip_mode = "skip_intro")
+    *goto intro_tunnel_visit_2
+*choice
+    #Go to the Tunnel (layer 1)
+        *goto intro_tunnel_visit_2
+    *selectable_if (false) #Go to the orphanage's study
+        *goto intro_tunnel_visit_2
+    
+*label intro_tunnel_visit_2
+
+*if (skip_mode = "normal")
+    What would you like to do in the first layer?
+
+*rand encounter_0 1 3
+
+*if (skip_mode = "skip_intro")
+    *set encounter_0 1
+    *goto intro_general_exploration_2
+*choice
+    #General exploration [+1 Month]
+        *goto intro_general_exploration_2
+    *selectable_if (false) #Fetch lemens [+1 month, +${lemen_fetch_skill} Lemens, +1 Lemen fetch skill]
+        *goto intro_general_exploration_2
+    
+*label intro_general_exploration_2
+
+*set diary ("I can recognize the plants now![n/][n/]" & diary)
+
+*set unlocked_experience true
+
+*gosub_scene logic month_passed
+
+*if (encounter_0 = 1)
+    *if (skip_mode = "normal")
+        You come across some rosalia on the ground!
+    
+    *if (skip_mode = "skip_intro")
+        [i]Oh that's what that weird plant is![/i]
+    
+    [+2 Rosalia]
+    *set inventory_rosalia + 2
+*if (encounter_0 = 2)
+    You come across some petunal blossoms.
+    
+    [+3 Petunal Blossoms]
+    *set inventory_petunal_blossoms + 3
+*if (encounter_0 = 3)
+    You come across a starblossom, but you don't have the special harvest tool for it. Bad luck!
+    
+*if (skip_mode = "normal")
+    You'll also get experience for doing various tasks and for being well-rested. Experience is used to unlock new areas and abilities. We'll talk about resting later, but for now, here's some experience from general exploration (from now on, it will give 4 Experience).
+
+[+4 Experience]
+*set experience + 4
+
+*if (skip_mode = "normal")
+    Now, adventuring isn't free. Every time you want to adventure a layer further from now on, you'll need some equipments (with an "s", don't ask me why). Equipments, however, take money, so you'll need to take a job as a lousy farm hand to be able to venture forth again. Let's go into town to view our job opportunities there.
+
+*if (skip_mode = "skip_intro")
+    *goto intro_town
+*choice
+    *selectable_if (false) #Go to the Tunnel (layer 1)
+        *goto intro_town
+    #Go into town
+        *goto intro_town
+    *selectable_if (false) #Go to the orphanage's study
+        *goto intro_town
+    
+*label intro_town
+
+*set unlocked_doubloons true
+
+*if (skip_mode = "normal")
+    Now, we could head straight to the market, but that won't help us since we only have ${doubloons} doubloons (the currency in this game), and we need more than that to buy ourselves some equipments. So to the job board it is!
+
+*if (skip_mode = "skip_intro")
+    *goto intro_town_job
+*choice
+    *selectable_if (false) #Back home
+        *goto intro_town_job
+    *selectable_if (false) #Go to the market
+        *goto intro_town_job
+    #Go to the job board
+        *goto intro_town_job
+
+*label intro_town_job
+
+*if (skip_mode = "skip_intro")
+    *goto intro_town_job_farmhand
+*choice
+    *selectable_if (false) #Back
+        *goto intro_town_job_farmhand
+    *selectable_if (false) #Back home
+        *goto intro_town_job_farmhand
+    #Work as a lousy farm hand [+3 Months, -5 Energy, +5 Experience, +2 Farm Hand Experience, +${job_pay_farm_hand} Doubloons]
+        *goto intro_town_job_farmhand
+
+*label intro_town_job_farmhand
+
+*if (skip_mode = "skip_intro")
+    [i]Talking to Troy about rosalia teas…[/i]
+
+*set town_farm_hand_total_times_worked + 1
+*set met_troy true
+
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+*gosub_scene logic month_passed
+ 
+*if (skip_mode = "normal")
+    Your first time as a job hand is rough. You don't get paid much, but it's something. You sweat so much out in the field. You never knew you could sweat so much.
+
+    However, Troy is there to lighten up your day. He's another farmhand you met on the job who started a few months prior. He's a little quiet and awkward, but he warms up to you, and starts to chatter all over about his love of different rosalia teas.
+
+*set unlocked_energy true
+
+[-5 Energy]
+*line_break
+[+5 Experience]
+*line_break
+[+2 Farm Hand Experience]
+*line_break
+[+${job_pay_farm_hand} Doubloons]
+*set energy - 5
+*set experience + 5
+*set job_experience_farm_hand + 2
+*set doubloons + job_pay_farm_hand
+
+*if (skip_mode = "normal")
+    *page_break
+    
+    You'll notice two new things that happened: You gained farm hand experience, and you lost energy. Farm hand experience is pretty simple; it's just a tracker for how good you are as a farm hand. Energy, on the other hand, is a pretty core mechanic to this game.
+    
+    Some labor-intensive tasks require energy, which can be regenerated by resting. You'll want to watch your energy and keep it high, since you may only notice certain things when you're not tired.
+
+    Now let's go to the general market store to buy some equipments!
+
+*if (skip_mode = "skip_intro")
+    *goto intro_town_2
+*choice
+    #Back
+        *goto intro_town_2
+    *selectable_if (false) #Back home
+        *goto intro_town_2
+    *selectable_if (false) #Work as a lousy farm hand [+3 Months, -5 Energy, +5 Experience, +2 Farm Hand Experience, +${job_pay_farm_hand} Doubloons]
+        *goto intro_town_2
+
+*label intro_town_2
+
+*if (skip_mode = "skip_intro")
+    *goto intro_market
+*choice
+    *selectable_if (false) #Back home
+        *goto intro_market
+    #Go to the market
+        *goto intro_market
+    *selectable_if (false) #Go to the job board
+        *goto intro_market
+
+*label intro_market
+
+*if (skip_mode = "skip_intro")
+    *goto intro_market_general_store
+*choice
+    *selectable_if (false) #Back
+        *goto intro_market_general_store
+    *selectable_if (false) #Back home
+        *goto intro_market_general_store
+    #Go to the general store
+        *goto intro_market_general_store
+
+*label intro_market_general_store
+
+*if (skip_mode = "skip_intro")
+    *goto intro_market_equipments
+*choice
+    *selectable_if (false) #Back
+        *goto intro_market_equipments
+    *selectable_if (false) #Back home
+        *goto intro_market_equipments
+    #Buy 10 equipments [-260 Doubloons]
+        *goto intro_market_equipments
+    *if (inventory_clackadoo_feather >= 1)
+        #Sell the clackadoo feather [+3309 Doubloons]
+            *goto intro_clackadoo_confirm
+
+*label intro_clackadoo_confirm
+
+Are you sure?
+
+*choice
+    #No
+        *goto intro_market_general_store
+    #Yes
+        [-1 Clackadoo Feather]
+        *line_break
+        [+3309 Doubloons]
+        *set inventory_clackadoo_feather - 1
+        *set doubloons + 3309
+        
+        ——————————————————————————————
+        *goto intro_market_general_store
+
+*label intro_market_equipments
+
+*if (skip_mode = "skip_intro")
+    [i]Buying equipments…[/i]
+
+[-260 Doubloons]
+*line_break
+[+10 Equipments]
+*set doubloons - 260
+*set inventory_equipments + 10
+
+*if (skip_mode = "normal")
+    ——————————————————————————————
+
+*if (skip_mode = "normal")
+    Great! Now we can explore more.
+
+    *page_break
+
+    I think you've got the hang of this. Go explore and have fun! Here's a starblossom for your patience, plus a full energy refresh.
+
+*comment TODO: Focus mechanic and refilling energy
+
+*if (skip_mode = "skip_intro")
+    [i]Collecting Tutorial Reward…[/i]
+
+[+1 Starblossom]
+*line_break
+[Energy Refreshed]
+*set inventory_starblossom + 1
+*set energy max_energy
+
+*set unlocked_job_farm_hand true
+*set unlocked_support_self true
+
+*if (skip_mode = "skip_intro")
+    *return
+*goto_scene orphanage orphanage_home_base
+
+*label changelog
+
+4/19/2023
+
+4/18/2023
+
+1. Worked on demo
+
+91000 —> 91000
+
+4/17/2023
+
+1. You can now dig up your plants in the garden
+*line_break
+2. Occupations listed in statistic
+*line_break
+3. Introduced confirmations before resigning from jobs
+
+90000 —> 91000
+
+4/16/2023
+
+1. More little tweaks
+*line_break
+2. Attempted to rewrite combat system
+
+90000 —> 90000
+
+4/15/2023
+
+1. Changed a lot of variable names from old styles to new. Wow, that was tedious.
+
+90000 —> 90000
+
+4/14/2023
+
+Slept
+
+4/13/2023
+
+1. Fixed up some encounters a bit more. You might notice new detail there.
+*line_break
+………the scrolls encounter was rewritten and now includes some treasure
+*line_break
+………the ghost encounter is now accessible when you're also a ghost
+*line_break
+………the clearing has a new fight encounter
+*line_break
+………the dagger encounter now hides a flying key
+*line_break
+………the backpack encounter now has a second part about perpetual points (not completely done yet)
+*line_break
+2. Small fix that probably wouldn't have come up anyways, but you no longer have to visit the general store to recognize Troy when he visits the orphanage for help
+*line_break
+3. Three hours long playtest with Christian.
+*line_break
+4. Renamed Energy Points to Focus Points (thank god for VSCode autoreplace, CSIDE's one isn't as good).
+*line_break
+5. Streamlined gardens logic (again). Less copying and pasting menus for me! (It shouldn't result in a visual difference… "shouldn't").
+*line_break
+6. Improved menu-ing
+
+86000 —> 90000
+
+4/12/2023
+
+1. Added checks mechanic. Once you research Observation I, you can now see what you're missing out on!
+*line_break
+2. Added two new hints to the hint garden.
+*line_break
+3. Added Caroline Quests to the game to help with getting experience.
+*line_break
+4. More things give experience now.
+*line_break
+5. Fixed up market shop text formatting.
+*line_break
+6. Added a new store. (For selling goods from the Tunnel).
+
+83000 —> 86000
+
+4/11/2023
+
+1. Resting replaced with focusing, which confers Energy Points (later renamed to Focus Points) for a new skill tree (upgrade skills in the home base actions menu).
+*line_break
+2. Updated the artifact dungeon
+*line_break
+3. Added new mini-artifacts shop
+*line_break
+4. Renamed evasion to nimblicity
+*line_break
+5. More ways to get trainings
+*line_break
+6. More events. Woooh
+*line_break
+7. Worked on some new residential properties
+*line_break
+8. Added a catalog for the orphanage study
+
+77000 —> 83000
+
+4/10/2023
+
+1. The orphanage no longer kicks you out at month 300, and it's basically your permanent home. This simplifies a lot of things and makes life less stressful for the player.
+*line_break
+2. Removed randomness in combat (it still may feel random because it depends on various factors, but it's not).
+
+76000 —> 77000
+
+4/9/2023
+
+1. Cleaned up a lot of mechanics (specifically forced time period to complete objectives and rest mechanic).
+
+80000 —> 76000
+
+4/8/2023
+
+1. Finished logic for moving living locations.
+*line_break
+2. Allowed skipping straight to Blue Pass with novel game simulation technique.
+*line_break
+3. A new layer 2 encounter with a new type of flower to discover.
+*line_break
+4. Implemented the beginnings of layer 3
+
+5 Hours
+*line_break
+77000 —> 80000
+
+4/7/2023
+
+Not much change…
+
+4/6/2023
+
+1. Worked on some layer 2 encounters
+
+3.5 Hours
+*line_break
+74000 —> 77000
+
+4/5/2023
+*line_break
+1. Just more reformatting mostly.
+
+72000 —> 74000
+
+4/4/2023
+*line_break
+1. New intro, but this time it's probably staying
+*line_break
+2. Major redesign of aesthetics and early parts of the game
+*line_break
+3. Cut some content (3000 words) to make styling more consistent (it's still in a separate text file, and I'll still count it in the word count, but it's inaccessible through normal gameplaying atm)
+
+66000 —> 72000
+
+4/3/2023
+*line_break
+1. Updated the layer 2 ghost encounter up to the dagger encounter (this is more a note for me than for you)
+*line_break
+2. Added cool rocks (you can't do anything with them yet)
+
+61000 —> 66000
+
+4/2/2023
+*line_break
+1. Added a secret admirer
+*line_break
+2. There's a new "The Boss" fight
+
+58000 —> 61000
+
+4/1/2023
+*line_break
+1. Added a new squirrel
+*line_break
+2. Added some new jobs
+*line_break
+3. The clackadoo feather now requires confirmation to sell
+*line_break
+4. You now get warnings 5 months before failing an objective, and 2 months before missing work
+
+52000 —> 58000
+
+3/31/2023 (after playtest)
+
+1. New fighting system.
+*line_break
+2. Expanded the Squirrel battle system (completely separate lol). You can now also send squirrels after a certain someone if you gain a squirrel leader's loyalties.
+*line_break
+3. A new introduction about a sword in a stone. (I must have been high when I wrote it cuz it be trippin balls).
+
+Word count 45000 —> 52000
+
+3/31/2023
+
+1. New objective system. Now you have to finish objectives to not lose.
+*line_break
+2. New intro: Learn more about the world's squirrels
+
+Word count 33000 —> 45000
+
+3/29/2023
+
+1. Tracking is now finished and fleshed out (enjoy your new rewards!)
+
+3/28/2023
+
+1. I added more depth and interconnections to the layer 1 encounters. They will start off the same as last time, but as you visit them more different things will happen.
+*line_break
+2. Went from 26000 words to… 33000 words.
+*line_break
+3. Added a friend
+*line_break
+4. You now keep a diary
+
+3/27/2023
+
+1. You may now advance your career, with a new job offer if you get good enough at being a basic farm hand.
+*line_break
+2. A new lemen-loving rich dude has moved into town. Gather enough lemens and you may catch his eye.
+*line_break
+3. Somehow, layer 2 and the new intro are nowhere near completion, still.
+*line_break
+4. You now start with 120 doubloons.
+*line_break
+5. And, last but not least, lemens now only last a year.
+
+3/26/2023
+
+1. One new layer 1 encounter.
+*line_break
+2. A new squirrel sub-plot for you to discover.
+*line_break
+3. A mystery involving a sword stuck in the stone is starting to unravel itself!
+*line_break
+4. Intro 2.0 is NOT finished yet, don't go there
+
+3/25/2023
+*line_break
+1. Implemented Rest mechanic
+*line_break
+2. You can now skip the intro (PLEASE do NOT read the intro again LOL).
+
+??? — Created and such
+
+*goto start
+
+*choice
+    #Skip the intro
+        *set inventory_lemens_13 + 12
+        *goto clackadoo_feather
+    #Read the Sword in the Stone intro
+        *set inventory_lemens_13 + 12
+        *goto intro_sword
+    #Read the squirrel intro
+        *set inventory_lemens_13 + 12
+        *goto intro_squirrel
+    #Read the intro 2.0
+        *goto intro_2
+    #Read the piece of shit intro
+        *goto intro_pos
+
+*label intro_sword
+
+There is an old fairy tale about a sword and a stone.
+
+The sword seeks to wreak havoc upon the land. Its goal is to kill, murder, destroy.
+
+The stone seeks to exist, this is its only purpose.
+
+This is not a story of yin and yang. The sword can exist with or without the stone, and vice versa. They are not opposites, nor are they flip sides of the same coin. They are simply different ideas. It took a genius to put them together.
+
+You see, the stone had great power within. If only one could harness that power… well, they would achieve greatness. What if one were to convince the stone that its existence was threatened by the destructive nature of the sword (which actually had no interest in destroying the stone itself). That is, if the sword destroyed all else, then would there really be a world for the stone to exist within?
+
+Such was the argument of Klonan the Wise, who successfully convinced the stone to protect humanity from the sword.
+
+This is not the story of the sword in the stone.
+
+You see, that is a different tale, for a different time. The stone did not choose to tame the sword. No! Rather, it let the sword destroy everything around the stone. Including Klonan. But the stone would not let the sword know that there was more to destroy. For inside the stone lay a small remnant of humanity that grew. Grew and grew. The stone would harbor this world in order to harbor its own existence. And outside, there was only abyss, all consumed by the sword.
+
+One day, the sword went to the stone and said, "Stone, I leave only you to exist. All else has been destroyed, and my mission fulfilled." Then the sword went dormant. But if it had looked closely, it would see a tiny hole in that rock. For, if there were no way out of the stone, wouldn't that world that the stone had created inside of it be a part of the stone itself?
+
+No, the stone needed some way, however theoretical, to consider it part of a world rather than being a world in and of itself. It needed a way out for the little creatures it harbored.
+
+So it created a long, winding labrynth, something that would first appear straight, but would grow ever more cavernous and hostile as one went further in (or, would it be better to say, further out?). It created a Tunnel. The stone trusted that all its mechanisms to prevent escape would work ad infinitum. So the stone also rested. And during the rest of the stone and the sword, a world flourished. A world that no one dared leave.
+
+At least, no one except a few reckless souls, that is.
+
+*goto clackadoo_feather
+
+*label intro_squirrel
+
+"Charles, I can't do this anymore," Says Fred, Charles' son.
+
+"Hmph!" Answers Charles, stiffening his tail. "You know I'm the true ruler of the Squirrels of the fifth layer."
+
+"But, Charles, the way you've been acting, I think this has all gone to your head. The squirrels here all the way in layer 2 respect you. Maybe it would be better to just settle down here?"
+
+"No, I won't give in. Edmington must be defeated."
+
+"You really think you can do that? Defeat him?"
+
+"I've had enough of these pessimistic talks. Out!"
+
+"But I live here, with you!"
+
+"Not anymore. No son of mine doubts me in this way. Out! And never come back."
+
+Fred was shocked. How could Charles do this? Had he gone mad? "I…" Fred started.
+
+"Guards!" Said Charles, "Remove this vermin from my presence."
+
+As one the guards dragged Fred away, kicking and screaming, one whispered, "There are still those who believe in you Fred. Go seek shelter in the fourth tree down from the river."
+
+Then, Fred was thrown down from the top of the cedar that was once his home.
+
+*goto clackadoo_feather
+
+*label intro_2
+
+Penis
 
 *page_break
 
-You are an orphan living in a town just outside the city. The orphanage has been kind to you, but doesn't always have the funds to feed, clothe, and shelter everyone appropriately. From time to time, you've seen children starve or freeze to death just outside when there wasn't a spare bed or food to support another. That is why you have taken it upon yourself to be the best tunnel pioneer there has ever been, and to bring back riches for the orphanage to grow and never need to turn another away again.
+*goto changelog
+
+*label intro_pos
+
+Your world is a small one, piece of shit who won't skip the intro. Ever since you were born, your parents resented having to wait for you to read every single intro. Also, ever since the elders of the town were born, they foresaw a piece of shit like you existing. and ever since [i]their[/i] elders were born, well, everyone hates you, you piece of shit. Everyone has been confined to this cave, and it's probably all because you won't skip the damn intros. You're like the person at the movies who actually reads the damn Star Wars intro text. It's a spacious cave, mysteriously lit, and stretching hundreds of miles in each direction without much other introduction to discuss, but you probably want more so I'll give it to you. It leaves plenty of space for people to stay away from pieces of shits like you, you piece of shit. Like, there's a bustling city on one side and a vast sea of farms on the other, but it still confines its inhabitants to be too close to you. Many have tried digging their way out to get away from you, but no tools seem strong enough to pierce through the stone walls of plot armor. The only hope to escape, is the tunnel, which people would rather die in than stay another second waiting for you to finish reading this text.
+
+The tunnel is a huge hole, like the one I'm gonna punch in your face, dozens of miles across, in the side of the cavern just outside the city. It is a sacred artifact of ancient times that you're probably going to defile with your shittiness, and many believe that, deep inside, it hides the secrets to their imprisonment. Many have tried to seek these answers, but if anyone has found them, none of those people returned to tell the tale. If only they'd checked the intro, where the answers are (next page). More often, the tunnel is a place to scavenge for ancient artifacts and other rarities that can only exist within its abyssal mouth. The deeper in you go, the rarer and more valuable the artifacts, but the higher the danger. No one has ever seen the other side of the tunnel. Some think it is infinite even. Like the amount of times you'll read the intro. But most hold hope that one day, escape will be found.
+
+*page_break
+
+You are an orphan living in a town just outside the city whose parents died. Did I mention your parents died. By the way, the way to get out of the Tunnel is to figure it out for yourself you piece of shit. You really think this intro would have the answers? You're so gullible. Piece of shit orphan whose piece of shit parents died, they probably didn't want you anyways, probably died after seeing your face. The orphanage has been kind to you, for whatever reason, but doesn't always have the funds to feed, clothe, and shelter everyone appropriately. From time to time, you've seen children starve or freeze to death just outside when there wasn't a spare bed or food to support another. Or, at least you would see that if you didn't spend each night laying in your bed reading the intro. That is why you have taken it upon yourself to be the best tunnel pioneer there has ever been. Oh wait, let me say that again since you seem to like reading the same thing over and over. That is why you have taken it upon yourself to be the best tunnel pioneer there has ever been. Oh, wait, you still want to read that? Here, let me make it more noticeable.
+
+*page_break
+
+.
+
+*page_break That
+
+.
+
+*page_break is
+
+.
+
+*page_break why
+
+.
+
+*page_break you
+
+.
+
+*page_break have
+
+.
+
+*page_break taken
+
+.
+
+*page_break it
+
+.
+
+*page_break upon
+
+.
+
+*page_break yourself
+
+.
+
+*page_break to
+
+.
+
+*page_break be
+
+.
+
+*page_break the
+
+*if (times_read_intro > 0)
+    *goto done_reading_intro_again
+
+.
+
+*page_break best
+
+.
+
+*page_break tunnel
+
+.
+
+*page_break pioneer
+
+.
+
+*page_break there
+
+.
+
+*page_break has
+
+.
+
+*page_break ever
+
+.
+
+*page_break been.
+
+And to bring back riches for the orphanage to grow and never need to turn another away again
 
 And today is your first venture into the tunnel.
 
+You piece of shit.
+
 *page_break
 
-George, your mentor, shows his pioneer pass to the guards at the primary tunnel entrance. It's a privilege to be able to scavenge from the first levels of the tunnel, since if everyone was allowed in at once, the precious resources that exist only within the tunnel would have no time to regrow. Of course, the artifacts have all been taken already, so today you and George are out to collect Bulbous Lemens, a luminous plant that inexplicably dies a few weeks after being removed from the tunnel no matter how well it is tended to by the farmers. While the outside of the cavern is lit 24/7 by a mysterious force, it is necessary to use other solutions like the Lemens for inside buildings.
+George, your mentor, shows his pioneer pass to the guards at the primary tunnel entrance. They smile at him as he passes, but then frown at you. "I'd rather drown a kitten and stick it up my butt than see you again." One of them states. Luckily, Kevin drowns a lot of kittens. He was kicked out of the orphanage a while back, but has inexplicably survived despite that. Probably lives off dead kitten meat. See, you wanted to know that detail, because you wanted to read the intro. Piece of shit. It's a privilege to be able to scavenge from the first levels of the tunnel, since if everyone was allowed in at once, they'd all be reading intros and being pieces of shit and the precious resources that exist only within the tunnel would have no time to regrow. Of course, the artifacts in the first layer have almost all been taken already, so today you and George are out to collect Bulbous Lemens, a luminous plant that inexplicably dies a few weeks after being removed from the tunnel no matter how well it is tended to by the farmers. So make sure to not dilly dally your time reading intros. (Also, it happens to stick around in your inventory forever… haha wonder if I should make it disappear after a while?).
 
-As you walk with George, you start to get a feel for the absolute magnitude of the tunnel. A couple hours later, and it still feels like you've barely inched into the lip of this massive hole in the cave. This is all you need to go, though, since this is where the secret field of Lemens that George told you he found many years ago is.
+*comment TODO: Make the lemens die in the inventory
+TODO: Make lemens die in the inventory, but only if Lauren reads the intro.
 
-"Crap, someone else found it!" George exclaims, gesturing toward some litter on the ground. "And they didn't even pick up after themselves." George always seemed to be perpetually annoyed. Of course, sooner or later, someone would have found this field. "Well, let's start gathering."
+While the outside of the cavern is lit 24/7 by a mysterious force called "pieces of shits who read the demo, jk why would they cause anything bright to happen", it is necessary to use other solutions like the Lemens for inside buildings (like maybe setting those pieces of shits on fire so they can be useful).
+
+As you walk with George, he keeps looking at you and frowning. "As your mentor, I shouldn't really say this, but you're a piece of a shit and a disappointment." You start to get a feel for the absolute magnitude of disappointment you've caused in George. He goes on, "I would hit you, but you'd probably like the attention, so instead I'm going to abandon you all alone in this huge tunnel." A couple hours later, you find him again, luckily. He sighs "I guess intros aren't endings, so I can't get rid of you just yet." It still feels like you've barely inched into the lip of this massive hole in the cave. This is all you need to go, though, since this is where the secret field of Lemens that George told you he found many years ago is.
+
+"Crap, someone else found it!" George exclaims, gesturing toward some litter on the ground. "And they didn't even pick up after themselves." The litter is smelly, like a piece of shit. George always seemed to be perpetually annoyed, especially around you. Of course, sooner or later, someone would have found this field. Especially since you were reading the intro where it happened. "Well, let's start gathering elsewhere."
 
 *choice
     #Gather Lemens [+${lemen_fetch_skill} Lemens, +7 Bonus Lemens from George's help]
-        *goto_scene orphanage first_return
+        *goto first_return
 
+*label first_return
 
+*set inventory_lemens_13 + 12
 
+You return to the orphanage with 12 fully harvested lemens, exhausted and yet excited for the weeks to come.
 
+*page_break
 
+The next few weeks consist of just exploration with George, him showing you around the tunnel's first layer. He takes back the lemens he gave you after you accidentally crap his dad's precious heirloom, the last thing he got from his father before he inexplicably disappeared. And you shat on it.
 
+[-12 Lemens]
+*set inventory_lemens_13 - 12
 
+By the way, you'd still have those lemens if you hadn't read the intro.
 
+Towards the end, he even shows you the start of the second layer, the first one where there is any hope of finding new relics and proving that you're not a piece of shit. However, you don't stay long enough to find any. At the end, he gives you an artifact. "Promise me you'll never get rid of this or shit on it like you did to my precious heirloom. I give it to all my mentees so that they remember me. Even though you're a disappointment, disgrace, piece of shit, and you shat on my precious heirloom and you're an orphan who probably deserves to die in a hole… wait what was I saying? Well here you go." It's a feather. "This has practical purpose, too, he goes on. It will fly away if you are about to be in grave danger. You know what, why am I giving this to you?" Then, he pockets it and walks away.
 
+*page_break
 
+You sit depressed on a rock a long time. Are you really as bad as everyone says you are? To calm you down, you decide to read the intro again.
 
+*set times_read_intro + 1
 
+*goto intro_pos
 
+*label done_reading_intro_again
 
+Okay, that's good enough. You're calmed down. When you look to your left, you see George. He smiles at you and says, "I know, I said I'd abandon you like your parents and the mouse you kept for a day until it got a full glimpse of your face and had a heart attack, but I have a soft side. I have to help you. I see your potential. So, I really am giving you this feather. It's very hard to catch and at that point you probably will want to just run, but one warning is better than none. It comes from a clackadoo bird that I was able to catch in the fourth layer. They are born with an instinct to always know when to flee danger, which makes them incredibly difficult to catch, but also bestows the feathers with that magical property I mentioned. Hold onto it as best as you can. I know I called you a lot of names back there, ones that truly apply to you. But I believe in you. You're my mentee, and I'll always trust that you'll rise up to be more than you are now."
 
+Deep down, you know everyone's just jealous of you, though. Cuz you're pretty damn amazing.
 
+I love you Lauren, thank you for putting up with all my bullshit and reading all the little things I wrote you. Here's your lemens back. Thanks for putting up with this whole thing, and for loving all the little things I do, however obnoxious.
 
+I love you
 
+[+12 Lemens]
+*set inventory_lemens_13 + 12
 
+Oh, right, and you get your clackadoo feather, too.
 
+Well, this is the end of the intro.
 
+You piece of shit.
 
+— Love, Kyle
 
+*choice
+    #Take the Clackadoo Feather [+1 Clackadoo feather]
+        *goto clackadoo_feather
 
+*label clackadoo_feather
 
+*gosub_scene logic month_passed
 
+*set diary ("I got a Clackadoo Feather from my mentor, George![n/][Rare Item Pickup][n/][n/]" & diary)
+[+1 Clackadoo Feather] [i](Rare)[/i]
+*set inventory_clackadoo_feather + 1
 
+You're off on your own now.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*goto_scene orphanage orphanage_home_base

@@ -1,8 +1,2220 @@
+*label month_passed
+
+*gosub update_curr_month_string
+
+*set diary ((("[b]Month " & months_passed) & ((" (" & curr_month_name) & ")")) & ("[/b][n/][n/]" & diary))
+
+*set months_passed + 1
+
+*gosub update_curr_month_string
+
+*gosub update_total_lemens
+
+*if (show_alerts)
+    ——————————————————————————————
+    
+    [b]Monthly Updates[/b]
+
+*if (show_alerts)
+    *if (months_passed = (starting_months_passed + 1))
+        Hint: Important monthly updates will go here.
+    *if (months_passed = (starting_months_passed + 2))
+        Hint: Each month, you'll get a new hint.
+    *if (months_passed = (starting_months_passed + 3))
+        Hint: I have a lot of hints, though maybe that's because a lot of them are useless junk like this one LOL.
+    *if (months_passed = (starting_months_passed + 4))
+        Hint: For now, you're in a bit of a tutorial stage, so I'll just include some inspiring information about the game: There are over 100,000,000 words in it! Not at the moment I wrote this, I mean, but I'm sure it'll happen eventually. Right?
+    *if (months_passed = (starting_months_passed + 5))
+        Hint: Wow it's work time!
+    *if (months_passed = (starting_months_passed + 6))
+        Hint: I'm just going to sit back and watch you sweat.
+    *if (months_passed = (starting_months_passed + 7))
+        Hint: Nice, it's over.
+    *if (months_passed = (starting_months_passed + 8))
+        Hint: Holy crap, you're on your own now, I better start giving you some better hints!
+    *if (months_passed = (starting_months_passed + 9))
+        Hint: In the beginning, general explanation, or, err, exploration is the best thing to do, generally speaking.
+    *if (months_passed = (starting_months_passed + 10))
+        Hint: If you can't explore anymore, figure out what you need to get to explore and get it!
+    *if (months_passed = (starting_months_passed + 11))
+        Hint: Adventuring to the Tunnel only costs 1 energy and 2 equipments. If you can't go there, you're missing one of those things!
+    *if (months_passed = (starting_months_passed + 12))
+        Hint: Make sure to check the stats screen to see what you're missing if you can't choose an option. It's better than just guessing!
+    *if (months_passed = (starting_months_passed + 13))
+        Hint: Don't worry about losing, by the way. This is a zen sorta game. There is no losing. (Though some decisions are irreversible).
+    *if (months_passed = (starting_months_passed + 14))
+        Hint: You get experience each month just for existing!
+    *if (months_passed = (starting_months_passed + 15))
+        Hint: The amount of experience you get each month is higher if you have higher energy levels.
+    *if (months_passed = (starting_months_passed + 16))
+        Hint: Resting regains more energy when you're tired (since there's more energy to regain), but it always loses the same percentage of your experience.
+    *if (months_passed = (starting_months_passed + 17))
+        Hint: Generally, I'd recommend waiting until your energy drops pretty low if you're trying to go for experience, since resting does lose a lot.
+    *if (months_passed = (starting_months_passed + 18))
+        Hint: If you want to spark those special encounters, I'd say keeping your energy at 6 or higher is probably a good idea.
+    *if (months_passed = (starting_months_passed + 19))
+        Hint: Checks to see if you have enough energy generally go in ranges of 5. Having 1-5 energy for example will get different results than 6-10 energy. However, having 6 energy or 10 energy doesn't usually change the text you'll see.
+    *if (months_passed = (starting_months_passed + 20))
+        Hint: Once you unlock focus, make sure to focus wherever you can. There's no downside to it.
+    *if (months_passed = (starting_months_passed + 21))
+        Hint: Focusing gives you focus points, which can be spent by going to the orphanage —> Home Base Actions —> Invest Skill Points —> Focus Point Skill Tree.
+    *if (months_passed = (starting_months_passed + 22))
+        Hint: I recommend increasing max energy as quickly as possible. That way, you can wait longer between Long Rests.
+    *if (months_passed = (starting_months_passed + 23))
+        Hint: Always try the focus option. Nothing bad will happen, but you may learn that you have to complete a "sidequest" to get those focus points.
+    *if (months_passed = (starting_months_passed + 24))
+        Hint: Those focus points are especially important for not having to rest as much, which means less experience loss, too!
+    *if (months_passed = (starting_months_passed + 25))
+        Hint: You get some seeds from your Lousy Farm Hand job, so make sure to plant them!
+    *if (months_passed = (starting_months_passed + 26))
+        Hint: Those lousy farm hand farm hand seeds give petunal blossoms and rosalia, but you didn't have to have me tell you that… just select "check what I planted" to see the possible results!
+    *if (months_passed = (starting_months_passed + 27))
+        Hint: Remember to visit the orphanage's study. The upgrades there are pretty important.
+    *if (months_passed = (starting_months_passed + 28))
+        Hint: Having a full-time job carries no obligations or downsides, except that you can only have one at once!
+    *if (months_passed = (starting_months_passed + 29))
+        Hint: Most of the time, things you find on your journeys will have a use later. You just need to discover the use somehow.
+
+*gosub add_to_randy_logs
+
+*comment Monthly counter resets
+*set town_general_store_num_times_bought_lemens_this_month 0
+*set orphanage_benedict_visits_this_month 0
+*if (achievement_lemen_lover_var_is_gathering_lemens)
+    *set achievement_lemen_lover_var_times_gathered_in_a_row + 1
+*if (not (achievement_lemen_lover_var_is_gathering_lemens))
+    *set achievement_lemen_lover_var_times_gathered_in_a_row 0
+
+*comment Tunnel key - The pattern to losing the key will still seem completely random to basically everyone even though it's just about whether you've had the key at least 4 months and whether the current month ends in a "3"
+*comment We can't make it random because that requires a pagebreak separation which would be a PAIN
+*if (((layer_1_dagger_flying_key_has) and ((months_passed modulo 10) = 3)) and ((layer_1_dagger_flying_key_caught_month + 4) <= months_passed))
+    The flying key from the tallgrass flew off and you couldn't grab it in time.
+    
+    [Lost Winged Key]
+    *set layer_1_dagger_flying_key_has false
+
+*comment Residential properties stuff
+*if (show_alerts)
+    *if (rent_paid_month_town_crusty_shack = (months_passed + 5))
+        You have 5 months until your lease is over for the crusty old shack in town.
+    
+    *if (rent_paid_month_town_decent_shack = (months_passed + 5))
+        You have 5 months until your lease is over for the slightly decent shack in town.
+
+*if ((rent_paid_month_town_crusty_shack < months_passed) and (not (rent_paid_month_town_crusty_shack = 0)))
+    *set rent_paid_month_town_crusty_shack 0
+    *comment Nothing much to do since the shack doesn't really have amenities
+    
+    *if (show_alerts)
+        Your lease is over at the crusty old shack in town.
+*if ((rent_paid_month_town_decent_shack < months_passed) and (not (rent_paid_month_town_decent_shack = 0)))
+    *set rent_paid_month_town_decent_shack 0
+    *set town_decent_shack_front_door_sign "Alicia's the only bitch in the building again!"
+    
+    *if (show_alerts)
+        Your lease is over at the decent shack in town.
+
+*comment Meat Skill up
+
+*if ((tracking_meat_level = 0) and (inventory_tracking_meat >= 1))
+    *set tracking_meat_level + 1
+    
+    You look at your first freshly caught meat, and then you it's gone.
+    
+    You ate it!
+    
+    Whenever you get enough meat to advance to the next meat level, you will instantly eat your meat (hey, it's tasty!). Then, you will gain a tracking skill point that you can invest as a home base action.
+    
+    [-1 Tracking Meat]
+    *line_break
+    [+1 Meat Skill Point]
+    *set inventory_tracking_meat - 1
+    *set tracking_meat_skill_points + 1
+*if ((tracking_meat_level > 0) and (inventory_tracking_meat >= 1))
+    *set tracking_meat_level + 1
+    
+    Gobble gobble. You had enough meat for the next meat level so you ate it!
+    
+    [-1 Tracking Meat]
+    *line_break
+    [+1 Meat Skill Point]
+    *set inventory_tracking_meat - 1
+    *set tracking_meat_skill_points + 1
+    
+    You can feel the new meat powers coursing through your veins and your ears ring with the screams of a thousand vegetarians. You are above them all. You are a meat-eater.
+    
+    "ROAR" You yell in English, sounding nothing like an animal but rather a measly human.
+    
+    Time to use this meat skill point as a home base action once you get home!
+
+*set logic_research_points_to_add research_speed
+*if (focus_upgrade_research_speed_1)
+    *set logic_research_points_to_add + energy
+*gosub update_library_research
+
+*if ((town_lemen_collective_doubloon_cost >= 1000) and (((months_passed modulo 13) = 9) or ((months_passed modulo 13) = 10)))
+    *goto month_passed_lemen_aging_eval_done
+
+*set inventory_lemens_1 inventory_lemens_2
+*set inventory_lemens_2 inventory_lemens_3
+*set inventory_lemens_3 inventory_lemens_4
+*set inventory_lemens_4 inventory_lemens_5
+*set inventory_lemens_5 inventory_lemens_6
+*set inventory_lemens_6 inventory_lemens_7
+*set inventory_lemens_7 inventory_lemens_8
+*set inventory_lemens_8 inventory_lemens_9
+*set inventory_lemens_9 inventory_lemens_10
+*set inventory_lemens_10 inventory_lemens_11
+*set inventory_lemens_11 inventory_lemens_12
+*set inventory_lemens_12 inventory_lemens_13
+*set inventory_lemens_13 0
+
+*gosub update_total_lemens
+
+*label month_passed_lemen_aging_eval_done
+
+*if (reputation < 10)
+    *set reputation 0
+*if (reputation >= 10)
+    *set reputation - 10
+    
+*if ((is_in_tunnel) and (inventory_xp_amulet >= 1))
+    [+${inventory_xp_amulet} Experience] (XP Amulet)
+    *set experience + inventory_xp_amulet
+
+*if (months_passed <= effect_end_potion_restless_1)
+    [+2 Energy] (Potion of Restlessness)
+    *set energy + 2
+    *if (energy >= max_energy)
+        *set energy max_energy
+
+*comment Good Habits Research
+*if ((researched_good_habits_1) and ((months_passed modulo 13) = 0))
+    [+4 Energy] (Good Habits I)
+    *set energy + 4
+    *if (energy >= max_energy)
+        *set energy max_energy
+*if ((researched_good_habits_1) and ((months_passed modulo 13) = 1))
+    [+2 Energy] (Good Habits I)
+    *set energy + 2
+    *if (energy >= max_energy)
+        *set energy max_energy
+        
+*comment Equipments Stocking Device
+*if ((artifact_has_equipments_stocking_device) and ((months_passed modulo 13) = 0))
+    [+10 Equipments] (Equipments Stocking Device artifact)
+    *set inventory_equipments + 10
+
+*comment Energy Upgrades
+*if ((focus_upgrade_monthly_doubloons_1) and (energy >= 11))
+    [+50 Doubloons] (Energy Upgrade)
+    *set doubloons + 50
+
+*if (unlocked_energy)
+    *if ((energy >= 1) and (energy <= 5))
+        [+1 Experience] (From Energy)
+        *set experience + 1
+    *if ((energy >= 6) and (energy <= 15))
+        [+2 Experience] (From Energy)
+        *set experience + 2
+    *if ((energy >= 16) and (energy <= 25))
+        [+3 Experience] (From Energy)
+        *set experience + 3
+    *if (energy >= 26)
+        [+5 Experience] (From Energy)
+        *set experience + 5
+
+*if ((inventory_kiwi > 0) and (not (knowledge_kiwi_level)))
+    *set knowledge_kiwi_level true
+    *if (show_alerts)
+        I sense that you now have gotten some kiwis! Here's some relevant readings that you may want to check out.
+    
+    [Encyclopedia Entry: Kiwi]
+    *line_break
+    [Encyclopedia Entry: Kiwi Level]
+
+*if ((experience >= 15) and (not (unlocked_home_base_actions)))
+    *set unlocked_home_base_actions true
+    
+    *if (show_alerts)
+        15 Experience: You can now rest as a home base action. Access home base actions by going to your home base (currently at the orphanage), then selecting "Home base actions". Another menu will pop up where you can rest. But be careful, you might forget some things while you're sleeping!
+*if ((experience >= 25) and (not (unlocked_objective_blue_pass)))
+    *set unlocked_objective_blue_pass true
+    *set unlocked_visit_rooms true
+    
+    *if (show_alerts)
+        25 Experience: You now will be assigned objectives. These are completely optional, but they do give small rewards and are meant to help guide you through the game. You can view main storyline and sidequest objectives on your stats page main screen. Your next main storyline objective is to acquire the Blue Pass.
+        
+        To do this, you'll need to talk to George, which means you need the ability to visit your friends in the orphanage. So, you can now visit others' rooms in the orphanage!
+        
+    [New Objective: Blue Pass]
+*if ((experience >= 30) and (not (unlocked_orphanage_garden)))
+    *set unlocked_orphanage_garden true
+    
+    *if (show_alerts)
+        30 Experience: You've unlocked the ability to use the orphanage's garden. 
+*if ((experience >= 35) and (not (unlocked_search_for_rosalia)))
+    *set unlocked_search_for_rosalia true
+    
+    *if (show_alerts)
+        35 Experience: You can now search for a rosalia patch in layer 1 if you haven't already found one.
+*if ((experience >= 40) and (not (unlocked_focus)))
+    *set unlocked_focus true
+    
+    *if (show_alerts)
+        40 Experience: You've unlocked the ability to focus. Try focusing whenever an area has the option. You can then use the focus points gotten in the Focus Point Skill Tree (get to it via the Home Base Actions) to do more with your energy!
+*if ((experience >= 50) and (not (unlocked_new_general_store_items)))
+    *set unlocked_new_general_store_items true
+    
+    *if (show_alerts)
+        50 Experience: The general store has new items.
+*if ((experience >= 60) and (not (unlocked_hint_garden)))
+    *set unlocked_hint_garden true
+    
+    *if (show_alerts)
+        60 Experience: You've unlocked direct access to the hint garden in the tunnel. Use it if you're ever lost.
+*if ((experience >= 70) and (not (unlocked_level_up)))
+    *set unlocked_level_up true
+    
+    *if (show_alerts)
+        70 Experience: If you haven't already, you now have enough experience to get a blue pass from George (though you'll need some other things, too). Select "Visit someone else's room" in the main orphanage menu to talk to George.
+*if ((experience >= 80) and (not (unlocked_market_square_booth)))
+    *set unlocked_market_square_booth true
+    
+    *if (show_alerts)
+        80 Experience: You've unlocked the Market Square booths in the market. They have wares that change monthly, but aren't open in the winter.
+*if ((experience >= 100) and (not (unlocked_town_outskirts)))
+    *set unlocked_town_outskirts true
+    
+    *if (show_alerts)
+        100 Experience: You can now visit the town outskirts.
+*if ((experience >= 120) and (not (unlocked_new_orphanage_book)))
+    *set unlocked_new_orphanage_book true
+    
+    *if (show_alerts)
+        120 Experience: A new book (Monsters I) has arrived at the orphanage.
+*if ((experience >= 150) and (not (unlocked_orphanage_basement)))
+    *set unlocked_orphanage_basement true
+    
+    *if (show_alerts)
+        150 Experience: You can now access the orphanage's basement.
+*if ((experience >= 170) and (not (unlocked_level_up_2)))
+    *set unlocked_level_up_2 true
+    
+    *if (show_alerts)
+        170 Experience: You may now haggle George to start the process for a Yellow Pass in order to advance to the third layer.
+        
+        *if (george_gone)
+            Oh, wait, George isn't here. Uh, awkward! Here, I'll unlock the ability he was supposed to give you.
+            
+            [Encyclopedia Entry: Trainings]
+            *set unlocked_trainings true
+    *if ((not (show_alerts)) and (george_gone))
+        [Encyclopedia Entry: Trainings]
+        *set unlocked_trainings true
+*if ((experience >= 200) and (not (unlocked_town_events)))
+    *set unlocked_town_events true
+    
+    *if (show_alerts)
+        200 Experience: You can now attend events in town. Go to the town events tab to attend an event, or view the calendar in the "Helpful Information" tab to see upcoming events.
+
+*comment Achievements / Objectives
+
+*gosub update_kiwi_level
+
+*comment Main Questline objective unlocks (blue pass objective unlock is above)
+
+*if ((knowledge_blue_coins) and (not (unlocked_objective_town_square)))
+    *if (show_alerts)
+        You now know about Blue Coins. Go to the Blue Coin Clothing Store in the market to unlock a new main town location — town square.
+    
+    [New Objective: Town Square]
+    *set unlocked_objective_town_square true
+
+*if ((unlocked_trainings) and (not (unlocked_objective_kinda_trained)))
+    *if (show_alerts)
+        You now know about trainings. Get three of them!
+    
+    [New Objective: Kinda Trained]
+    *set unlocked_objective_kinda_trained true
+
+*comment Main Questline objective completion
+
+*if ((pass_unlocked_blue) and (not (objective_blue_pass)))    
+    *if (show_alerts)
+        You unlocked a Blue Pass and completed an objective!
+        
+        *comment TODO: New reward now that napping is not a thing
+    
+    [Objective Completed: Blue Pass]
+    *line_break
+    [New Objective: Layer Two Novice]
+    *set objective_blue_pass true
+    *set unlocked_objective_layer_two_novice true
+
+*if ((has_street_attire) and (not (objective_town_square)))
+    *if (show_alerts)
+        You unlocked town square (access it from the main town menu). As a reward, here's some equipments.
+    
+    [Objective Completed: Town Square]
+    *line_break
+    [+14 Equipments]
+    *set objective_town_square true
+    *set inventory_equipments + 14
+
+*if ((objective_layer_2_visits >= 3) and (not (objective_layer_two_novice)))
+    *if (show_alerts)
+        You've visited layer two three times and completed an objective. Your reward is some building materials and special dirt.
+    
+    *comment TODO: Check later if there's a better reward to give
+    
+    [Objective Completed: Layer Two Novice]
+    *line_break
+    [+9 Building Materials]
+    *line_break
+    [+9 Special Dirt]
+    *set objective_layer_two_novice true
+    *set inventory_building_materials + 9
+    *set inventory_special_dirt + 9
+
+*if ((exploration_trainings >= 3) and (not (objective_kinda_trained)))
+    *if (show_alerts)
+        You've received 3 trainings and finished an objective. Your reward is 5 focus points.
+    
+    *comment TODO: Check later if there's a better reward to give
+    
+    [Objective Completed: Kinda Trained]
+    *line_break
+    [+5 Focus Points]
+    *set objective_kinda_trained true
+    *set focus_points + 10
+
+*comment Achievements
+
+*if ((inventory_rosalia >= 25) and (not (achievement_rolling_in_rosalia)))
+    *set diary ("I got the Rolling in Rosalia achievement![n/][n/]" & diary)
+
+    *set achievement_rolling_in_rosalia true
+    [Achievement: Rolling in Rosalia]
+    
+    *if (show_alerts)
+        [b]Rolling in Rosalia:[/b]
+        
+        Reward: Get invited to Wedding Events. (Must have at least 200 Experience to be allowed to attend events).
+
+*if ((kiwi_level = 1) and (not (achievement_kiwi_white_belt)))
+    *set diary ("I got to kiwi level 1. I'm now a kiwi white belt.[n/][n/]" & diary)
+
+    *set achievement_kiwi_white_belt true
+    [Achievement: Kiwi White Belt]
+    
+    *if (show_alerts)
+        [b]Kiwi White Belt:[/b] Achieve Kiwi Level 1.
+        
+        Reward: Receive one kiwi seed every time you harvest a plant.
+
+*if ((achievement_well_read_trigger) and (not (achievement_well_read)))
+    *set diary ("I am quite pontiferous. That means well-read, in case you didn't know.[n/][n/]" & diary)
+
+    *set achievement_well_read true
+    [Achievement: Well Read]
+    
+    *if (show_alerts)
+        Well Read: Return a finished book to the town square library.
+        
+        Reward: Get invited to town book club meetings. Book club meetings happen for 10 months every time the number of months passed ends in a 30 or a 70. For example, there are book club meetings on month 230, 270, 330, 370, etc. (Must have at least 200 Experience to be allowed to attend events).
+
+*if ((not (achievement_lemen_lover)) and (achievement_lemen_lover_var_times_gathered_in_a_row >= 3))
+    *set diary ("Every day I get up just to gather lemens. The morning is for gathering lemens. The afternoon is for gathering lemens. The evening is for gathering lemens. The nighttime is for gathering lemens. Dusk is for gathering lemens. Dawn is for gathering lemens. Sunset is for gathering lemens. Sunrise is for... [3425 more words][n/][n/]" & diary)
+
+    *set achievement_lemen_lover true
+    [Achievement: Lemen Lover]
+    
+    *if (show_alerts)
+        Lemen Lover: Harvest lemens three months in a row.
+        
+        Reward: Get invited to lemen-ball games. (Must have at least 200 Experience to be allowed to attend events).
+
+*comment Events (of the visitable variety)
+
+*if (show_alerts)
+    *if (unlocked_town_events)
+        [i]Events…[/i]
+        
+        *if (months_passed = 209)
+            Dulcius and Regintina's Wedding will commence in one year. (Requires achievement "Rolling in Rosalia" to visit).
+        *if (months_passed = 219)
+            Next year is the Petunal Blossom Festival.
+        *if (months_passed = 238)
+            In a year from now, there will be a solar eclipse.
+        *if (months_passed = 249)
+            The town's lemen-ball team has performed well enough to go against a much better rival town. The game commences next year. (Requires achievement "Lemen Lover" to visit, has 50 lemen entry fee).
+        *if (months_passed = 255)
+            The traveling trainer is passing by town a year from now to train those who don't train themselves. (Takes 16 energy).
+        *if (months_passed = 257)
+            The fortune teller will be in town in a year.
+        *if (months_passed = 263)
+            In a year, the town market is having an important anniversary event!
+        *if (months_passed = 288)
+            A year from now will be the social welfare disbursement.
+        *if (months_passed = 301)
+            The Explorer's Conference is happening next year.
+        *if (months_passed = 316)
+            Another solar eclipse is happening in exactly 13 months.
+
+*if (show_alerts)
+    ——————————————————————————————
+
+*comment Events (of the "this happened" category)
+*if (layer_1_dagger_flying_key_used_month > 0)
+    *if (months_passed = (layer_1_dagger_flying_key_used_month + 6))
+        *gosub event_rosalia_lockbox_1
+    *if (months_passed = (layer_1_dagger_flying_key_used_month + 11))
+        *gosub event_rosalia_lockbox_2
+    *if (months_passed = (layer_1_dagger_flying_key_used_month + 14))
+        *gosub event_rosalia_lockbox_3
+    *if ((months_passed >= (layer_1_dagger_flying_key_used_month + 15)) and (not (tom_event_rosalia_lockbox_4_correct_choice)))
+        *gosub event_rosalia_lockbox_4
+
+*return
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Home Base Actions
+*comment ////////////////////////////////////////////////////////////
+
+*label home_base_actions
+
+*comment I contemplated the text "back home" rather than "home", but that feels weird to me since this is just a menu inside your home, not a different place
+*choice
+    #Back
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (unlocked_focus)
+        #Invest Skill Points
+            *goto skill_spec
+    *if (max_energy <= energy)
+        *selectable_if (false) #Long rest — You can't choose this since you already have full energy!
+            *goto home_base_actions
+    *if (max_energy > energy)
+        #Long rest [+2 Months, Fully Regenerate Energy (${energy}—>${max_energy}), Lose ${experience_lost_resting_percentage}% of your Experience]
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+
+            *temp experience_to_lose experience
+            *set experience_to_lose * experience_lost_resting_percentage
+            *set experience_to_lose / 100
+            *set experience_to_lose round(experience_to_lose)
+
+            [-${experience_to_lose} Experience]
+            *line_break
+            [Energy Refreshed]
+            *set experience - experience_to_lose
+            *set energy max_energy
+
+            *goto_scene {home_base_scene} {home_base_label}
+    *if ((artifact_has_doubloon_doubler) and (artifact_uses_doubloon_doubler >= 1))
+        #Double my doubloons! [-1 Doubloon Doubler Charge, +${doubloons} Doubloons]
+            [-1 Doubloon Doubler Charge]
+            *line_break
+            [+${doubloons} Doubloons]
+            *set artifact_uses_doubloon_doubler - 1
+            *set doubloons * 2
+            
+            *goto_scene {home_base_scene} {home_base_label}
+
+*label skill_spec
+
+*choice
+    #Back
+        *goto home_base_actions
+    #Focus Point Skill Tree
+        *goto skill_spec_focus_tree
+    *if (tracking_meat_level >= 1)
+        #Tracking Meat Skill Tree
+            *goto meat_skill_point_choice
+
+*label skill_spec_focus_tree
+*page_break
+
+*choice
+    #Back
+        *goto skill_spec
+    #Home base main menu
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (not (focus_upgrade_max_energy_1))
+        *selectable_if (focus_points >= 2) #Increase Max Energy by 1 [-2 Focus Points]
+            *set focus_upgrade_max_energy_1 true
+            
+            [-2 Focus Points]
+            *line_break
+            [+1 Max Energy]
+            *set focus_points - 2
+            *set max_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_2)) and (focus_upgrade_max_energy_1))
+        *selectable_if (focus_points >= 2) #Increase Max Energy by 1 [-2 Focus Points]
+            *set focus_upgrade_max_energy_2 true
+            
+            [-2 Focus Points]
+            *line_break
+            [+1 Max Energy]
+            *set focus_points - 2
+            *set max_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_3)) and (focus_upgrade_max_energy_2))
+        *selectable_if (focus_points >= 3) #Increase Max Energy by 1 [-3 Focus Points]
+            *set focus_upgrade_max_energy_3 true
+            
+            [-3 Focus Points]
+            *line_break
+            [+1 Max Energy]
+            *set focus_points - 3
+            *set max_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_4)) and (focus_upgrade_max_energy_3))
+        *selectable_if (focus_points >= 3) #Increase Max Energy by 1 [-3 Focus Points]
+            *set focus_upgrade_max_energy_4 true
+            
+            [-3 Focus Points]
+            *line_break
+            [+1 Max Energy]
+            *set focus_points - 3
+            *set max_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_5)) and (focus_upgrade_max_energy_4))
+        *selectable_if (focus_points >= 4) #Increase Max Energy by 1 [-4 Focus Points]
+            *set focus_upgrade_max_energy_5 true
+            
+            [-4 Focus Points]
+            *line_break
+            [+1 Max Energy]
+            *set focus_points - 4
+            *set max_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_6)) and (focus_upgrade_max_energy_5))
+        *selectable_if (focus_points >= 5) #Increase Max Energy by 2 [-5 Focus Points]
+            *set focus_upgrade_max_energy_6 true
+            
+            [-5 Focus Points]
+            *line_break
+            [+2 Max Energy]
+            *set focus_points - 5
+            *set max_energy + 2
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_7)) and (focus_upgrade_max_energy_6))
+        *selectable_if (focus_points >= 5) #Increase Max Energy by 2 [-5 Focus Points]
+            *set focus_upgrade_max_energy_7 true
+            
+            [-5 Focus Points]
+            *line_break
+            [+2 Max Energy]
+            *set focus_points - 5
+            *set max_energy + 2
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_8)) and (focus_upgrade_max_energy_7))
+        *selectable_if (focus_points >= 5) #Increase Max Energy by 2 [-5 Focus Points]
+            *set focus_upgrade_max_energy_8 true
+            
+            [-5 Focus Points]
+            *line_break
+            [+2 Max Energy]
+            *set focus_points - 5
+            *set max_energy + 2
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_9)) and (focus_upgrade_max_energy_8))
+        *selectable_if (focus_points >= 6) #Increase Max Energy by 2 [-6 Focus Points]
+            *set focus_upgrade_max_energy_9 true
+            
+            [-6 Focus Points]
+            *line_break
+            [+2 Max Energy]
+            *set focus_points - 6
+            *set max_energy + 2
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_max_energy_10)) and (focus_upgrade_max_energy_9))
+        *selectable_if (focus_points >= 7) #Increase Max Energy by 3 [-7 Focus Points]
+            *set focus_upgrade_max_energy_10 true
+            
+            [-7 Focus Points]
+            *line_break
+            [+3 Max Energy]
+            *set focus_points - 7
+            *set max_energy + 3
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if (not (focus_upgrade_percentage_lost_resting_1))
+        *selectable_if (focus_points >= 5) #Decrease percentage of experience lost resting by 1% [-5 Focus Points]
+            *set focus_upgrade_percentage_lost_resting_1 true
+            
+            [-5 Focus Points]
+            *line_break
+            [-1% Experience Lost Resting]
+            *set focus_points - 5
+            *set experience_lost_resting_percentage - 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_percentage_lost_resting_2)) and (focus_upgrade_percentage_lost_resting_1))
+        *selectable_if (focus_points >= 10) #Decrease percentage of experience lost resting by 1% [-10 Focus Points]
+            *set focus_upgrade_percentage_lost_resting_2 true
+            
+            [-10 Focus Points]
+            *line_break
+            [-1% Experience Lost Resting]
+            *set focus_points - 10
+            *set experience_lost_resting_percentage - 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_percentage_lost_resting_3)) and (focus_upgrade_percentage_lost_resting_2))
+        *selectable_if (focus_points >= 20) #Decrease percentage of experience lost resting by 1% [-20 Focus Points]
+            *set focus_upgrade_percentage_lost_resting_3 true
+            
+            [-20 Focus Points]
+            *line_break
+            [-1% Experience Lost Resting]
+            *set focus_points - 20
+            *set experience_lost_resting_percentage - 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_percentage_lost_resting_4)) and (focus_upgrade_percentage_lost_resting_3))
+        *selectable_if (focus_points >= 30) #Decrease percentage of experience lost resting by 1% [-30 Focus Points]
+            *set focus_upgrade_percentage_lost_resting_4 true
+            
+            [-30 Focus Points]
+            *line_break
+            [-1% Experience Lost Resting]
+            *set focus_points - 30
+            *set experience_lost_resting_percentage - 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((not (focus_upgrade_monthly_doubloons_1)) and (max_energy >= 11))
+        *selectable_if (focus_points >= 4) #Get +50 Doubloons each month that you have at least 11 energy [-4 Focus Points]
+            *set focus_upgrade_monthly_doubloons_1 true
+            
+            [-4 Focus Points]
+            *set focus_points - 4
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((can_fight) and (not (focus_upgrade_fighting_power_per_energy_1)))
+        *selectable_if (focus_points >= 16) #Each energy gives an extra fighting power [-16 Focus Points]
+            *set focus_upgrade_fighting_power_per_energy_1 true
+            
+            [-16 Focus Points]
+            *line_break
+            [+1 Fight Power per Energy]
+            *set focus_points - 16
+            *set fight_power_per_energy + 1
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if (((can_fight) and (max_energy >= 16)) and (not (focus_upgrade_well_rested_fighting_power_1)))
+        *selectable_if (focus_points >= 5) #Having at least 16 energy gives +3 base fighting power [-5 Focus Points]
+            *set focus_upgrade_well_rested_fighting_power_1 true
+            
+            [-5 Focus Points]
+            *set focus_points - 5
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+    *if ((has_mabel_library_pass) and (not (focus_upgrade_research_speed_1)))
+        *selectable_if (focus_points >= 6) #Research speed each month is increased by energy (won't show up in stats, only applies to monthly research) [-6 Focus Points]
+            *set focus_upgrade_research_speed_1 true
+            
+            [-6 Focus Points]
+            *set focus_points - 6
+            
+            ——————————————————————————————
+            *goto skill_spec_focus_tree
+
+*label meat_skill_point_choice
+*page_break
+
+(Yes, it's a very long list).
+
+*choice
+    #Back
+        *goto skill_spec
+    #Home base main menu
+        *goto_scene {home_base_scene} {home_base_label}
+    *if ((knowledge_rosalia) and (not (tracking_upgrade_rosalia_fetch)))
+        *selectable_if (tracking_meat_skill_points >= 1) #Hunter gatherers with a capital H: Increase rosalia fetch skill by 2 [-1 Meat Skill Point]
+            *set tracking_upgrade_rosalia_fetch true
+            hunter gatHerers?
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+2 Rosalia Fetch Skill]
+            *set tracking_meat_skill_points - 1
+            *set rosalia_fetch_skill + 2
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if ((unlocked_squirrel_war) and (not (tracking_upgrade_extra_nut)))
+        *selectable_if (tracking_meat_skill_points >= 1) #Eating meat makes me want a nut: +1 Nut [-1 Meat Skill Point]
+            *set tracking_upgrade_extra_nut true
+            Ew
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+1 Nut]
+            *set tracking_meat_skill_points - 1
+            *set inventory_nuts + 1
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if ((knowledge_blue_coins) and (not (tracking_upgrade_blue_coin)))
+        *selectable_if (tracking_meat_skill_points >= 1) #You know what else looks like a pointy blue sphere?: +3 Blue Coins [-1 Meat Skill Point]
+            *set tracking_upgrade_blue_coin true
+            Uh, no I don't.
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+3 Blue Coins]
+            *set tracking_meat_skill_points - 1
+            *set inventory_blue_coins + 3
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if ((town_lemen_collective_level > 0) and (not (tracking_upgrade_immortal_lemen)))
+        *selectable_if (tracking_meat_skill_points >= 1) #Gimme some Lemens that are immortal, like my libido: +10 Immortal Lemens [-1 Meat Skill Point]
+            *set tracking_upgrade_immortal_lemen true
+            Wow, uh, congrats?
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+10 Immortal Lemens]
+            *set tracking_meat_skill_points - 1
+            *set inventory_lemens_immortal + 10
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if (not (tracking_upgrade_extra_orphanage_garden))
+        *selectable_if (tracking_meat_skill_points >= 1) #Gardelightful: Gain an extra garden patch at the orphanage [-1 Meat Skill Point]
+            *set tracking_upgrade_extra_orphanage_garden true
+            Yeeee
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [Extra Orphanage Garden Plot Unlocked]
+            *set tracking_meat_skill_points - 1
+            *comment The plot is unlocked by the above variable
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if (not (tracking_upgrade_special_dirt))
+        *selectable_if (tracking_meat_skill_points >= 1) #Eat my dirt! Or, err, give me your dirt: +15 Special Dirt [-1 Meat Skill Point]
+            *set tracking_upgrade_special_dirt true
+            I shower you with my magic dust.
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+15 Special Dirt]
+            *set tracking_meat_skill_points - 1
+            *set inventory_special_dirt + 15
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if (not (tracking_upgrade_petunal_blossoms))
+        *selectable_if (tracking_meat_skill_points >= 1) #Petunal Blossoms? More like petunal BOOBlossoms: +26 Petunal Blossoms [-1 Meat Skill Point]
+            *set tracking_upgrade_petunal_blossoms true
+            Boob
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [+26 Petunal Blossoms]
+            *set tracking_meat_skill_points - 1
+            *set inventory_petunal_blossoms + 26
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if ((not (tracking_upgrade_training_1)) and (unlocked_trainings))
+        *selectable_if (tracking_meat_skill_points >= 1) #Make laps clockwise: Training [-1 Meat Skill Point]
+            *set tracking_upgrade_training_1 true
+            Clockwise, like the electrons in your body.
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [Training]
+            *set tracking_meat_skill_points - 1
+            *set exploration_trainings + 1
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+    *if ((not (tracking_upgrade_training_2)) and (unlocked_trainings))
+        *selectable_if (tracking_meat_skill_points >= 1) #Make laps counterclockwise: Training [-1 Meat Skill Point]
+            *set tracking_upgrade_training_2 true
+            Counterclockwise, like the electrons in your body.
+            
+            [-1 Meat Skill Point]
+            *line_break
+            [Training]
+            *set tracking_meat_skill_points - 1
+            *set exploration_trainings + 1
+            
+            ——————————————————————————————
+            *goto meat_skill_point_choice
+
+*label update_library_research
+
+*set logic_book_to_update_research_on "book_checked_out_town_library_1"
+*set logic_book_to_update_research_on_time_left "book_checked_out_town_library_1_research_points_left"
+*gosub update_library_research_single_book
+
+*return
+
+*label update_library_research_single_book
+
+*temp book_researching {logic_book_to_update_research_on}
+*temp book_researching_time_left {logic_book_to_update_research_on_time_left}
+
+*if (not (book_researching = "none"))
+    *if ((not (book_researching_time_left = 0)) and (logic_research_points_to_add >= book_researching_time_left))
+        [Researched: ${book_researching}]
+        
+        *set logic_research_passed book_researching
+        *gosub do_research_effects
+        
+        *set {logic_book_to_update_research_on_time_left} 0
+        *set {book_researching} true
+    *if (logic_research_points_to_add < book_researching_time_left)
+        *set {logic_book_to_update_research_on_time_left} - logic_research_points_to_add
+
+*return
+
+*label do_research_effects
+
+*set layer_1_perpetual_progress_point_finish_non_orphanage_research true
+
+*if (logic_research_passed = "researched_botany_2")
+    [Encyclopedia Entry: Glowshrooms]
+    *line_break
+    [Encyclopedia Entry: Mother of Specters]
+    *set knowledge_glowshroom_flower true
+    *set knowledge_mother_of_specters true
+    
+*if (logic_research_passed = "researched_reading_1")
+    [+4 Focus Points to Town Square Library]
+    *set focus_points_town_square_library + 4
+
+*if (logic_research_passed = "researched_reading_2")
+    [+6 Focus Points to Town Square Library]
+    *set focus_points_town_square_library + 6
+
+*if (logic_research_passed = "researched_reading_3")
+    [+7 Focus Points to Town Square Library]
+    *set focus_points_town_square_library + 7
+
+*return
+
+*label update_curr_month_string
+
+*if (months_passed modulo 13) = 0
+    *set curr_month_name "January"
+*if (months_passed modulo 13) = 1
+    *set curr_month_name "February"
+*if (months_passed modulo 13) = 2
+    *set curr_month_name "March"
+*if (months_passed modulo 13) = 3
+    *set curr_month_name "April"
+*if (months_passed modulo 13) = 4
+    *set curr_month_name "May"
+*if (months_passed modulo 13) = 5
+    *set curr_month_name "June"
+*if (months_passed modulo 13) = 6
+    *set curr_month_name "July"
+*if (months_passed modulo 13) = 7
+    *set curr_month_name "August"
+*if (months_passed modulo 13) = 8
+    *set curr_month_name "September"
+*if (months_passed modulo 13) = 9
+    *set curr_month_name "October"
+*if (months_passed modulo 13) = 10
+    *set curr_month_name "Octember"
+*if (months_passed modulo 13) = 11
+    *set curr_month_name "November"
+*if (months_passed modulo 13) = 12
+    *set curr_month_name "December"
+
+*return
+
 *label has_weapon
 
-*if inventory_dagger > 0
-    *set temp_logic_boolean true
-*else
-    *set temp_logic_boolean false
+*set temp_logic_boolean false
 
+*if (inventory_dagger > 0)
+    *set temp_logic_boolean true
+*if (inventory_two_handed_sword > 0)
+    *set temp_logic_boolean true
+
+*return
+
+*label update_total_lemens
+
+*set total_lemens 0
+*set total_lemens + inventory_lemens_13
+*set total_lemens + inventory_lemens_12
+*set total_lemens + inventory_lemens_11
+*set total_lemens + inventory_lemens_10
+*set total_lemens + inventory_lemens_9
+*set total_lemens + inventory_lemens_8
+*set total_lemens + inventory_lemens_7
+*set total_lemens + inventory_lemens_6
+*set total_lemens + inventory_lemens_5
+*set total_lemens + inventory_lemens_4
+*set total_lemens + inventory_lemens_3
+*set total_lemens + inventory_lemens_2
+*set total_lemens + inventory_lemens_1
+
+*return
+
+*label remove_lemens
+
+*if (inventory_lemens_1 > logic_lemens_to_remove)
+    *set inventory_lemens_1 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_1
+*set inventory_lemens_1 0
+
+*if (inventory_lemens_2 > logic_lemens_to_remove)
+    *set inventory_lemens_2 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_2
+*set inventory_lemens_2 0
+
+*if (inventory_lemens_3 > logic_lemens_to_remove)
+    *set inventory_lemens_3 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_3
+*set inventory_lemens_3 0
+
+*if (inventory_lemens_4 > logic_lemens_to_remove)
+    *set inventory_lemens_4 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_4
+*set inventory_lemens_4 0
+
+*if (inventory_lemens_5 > logic_lemens_to_remove)
+    *set inventory_lemens_5 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_5
+*set inventory_lemens_5 0
+
+*if (inventory_lemens_6 > logic_lemens_to_remove)
+    *set inventory_lemens_6 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_6
+*set inventory_lemens_6 0
+
+*if (inventory_lemens_7 > logic_lemens_to_remove)
+    *set inventory_lemens_7 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_7
+*set inventory_lemens_7 0
+
+*if (inventory_lemens_8 > logic_lemens_to_remove)
+    *set inventory_lemens_8 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_8
+*set inventory_lemens_8 0
+
+*if (inventory_lemens_9 > logic_lemens_to_remove)
+    *set inventory_lemens_9 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_9
+*set inventory_lemens_9 0
+
+*if (inventory_lemens_10 > logic_lemens_to_remove)
+    *set inventory_lemens_10 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_10
+*set inventory_lemens_10 0
+
+*if (inventory_lemens_11 > logic_lemens_to_remove)
+    *set inventory_lemens_11 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_11
+*set inventory_lemens_11 0
+
+*if (inventory_lemens_12 > logic_lemens_to_remove)
+    *set inventory_lemens_12 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_12
+*set inventory_lemens_12 0
+
+*if (inventory_lemens_13 > logic_lemens_to_remove)
+    *set inventory_lemens_13 - logic_lemens_to_remove
+    *set logic_lemens_to_remove 0
+    *return
+*set logic_lemens_to_remove - inventory_lemens_13
+*set inventory_lemens_13 0
+
+*return
+
+*label transfer_lemen_inventory
+
+*temp lemens_to_transfer 32
+*temp inventory
+*temp inventory_name ""
+*temp curr_age_pointer 0
+
+*set logic_lemen_curr_age_pointer 1
+
+*label transfer_lemen_inventory_loop
+
+*if (logic_lemen_transfer_order = "freshest")
+    *set curr_age_pointer 14
+    *set curr_age_pointer - logic_lemen_curr_age_pointer
+*if (logic_lemen_transfer_order = "oldest")
+    *set curr_age_pointer logic_lemen_curr_age_pointer
+
+*set inventory_name ((logic_lemen_giving_inventory & "_") & curr_age_pointer)
+*set inventory {inventory_name}
+*if (inventory >= lemens_to_transfer)
+    *set {inventory_name} - lemens_to_transfer
+    *set inventory_name ((logic_lemen_receiving_inventory & "_") & curr_age_pointer)
+    *set {inventory_name} + lemens_to_transfer
+    *return
+*set {inventory_name} 0
+*set  inventory_name ((logic_lemen_receiving_inventory & "_") & curr_age_pointer)
+*set {inventory_name} + inventory
+*set lemens_to_transfer - inventory
+
+*set logic_lemen_curr_age_pointer + 1
+*if (logic_lemen_curr_age_pointer <= 13)
+    *goto transfer_lemen_inventory_loop
+
+*return
+
+*label squirrel_wrapper
+
+*temp curr_supporting {temp_affiliate}
+
+"Who should I assign my loyalties to?"
+*if (not (curr_supporting = "nothing"))
+    
+    "I'm currently in support of ${curr_supporting}."
+    
+— ${temp_affiliate}
+
+*choice
+    #Don't assign/reassign value of ${temp_affiliate}.
+        *goto squirrel_wrapper_return
+    *selectable_if (inventory_nuts >= logic_nuts_required) #Give ${logic_nuts_required} nuts for the loyalties of this squirrel [-${logic_nuts_required} Nuts, +${logic_squirrel_strength_offered} Squirrel Strength to a cause of your choice]
+        *set inventory_nuts - logic_nuts_required
+        *goto squirrel_wrapper_choose_affiliation
+
+*label squirrel_wrapper_choose_affiliation
+
+Whomst would you like to assign the value of ${temp_affiliate} to?
+
+(Use lower case).
+
+*input_text temp_new_affiliation
+
+*gosub_scene logic squirrel
+
+*if (temp_new_affiliation = "error")
+    Would you like to try entering in the squirrel faction again?
+    
+    *choice
+        #Yes
+            *goto squirrel_wrapper_choose_affiliation
+        #No [Get your ${logic_nuts_required} Nuts back]
+            *set inventory_nuts + logic_nuts_required
+            *goto squirrel_wrapper_return
+
+*label squirrel_wrapper_return
+
+*return
+
+*label squirrel
+
+*if (not ({temp_affiliate} = "nothing"))
+    *if (temp_new_affiliation = {temp_affiliate})
+        That's the same as before…
+
+        *set temp_new_affiliation "error"
+        *return
+
+*if (temp_new_affiliation = "charles")
+    *if (squirrel_charles_defeated)
+        Charles is dead.
+        *set temp_new_affiliation "error"
+        *return
+    
+    You assign the squirrels to the royal Charles.
+    *if (not ({temp_affiliate_strength_var} = "nothing"))
+        *set {{temp_affiliate_strength_var}} - logic_squirrel_strength_offered
+    *set {temp_affiliate} "charles"
+    *set {temp_affiliate_strength_var} "squirrel_strength_charles"
+    *set squirrel_strength_charles + logic_squirrel_strength_offered
+    *return
+*if (temp_new_affiliation = "george")
+    *set temp_new_affiliation "error"
+    
+    *if ((george_gone) and (not (george_frozen)))
+        You definitely wish you could give George the squirrels' help right now, but they refuse to help a human who's oblivious to their cause.
+        *return
+    *if (george_frozen)
+        We all want him back, honey, but that ain't gonna happen.
+        *return
+    Your mentor knows nothing of the Squirrel Wars, silly.
+    *return
+*if (temp_new_affiliation = "henry")
+    *if (not (squirrel_faction_unlocked_henry))
+        You can't assign to Henry because your character hasn't learned of his involvement in the squirrel wars yet.
+        *set temp_new_affiliation "error"
+        *return
+    *if (squirrel_faction_unlocked_henry)
+        You assign the squirrels to the righteous ruler Henry.
+        *if (not ({temp_affiliate_strength_var} = "nothing"))
+            *set {{temp_affiliate_strength_var}} - logic_squirrel_strength_offered
+        *set {temp_affiliate} "henry"
+        *set {temp_affiliate_strength_var} "squirrel_strength_henry"
+        *set squirrel_strength_henry + logic_squirrel_strength_offered
+        *return
+*if (temp_new_affiliation = "fred")
+    *if (temp_affiliate = "squirrel_affiliation_rory")
+        Rory informs you that he's not really into the whole "supporting Fred" idea. Like, sure he seems cool and all, but somethin' about him is offputting.
+        *set temp_new_affiliation "error"
+        *return
+        
+    You assign the squirrels to Charles' son, Fred.
+    *if (not ({temp_affiliate_strength_var} = "nothing"))
+        *set {{temp_affiliate_strength_var}} - logic_squirrel_strength_offered
+    *set {temp_affiliate} "fred"
+    *set {temp_affiliate_strength_var} "squirrel_strength_fred"
+    *set squirrel_strength_fred + logic_squirrel_strength_offered
+    *return
+*if (temp_new_affiliation = "edmington")
+    These squirrels refuse to support such a person, or, err, squirrel.
+    *set temp_new_affiliation "error"
+    *return
+
+*set temp_new_affiliation "error"
+That's not a valid squirrel faction. You can always try Charles.
+
+*return
+
+*comment MENU / NOT A SUBROUTINE
+*label manage_garden
+
+*temp contents {logic_garden_plot}
+*temp harvest_month {logic_garden_plot_timer}
+*temp randomness_var 0
+*rand randomness_var 1 1000000
+
+You arrive at your ${logic_garden_plot}.
+
+*choice
+    #Back
+        *goto_scene {logic_return_scene} {logic_return_label}
+    #Back home
+        *goto_scene {home_base_scene} {home_base_label}
+    *if (contents = "nothing")
+        #Plant a seed
+            *gosub garden_plant_seed
+            *goto manage_garden
+    *if (not (contents = "nothing")) and (months_passed >= harvest_month)
+        #Harvest
+            *gosub harvest_plants
+            *goto manage_garden
+    *if (not (contents = "nothing")) and (months_passed < harvest_month)
+        #Dig up seeds (get back the seeds but cancel all growth progress)
+            *gosub dig_up_seed
+            *goto manage_garden
+    *if (not (contents = "nothing"))
+        #Check what I'm growing
+            *gosub check_garden_plot
+            *goto manage_garden
+    *if (((not (contents = "nothing")) and (inventory_fertilizer > 0)) and (months_passed < harvest_month))
+        *selectable_if (task_gardening_experience >= 3) #Use Fertilizer [-1 Fertilizer, -3 Gardening Experience]
+            *gosub apply_fertilizer
+            *goto manage_garden
+
+*label check_garden_plot
+
+*temp time_to_harvest harvest_month
+*set time_to_harvest - months_passed
+
+The amount of time until you can harvest your plants is: ${time_to_harvest} months.
+
+*if (contents = "flower_seeds_1")
+    You planted basic af flower seeds, bruh. You can't remember that? Well, they can yield 1 rosalia or 2 petunal blossoms. They also give 1 Gardening Experience and 1 (regular) experience when harvested.
+*if (contents = "kiwi_seeds")
+    You planted 3 kiwi seeds, which always yields a kiwi. Dumbass. Okay, sorry for calling you that. Kiwi?
+    
+    It also gives a decent 5 Gardening Experience when harvested
+*if (contents = "petunal_seeds")
+    Petunal Seeds, bruh. Gives 11 Petunal Blossoms and 6 Gardening experience.
+*if (contents = "blue_coin_seed")
+    You planted a blue coin seed. Good luck waiting for it to grow lol.
+*if (contents = "doubloon_seeds")
+    You planted some mon-ay. Does not work with fertilizer, but gives 5000 Doubloons when done.
+
+——————————————————————————————
+*return
+
+*label update_kiwi_level
+
+*if (inventory_kiwi = 0)
+    *set kiwi_level 0
+    *return
+
+*if ((inventory_kiwi modulo 59049) = 0)
+    *set kiwi_level 10
+*if (((inventory_kiwi modulo 19683) = 0) and (not ((inventory_kiwi modulo 59049) = 0)))
+    *set kiwi_level 9
+*if (((inventory_kiwi modulo 6561) = 0) and (not ((inventory_kiwi modulo 19683) = 0)))
+    *set kiwi_level 8
+*if (((inventory_kiwi modulo 2187) = 0) and (not ((inventory_kiwi modulo 6561) = 0)))
+    *set kiwi_level 7
+*if (((inventory_kiwi modulo 729) = 0) and (not ((inventory_kiwi modulo 2187) = 0)))
+    *set kiwi_level 6
+*if (((inventory_kiwi modulo 243) = 0) and (not ((inventory_kiwi modulo 729) = 0)))
+    *set kiwi_level 5
+*if (((inventory_kiwi modulo 81) = 0) and (not ((inventory_kiwi modulo 243) = 0)))
+    *set kiwi_level 4
+*if (((inventory_kiwi modulo 27) = 0) and (not ((inventory_kiwi modulo 81) = 0)))
+    *set kiwi_level 3
+*if (((inventory_kiwi modulo 9) = 0) and (not ((inventory_kiwi modulo 27) = 0)))
+    *set kiwi_level 2
+*if (((inventory_kiwi modulo 3) = 0) and (not ((inventory_kiwi modulo 9) = 0)))
+    *set kiwi_level 1
+*if ((not ((inventory_kiwi modulo 3) = 0)))
+    *set kiwi_level 0
+    
+*return
+
+*label dig_up_seed
+
+You shout the magic words and the plant instantly un-grows back into a seed. "Another day, little one," you tell the unborn plant. Or, well, born but then shoved back into its mother's womb. Metaphorically speaking, that is.
+
+*if (contents = "flower_seeds_1")
+    [+1 Basic Flower Seed]
+    *set inventory_flower_seeds_1 + 1
+*if (contents = "kiwi_seeds")
+    [+3 Kiwi Seeds]
+    *set inventory_kiwi_seeds + 3
+*if (contents = "petunal_seeds")
+    [+1 Petunal Blossom Seed]
+    *set inventory_petunal_seeds + 1
+*if (contents = "blue_coin_seed")
+    [+1 Blue Coin Seed]
+    *set inventory_blue_coin_seed + 1
+*if (contents = "doubloon_seeds")
+    [+1 Doubloon Seed]
+    *set inventory_doubloon_seeds + 1
+
+*set {logic_garden_plot_timer} 0
+
+*return
+
+*comment IS A SUBROUTINE
+*label garden_plant_seed
+
+(If there are no options, that means you have no seeds).
+
+*choice
+    #Back
+        *return
+    *if (inventory_flower_seeds_1 > 0)
+        #Plant a basic flower seed [-1 Basic Flower Seed, Takes 2 months to grow, +1 Gardening Experience and +1 (Regular) Experience when Harvested, may give: 1 rosalia; or 2 petunal blossoms]
+            [-1 Basic Flower Seed]
+            *set inventory_flower_seeds_1 - 1
+            
+            *set {logic_garden_plot} "flower_seeds_1"
+            *set {logic_garden_plot_timer} months_passed
+            *set {logic_garden_plot_timer} + 2
+            
+            *set diary ("I planted some Basic af Flower Seeds.[n/][n/]" & diary)
+            
+            You plant some basic flower seeds.
+            
+            ——————————————————————————————
+            *return
+    *if (inventory_kiwi_seeds > 0)
+        *selectable_if (inventory_kiwi_seeds >= 3) #Plant the 3 kiwi seeds needed for a kiwi trifecta, which is the only way to grow kiwis [-3 Kiwi Seeds, Takes 5 months to grow, +5 Gardening Experience when Harvested, gives: 1 kiwi]
+            [3 Kiwi Seeds]
+            *set inventory_kiwi_seeds - 3
+            
+            *set {logic_garden_plot} "kiwi_seeds"
+            *set {logic_garden_plot_timer} months_passed
+            *set {logic_garden_plot_timer} + 5
+            
+            *set diary ("I planted a Kiwi seed trifecta.[n/][n/]" & diary)
+            
+            You plant some kiwi seeds.
+            
+            ——————————————————————————————
+            *return
+    *if (inventory_petunal_seeds > 0)
+        #Plant a Petunal Blossom Seed [-1 Petunal Blossom Seed, Takes 8 Months to grow, +6 Gardening Experience when harvested, gives +11 Petunal Blossoms]
+            [-1 Petunal Blossom Seed]
+            *set inventory_petunal_seeds - 1
+            
+            *set {logic_garden_plot} "petunal_seeds"
+            *set {logic_garden_plot_timer} months_passed
+            *set {logic_garden_plot_timer} + 8
+            
+            *set diary ("I planted a Petunal Blossom seed today.[n/][n/]" & diary)
+            
+            You plant a Petunal Blossom seed.
+            
+            ——————————————————————————————
+            *return
+    *if (inventory_blue_coin_seed > 0)
+        *selectable_if (task_experience_gardening >= 2) #Plant a Blue Coin Seed [-2 Gardening Experience, -1 Blue Coin Seed, Takes 10 months to grow, +0 Gardening Experience when Harvested, gives 1 Blue Coin]
+            [-2 Gardening Experience]
+            *line_break
+            [-1 Blue Coin Seed]
+            *set task_experience_gardening - 2
+            *set inventory_blue_coin_seed - 1
+            
+            *set {logic_garden_plot} "blue_coin_seed"
+            *set {logic_garden_plot_timer} months_passed
+            *set {logic_garden_plot_timer} + 10
+            
+            *set diary ("I planted a Blue Coin Seed today.[n/][n/]" & diary)
+            
+            You plant some blue coin seeds.
+            
+            ——————————————————————————————
+            *return
+    *if (inventory_doubloon_seeds > 0)
+        #Plant a Doubloon Seed [-1 Doubloon Seed, Takes 130 Months to grow, not affected by fertilizer, +0 Gardening Experience when Harvested, gives 5000 Doubloons, [b]Can not use fertilizer on the plant[/b]]
+            [-1 Doubloon Seed]
+            *set inventory_doubloon_seeds - 1
+            
+            *set {logic_garden_plot} "doubloon_seeds"
+            *set {logic_garden_plot_timer} months_passed
+            *set {logic_garden_plot_timer} + 130
+            
+            *set diary ("I planted a Doubloon Seed today.[n/][n/]" & diary)
+            
+            You plant a doubloon seed. Soon enough you'll be rich! Or, errr, long enough more like it.
+            
+            ——————————————————————————————
+            *return
+
+*label harvest_plants
+
+You harvest the plants coming from the ${contents} in your ${logic_garden_plot}.
+
+[+2 Experience] (Base Harvest Experience)
+*set experience + 2
+
+*if ((logic_garden_plot = "gardens_orphanage_plot_1") or ((logic_garden_plot = "gardens_orphanage_plot_2")))
+    *set gardens_orphanage_num_times_harvested + 1
+
+*set {logic_garden_plot} "nothing"
+
+*if (achievement_kiwi_white_belt)
+    Since you are a Kiwi White Belt (you have the achievement "Kiwi Level 1"), you get a kiwi seed from harvesting a plant.
+    
+    [+1 Kiwi Seed]
+    *set inventory_kiwi_seeds + 1
+
+*if (contents = "flower_seeds_1")
+    *set diary ("I havested some Basic Flower Seeds.[n/][n/]" & diary)
+    
+    *if ((randomness_var modulo 2) = 0)
+        *set layer_1_perpetual_progress_point_harvest_rosalia_from_garden true
+        
+        You got 1 rosalia!
+        
+        [+1 Rosalia]
+        *set inventory_rosalia + 1
+    *if ((randomness_var modulo 2) = 1)
+        You got 2 Petunal Blossoms!
+        
+        [+2 Petunal Blossoms]
+        *set inventory_petunal_blossoms + 2
+    
+    [+1 Gardening Experience]
+    *line_break
+    [+1 Experience]
+    *set task_experience_gardening + 1
+    *set experience + 1
+*if (contents = "kiwi_seeds")
+    *set diary ("I havested some Kiwi Seeds.[n/][n/]" & diary)
+    
+    [+1 Kiwi]
+    *set inventory_kiwi + 1
+    
+    [+5 Gardening Experience]
+    *set task_experience_gardening + 5
+*if (contents = "petunal_seeds")
+    *set diary ("I havested a few Petunal Blossoms.[n/][n/]" & diary)
+    
+    Cool, some petunal blossoms.
+    
+    [+11 Petunal Blossoms]
+    *set inventory_petunal_blossoms + 11
+    
+    [+6 Gardening Experience]
+    *set task_experience_gardening + 6
+*if (contents = "blue_coin_seed")
+    *set diary ("I havested a Blue Coin.[n/][n/]" & diary)
+    
+    Woot, a blue coin. That's it.
+    
+    *set inventory_blue_coins + 1
+    [+1 Blue Coin]
+*if (contents = "doubloon_seeds")
+    *set diary ("I havested just a few Doubloons. Guess money does grow on trees. Or, well, on plants.[n/][n/]" & diary)
+    
+    You harvest the Doubloon Plant for many Doubloons.
+    *if (logic_garden_plot = "gardens_petunia_plot_1")
+        Many, many Doubloons. Since you planted in your employee lot, these plants give a lot more Doubloons than normal!
+        
+        *set doubloons + 15000
+        [+15000 Doubloons]
+    *if (not (logic_garden_plot = "gardens_petunia_plot_1"))
+        *set doubloons + 5000
+        [+5000 Doubloons]
+
+——————————————————————————————
+*return
+
+*label fight
+
+*set diary (("FIGHT FIGHT FIGHT... I fought [n/][n/]" & logic_fight_encounter) & diary)
+
+*temp rounds_won 0
+
+*if (logic_fight_encounter = "flower_guardian")
+    *goto fight_flower_guardian
+*if (logic_fight_encounter = "the_boss")
+    *goto fight_the_boss
+*if (logic_fight_encounter = "scrolls")
+    *goto fight_scroll
+*if (logic_fight_encounter = "single_dingrit")
+    *goto fight_single_dingrit
+
+Apparently, you're trying to fight something that doesn't exist in my files yet.
+
+*set logic_fight_result "error"
+
+*return
+
+*label fight_flower_guardian
+
+You come across a flower guardian.
+
+*temp flower_guardian_fight_power 0
+*temp flower_guardian_max_fight_power 9
+*if (achievement_rolling_in_rosalia)
+    Due to your flower prowess (having Rolling in Rosalia), you are able to decrease the flower guardian's max fight power.
+    
+    *set flower_guardian_max_fight_power 8
+    
+*rand flower_guardian_fight_power 0 flower_guardian_max_fight_power
+*gosub choose_fight_power
+
+*if (flower_guardian_fight_power < logic_fight_power)
+    You win this round. You're rewarded with three petunal blossoms. The enemy becomes weaker.
+    *set rounds_won + 1
+    
+    [+3 Petunal Blossoms]
+    *set inventory_petunal_blossoms + 3
+    *set flower_guardian_max_fight_power - 2
+*if (flower_guardian_fight_power >= logic_fight_power)
+    You lose this round.
+
+*rand flower_guardian_fight_power 0 flower_guardian_max_fight_power
+*gosub choose_fight_power
+
+*if (flower_guardian_fight_power < logic_fight_power)
+    You win this round. You're rewarded with three petunal blossoms. The enemy becomes weaker.
+    *set rounds_won + 1
+    
+    [+3 Petunal Blossoms]
+    *set inventory_petunal_blossoms + 3
+    *set flower_guardian_max_fight_power - 2
+    
+    *if (rounds_won >= 2)
+        You won two rounds! The enemy is defeated.
+        
+        *set logic_fight_result "player_won"
+        *return
+*if (flower_guardian_fight_power >= logic_fight_power)
+    You lose this round.
+    
+    *if (rounds_won = 0)
+        You lost two rounds. The enemy defeats you.
+        
+        *set logic_fight_result "enemy_won"
+        *return
+
+*rand flower_guardian_fight_power 0 flower_guardian_max_fight_power
+*gosub choose_fight_power
+
+*if (flower_guardian_fight_power < logic_fight_power)
+    You win this round. You're rewarded with three petunal blossoms. The enemy becomes weaker.
+    *set rounds_won + 1
+    
+    [+3 Petunal Blossoms]
+    *set inventory_petunal_blossoms + 3
+    *set flower_guardian_max_fight_power - 2
+    
+    *if (rounds_won >= 2)
+        You won two rounds! The enemy is defeated.
+        
+        *set logic_fight_result "player_won"
+        *return
+*if (flower_guardian_fight_power >= logic_fight_power)
+    You lose this round.
+    
+    *if (rounds_won <= 1)
+        You lost two rounds. The enemy defeats you.
+        
+        *set logic_fight_result "enemy_won"
+        *return
+
+*label fight_scroll
+
+Three scrolls confront you. "You read one of us, causing it to die. Prepare to meet the same fate yourself!"
+
+*temp scroll_1_fight_power 4
+*temp scroll_2_fight_power 4
+*temp scroll_3_fight_power 1
+*temp total_fight_power 0
+
+*if (researched_reading_3)
+    You automatically take down one scroll from your reading abilities. In fact, yet another scroll is taken down by the sheer volapticity of your keen reading eyes (and yes, that's a word, you would know). The final scroll retreats. Wow, that was easy.
+    
+    *set logic_fight_result "player_won"
+    *page_break
+    *return
+*if (researched_reading_2)
+    You automatically take down one scroll from your reading abilities.
+    
+    *set rounds_won + 1
+    
+    *page_break
+    *goto fight_scroll_round_2
+
+*set scroll_1_fight_power 2
+*set scroll_2_fight_power 3
+*set scroll_3_fight_power 2
+
+*gosub choose_fight_power
+
+*set total_fight_power 0
+*set total_fight_power + scroll_1_fight_power
+*set total_fight_power + scroll_2_fight_power
+*set total_fight_power + scroll_3_fight_power
+
+*if (total_fight_power >= logic_fight_power)
+    The scrolls overwhelm you this round!
+*if (total_fight_power < logic_fight_power)
+    You win this round.
+    *set rounds_won + 1
+    
+*page_break
+
+*label fight_scroll_round_2
+
+*set scroll_1_fight_power 5
+*set scroll_2_fight_power 3
+*set scroll_3_fight_power 1
+
+*gosub choose_fight_power
+
+*set total_fight_power 0
+*set total_fight_power + scroll_1_fight_power
+*set total_fight_power + scroll_2_fight_power
+*set total_fight_power + scroll_3_fight_power
+
+*if (total_fight_power >= logic_fight_power)
+    The scrolls overwhelm you this round!
+    
+    *if (rounds_won = 0)
+        That's it for you, sad.
+        
+        *set logic_fight_result "player_lost"
+        *page_break
+        *return
+*if (total_fight_power < logic_fight_power)
+    You win this round.
+    *set rounds_won + 1
+    
+    You found some secret text. It doesn't do anything, but good job for finding it!
+    
+    *if (rounds_won = 2)
+        You win the fight!
+        
+        *set logic_fight_result "player_won"
+        *page_break
+        *return
+
+Tiebreaker round…
+
+*if (total_fight_power >= logic_fight_power)
+    You lost
+    
+    *set logic_fight_result "player_lost"
+    *page_break
+    *return
+*if (total_fight_power < logic_fight_power)
+    You win!
+    
+    *set logic_fight_result "player_won"
+    *page_break
+    *return
+
+*label fight_the_boss
+
+*temp num_minions 2
+
+The boss is surrounded by 2 cookie minions. He spits out a new one every time you lose a round. The minions must be taken out first, but as you get rid of minions, he gets angrier and saucier. The Boss's attack power is not random, but does depend on the number of minions and another variable I've been tracking.
+
+*if (tracking_meat_level > 0)
+    Hehe, [i]tracking[/i], get it? Since your tracking meat level is greater than zero, The Boss's fight power is reduced by one per meat level you have (but not to less than one). Hey, it's easy to fight meat as a meat-eater!
+
+*label fight_the_boss_single_round
+
+There are ${num_minions} minions left.
+*if (num_minions = 0)
+    Just one final blow to take it out!
+*if (num_minions >= 5)
+    Uh… There are a lot of minions, you should probably run.
+    
+*choice
+    #Keep fighting!
+        *goto fight_the_boss_single_round_keep_fighting
+    #Retreat
+        *set logic_fight_result "the_boss_won"
+        *return
+
+*label fight_the_boss_single_round_keep_fighting
+
+*temp the_boss_fight_power 0
+*if (num_minions = 0)
+    *set the_boss_fight_power 12
+*if (num_minions = 1)
+    *set the_boss_fight_power 9
+*if (num_minions = 2)
+    *set the_boss_fight_power 7
+*if (num_minions = 3)
+    *set the_boss_fight_power 6
+*if (num_minions = 4)
+    *set the_boss_fight_power 5
+*if (num_minions >= 5)
+    *set the_boss_fight_power 4
+
+*if (tracking_meat_level >= the_boss_fight_power)
+    *set the_boss_fight_power 1
+*if (tracking_meat_level < the_boss_fight_power)
+    *set the_boss_fight_power - tracking_meat_level
+
+*gosub choose_fight_power
+
+*if (logic_fight_power = 0)
+    The fight goes on and on, with The Boss eventually spawning infinitely many minions in a closed time loop. You can't do anything about it, since you have no health to wager and thus your fight power is always zero. But hey, at least the world was full of cookies for a split minute until the time loop ended and you appeared back at home!
+    
+    *set logic_fight_result "the_boss_won"
+    *return
+
+*if (the_boss_fight_power = logic_fight_power)
+    You are equally tied in fight power with The Boss. No new minions spawn, but you get no farther in killing that damn sandwich.
+    
+    *goto fight_the_boss_single_round
+*if (the_boss_fight_power > logic_fight_power)
+    You're too weak. Not only do no minions die, but a new one spawns!
+    *set num_minions + 1
+    
+    *goto fight_the_boss_single_round
+*if (the_boss_fight_power < logic_fight_power)
+    *if (num_minions = 0)
+        You deal the finishing blow to The Boss itself! The sandwich explodes into a heap of marinara and meats.
+        
+        *set logic_fight_result "the_boss_lost"
+        *return
+    
+    *set num_minions - 1
+    You successfully take out another of The Boss's minions!
+    
+    *goto fight_the_boss_single_round
+
+*label fight_single_dingrit
+
+*temp dingrit_fight_power 0
+*set dingrit_fight_power 5
+
+*gosub choose_fight_power
+
+*if ((dingrit_fight_power + 5) < logic_fight_power)
+    *goto fight_single_dingrit_annihilated
+
+*if (dingrit_fight_power >= logic_fight_power)
+    The dingrit wins round one. Time to regroup.
+*if (dingrit_fight_power < logic_fight_power)
+    You knock the dingrit clean. But there's still a second round. (And possibly a third).
+    *set rounds_won + 1
+
+*gosub choose_fight_power
+
+*if ((dingrit_fight_power + 5) < logic_fight_power)
+    *goto fight_single_dingrit_annihilated
+
+*if (dingrit_fight_power >= logic_fight_power)
+    The dingrit wins round two.
+
+    *if (rounds_won = 0)
+        That's two out of three for the dingrit. Fight's over.
+        *set logic_fight_result "dingrit_won"
+
+        *return
+*if (dingrit_fight_power < logic_fight_power)
+    You knock the dingrit clean.
+    *set rounds_won + 1
+
+    *if (rounds_won = 2)
+        That's the second round you've won. The dingrit runs away as fast as it can.
+
+        *set logic_fight_result "player_won"
+        
+        [+6 Experience]
+        *set experience + 6
+
+        *return
+
+*gosub choose_fight_power
+
+It's the final battle… Who wins?
+
+*page_break
+
+*if ((dingrit_fight_power + 5) < logic_fight_power)
+    *goto fight_single_dingrit_annihilated
+
+*if (dingrit_fight_power >= logic_fight_power)
+    *set logic_fight_result "dingrit_won"
+
+    You lose.
+
+    *return
+*if (dingrit_fight_power < logic_fight_power)
+    *set logic_fight_result "player_won"
+
+    You win!
+    
+    [+6 Experience]
+    *set experience + 6
+
+    *return
+
+*label fight_single_dingrit_annihilated
+
+Wow, uh, you hit the dingrit a bit hard there. It falls over, twitches, and dies.
+
+You win!
+
+[+1 Dingrit Claw]
+*line_break
+[+6 Experience]
+*set inventory_dingrit_claw + 1
+*set experience + 6
+
+*set logic_fight_result "dingrit_annihilated"
+
+*return
+
+*label choose_fight_power
+
+*set logic_fight_power 0
+
+*if (health = 0)
+    Uh oh, you don't have any health to wager! Your fight power this round is zero.
+    *return
+
+*choice
+    #Pass this round (wager no energy or health, but automatically lose the round)
+        *return
+    #Fight this round (you will be forced to wager at least 1 health)
+        *goto choose_fight_power_fight
+
+*label choose_fight_power_fight
+
+*if ((focus_upgrade_well_rested_fighting_power_1) and (energy >= 16))
+    You get +3 fight power from having at least 16 energy.
+    
+    [+3 Fight Power]
+    *set logic_fight_power + 3
+
+*if ((inventory_ghost_dagger > 0) and (inventory_dagger > 0))
+    *temp extra_daggers 0
+    
+    How many daggers would you like to sacrifice for extra damage? You can sacrifice up to one dagger per ghost dagger you have. You have ${inventory_ghost_dagger} ghost daggers, and ${inventory_dagger} daggers.
+    
+    *temp max_extra_daggers inventory_ghost_dagger
+    *if (inventory_dagger > inventory_ghost_dagger)
+        *set max_extra_daggers inventory_dagger
+    
+    *input_text extra_daggers 0 max_extra_daggers
+    
+    *temp extra_fight_power_from_extra_daggers extra_daggers
+    *set extra_fight_power_from_extra_daggers * 2
+    [-${extra_daggers} Daggers]
+    *line_break
+    [+${extra_fight_power_from_extra_daggers} Fight Power]
+    *set inventory_dagger - extra_daggers
+    *set logic_fight_power + extra_fight_power_from_extra_daggers
+
+*if (researched_fighting_2)
+    *set logic_fight_power + 1
+*if (streets_sketchy_fighting_taught)
+    *set logic_fight_power + 1
+*if (months_passed <= effect_end_potion_strength_1)
+    *set logic_fight_power + 1
+
+*if ((inventory_dagger > 0) and (not (inventory_two_handed_sword > 0)))
+    *set logic_fight_power + 2
+*if (inventory_two_handed_sword > 0)
+    *set logic_fight_power + 5
+
+Your fight power from weapons alone is: ${logic_fight_power}
+
+Input the amount of fight power you'd like to contribute in the form of health. Right now, your health is ${health}/${max_health}. You must wager at least one health. Each wagered health currently contributes ${fight_power_per_health} fight power.
+
+*temp fight_power_from_health
+*input_number fight_power_from_health 1 health
+
+*set health - fight_power_from_health
+*set logic_fight_power + fight_power_from_health
+
+You wagered ${fight_power_from_health} health. You now have ${health}/${max_health} health, and ${logic_fight_power} fight power.
+
+Input the amount of fight power you'd like to contribute in the form of energy. You have ${energy}/${max_energy}. Each energy contributes ${fight_power_per_energy} fight power.
+
+*temp fight_power_from_energy
+*input_number fight_power_from_energy 0 energy
+
+*set energy - fight_power_from_energy
+*set logic_fight_power + fight_power_from_energy
+
+You wagered ${fight_power_from_energy} energy. You now have ${energy}/${max_energy} energy and ${logic_fight_power} fight power.
+
+*return
+
+*label home_base_updates
+
+*comment Events
+*if ((not (layer_1_cave_sword_effect)) and (layer_1_cave_sword_seen))
+    *gosub event_orphanage_sword_ducat_event
+*if ((not (george_departure_date = 0)) and ((not (george_departure_event_4_occurred)) and (months_passed >= (george_departure_event_3_time + 5))))
+    *gosub event_george_departure_event_4
+
+*return
+
+*label add_to_randy_logs
+
+*if (months_passed = 157)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Just cheated a Joe Schmoe at my game. [Joe Schmoe - 420 Doubloons]")
+*if (months_passed = 159)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Just cheated a Jerry Schmerry. [Jerry Schmerry - 520 Doubloons]")
+*if (months_passed = 162)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Just cheated a Larry McNarry. He went all the way with the game and held me at gunpoint when I revealed the trick. Luckily, Buster was there and scared him away. Still gotta pay that bastard back. [Larry McNarry - 1220 Doubloons]")
+*if (months_passed = 168)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]No visitors in quite a while. Makes me worried since Buster just got sick and I don't have the funds to feed him.")
+*if (months_passed = 170)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I took Buster to the gym today and left him there. I know the good gym-goers there will appreciate him and take care of him.")
+*if (months_passed = 171)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]And just like that I have more visitors! Maybe they were just scared of Buster. Was also able to cheat them out of a lot of money since they were pretty drunk [Cuckold - 4210] [Barnes - 220] [ThisGuyIsGonnaRobHimTwoMonthsFromNow Smith - 4400] [Jake - 543]")
+*if (months_passed = 172)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Just got my dividends from the stocks I invested in, it's great! I knew I was a good investor. Just needed to cheat some money to get myself off the ground.")
+*if (months_passed = 173)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]As I was heading to the bank to cash in all my money, I was robbed by Cuckold! I want to go to the police, but I think Jerry from a year ago just got enlisted and he did *not* look happy with me when he left.")
+*if (months_passed = 173)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I miss Buster. He would have saved me from the robbery.")
+*if (months_passed = 184)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I went to the gym to see Buster today. Really cheered me up! Maybe I can still pay back my debts and return to the city.")
+*if (months_passed = 186)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]This guy with a long white beard was bragging to me about being a great pickpocket and then he turned around and had a blue coin loose in his back pocket. What a sham! Needless to say I took it. [Wizard bruh - 1 Blue Coin]")
+*if (months_passed = 187)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I checked my cash drawer yesterday and it was empty! The sham wizard guy robbed me! Scratch that, I'm keeping this worthless Blue Coin.")
+*if (months_passed = 203)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]It gets kind of lonely in here. But I know if I venture too much around town, those people from The Streets might find me. Ugh, I hate how this log is basically just a diary now.")
+*if (months_passed = 203)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Cheated someone with a new game. [McMarty - 31]")
+*if (months_passed = 208)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]So few people are coming by now, I don't have enough funds to invest. I'm not even really able to feed myself. Oh yeah, some people did come by today. [Stacy - 43 Doubloons] [Ben - 2 Doubloons] [ebay's Website - 4 Doubloons]")
+*if (months_passed = 213)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]I just took out a loan at the bank under a false name. I'm supposed to be paying people back, not stealing money from them. I'm not a bad person. Am I?")
+*if (months_passed = 228)
+    *set town_outskirts_randy_money_cheated_log (town_outskirts_randy_money_cheated_log & "[n/][n/]Just wanted to put down that I stopped keeping this useless log, only after a few years. It doesn't sound that long, but when you're 55 every year counts. I thought I could make up for my mistakes. Then, go out in a blaze. A spark of brilliance. I just want people to see me for who I am, a bright man with explosive potent... hey, what's that sound outside?")
+
+*return
+
+*label apply_fertilizer
+
+*if (contents = "doubloon_seeds")
+    Doubloon Seeds cannot be the target of a fertilizer action.
+    
+    *return
+
+[-3 Gardening Experience]
+*line_break
+[-1 Fertilizer]
+*set task_experience_gardening - 3
+*set inventory_fertilizer - 1
+
+Success! The timer on your plants for this plot is reduced to zero.
+
+[Plants Ready for Harvest]
+*set {logic_garden_plot_timer} 0
+
+——————————————————————————————
+*return
+
+*label confirm_job_resignation
+
+Are you sure? You will lose all items in special employee areas and may have to go through some steps if you wish to return.
+
+*choice
+    #Nevermind
+        *set logic_confirm false
+        *return
+    #Yes
+        *set logic_confirm true
+        *return
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Events
+*comment ////////////////////////////////////////////////////////////
+
+*label event_rosalia_lockbox_1
+*page_break
+
+"Hello?" Squeaks a deep, scratchy man's voice from deep in your head. You pause, thinking it might be a trick of your brain. After a couple seconds of waiting and looking around, that seems to be confirmed. No one's around.
+
+Weird.
+
+*page_break
+*return
+
+*label event_rosalia_lockbox_2
+*page_break
+
+"Did someone open it?" Says the voice, less scratchy this time. It's sounds like a voice that was too high-pitched to be cast as a movie trailer narrator, but otherwise would have gotten the job.
+
+"Who is it?" You ask, looking around, but no one's there. You think through possible causes to the voice.
+
+"Ah, so someone must have. Who are you?"
+
+You can't find the source of the voice. In fact, it feels like it's coming from your head rather than an external source. Like you're the one thinking the words. However, your thinking voice sounds more like your talking voice, which, well, isn't a man's voice. "Who are [i]you[/i]?" You ask back out loud.
+
+However, there's no answer. Nada. Nothing. Moot. Absence of answer. Complete denial of speech delivery. The thoughts stay stagnant. Okay, you get the point.
+
+Must be a hallucination.
+
+*page_break
+*return
+
+*label event_rosalia_lockbox_3
+*page_break
+
+"Ah, I've gathered it's Lauren then?" Says that same movie-trailer-esque voice.
+
+Okay, no more ignoring this. You think about telling someone about what's going on or trying to get this voice thing cured at some sort of crazy person hospital.
+
+"Oh, no need for that. I'm harmless."
+
+Now your thoughts get out of control, whooshing from "I'm doomed" to "who do I tell about this new curse" to "how did this happen" and so on.
+
+"No, no, I'm in your head. I'm only allowed to speak up when you allow me."
+
+You furrow your eyebrows. So you just have to think "not allowed" and the voice will go away? Let's see…
+
+"You humans are so bad at this." The sudden snappiness of the voice makes you jump. "I know you'll just want to use this to silence me, but the way you allow me to speak is by thinking about me or the box."
+
+Oh, so you just don't have to think about the voice and it'll go away. Sometimes avoidance [i]is[/i] the solution!
+
+"No that's not what I mea…" The voice isn't able to finish its thought before you finish thinking about it.
+
+*page_break
+*return
+
+*label event_rosalia_lockbox_4
+*page_break
+
+You can't help but think about that dangerous baritone voice from last month. Oh no, now it's awake.
+
+"I'm harmless, I'm literally a voice in your head!" It pipes up upon being reawakened. Ugh.
+
+*choice
+    #Ask it out loud why it's here and what it wants
+        "Hello?" It shouts out. But no matter what you say out loud it doesn't seem to hear you. Not worth.
+        
+        *page_break
+        *return
+    #Focus on the word "hi"
+        *goto event_rosalia_lockbox_4_think
+    #Ignore it for another month
+        It's easy to push out of your thoughts and avoid the annoyance… for now.
+        
+        *page_break
+        *return
+    #Keep thinking about it, but remain silent
+        You stand there silently. You can hear in your head the voice shouting "Hello, are you there?" over and over, but eventually it goes away as you wander to thinking about other things.
+        
+        *page_break
+        *return
+
+*label event_rosalia_lockbox_4_think
+
+"Finally, you know how to communicate with me! Or, at least, I thought that last time and then was promptly disproven. But you know this time, right?"
+
+*choice
+    #Nod
+        "Hello?" Says the voice over and over, slowly getting softer and softer no matter how vigorously you nod.
+        
+        *page_break
+        *return
+    #Think about how you just learned to communicate with the voice
+        *goto event_rosalia_lockbox_4_think_questions
+    #Speak the word "yes" in the voice's language
+        The voice doesn't answer, no matter how many times you say the word, or which accents you try. It's not even like it has a separate language either soooo… yeah.
+        
+        *page_break
+        *return
+
+*label event_rosalia_lockbox_4_think_questions
+
+*set tom_event_rosalia_lockbox_4_correct_choice true
+
+"Great! Just think the thought and you got me."
+
+*choice
+    #What's my reward for this whole thing?
+        *goto event_rosalia_lockbox_4_reward
+
+*label event_rosalia_lockbox_4_reward
+
+Well, in the future there's gonna be a whole thing with a dream world and this is gonna be one of the ways to unlock it. It'll be so cool. For now, though, here's some doubloons to hold you over.
+
+[+6000 Doubloons]
+*set doubloons + 6000
+
+*page_break
+*return
+
+*comment (Happens no matter the home base, but only when you return home)
+*label event_orphanage_sword_ducat_event
+
+*set diary ("Uhhh... where'd all these ducats come from?[n/][n/]" & diary)
+
+*comment TODO: What if the character somehow already knows about ducats?
+
+You drop off your stuff to find your pockets heavier… all your doubloons have been converted into ducats. Ancient stuff. You don't even know how it all got in your pockets, much less where your doubloons went. Or where you suddenly knew all this stuff about ducats? You're pretty sure they didn't talk about those in the orphanage.
+
+[-${doubloons} Doubloons]
+*line_break
+[+${doubloons} Ducats]
+*set layer_1_cave_sword_effect true
+*set knowledge_ducats true
+*set inventory_ducats doubloons
+*set doubloons 0
+
+*page_break
+*return
+
+*label event_george_departure_event_4
+
+*set george_departure_event_4_occurred true
+
+*set diary ("George is back![n/][n/]" & diary)
+
+*set george_frozen true
+
+George is back. A Rose Pass holder is with him at your door.
+
+*page_break
+
+Gray hair.
+
+Wrinkled skin.
+
+Dead, purple eyes.
+
+These are the symptoms of the Medusa's stare. Or so says the Rose Pass holder who brought George back.
+
+"How do you cure it?" You ask. The Rose Pass holder laughs at first, then seeing your face, frowns and coughs.
+
+"I'm sorry." You expect more words after this but none follow.
+
+*page_break
+
+You expected more moments with George, but none follow.
+
+*page_break
+
+*set diary ("Oh... George...[n/][n/]" & diary)
+
+The Rose Pass holder (Rose Pass is the highest pass offered, a high distinction held by few individuals) asks, "Are you Lauren?" You look up and nod. "He had a letter with him that was addressed to you. Also, his stuff, uh, most of it is made out to the orphanage. I could have snagged a fair bit of value from it myself, but I'm not that type of person."
+
+He goes on, "I know it can be easy to blame me as the bearer of bad news, Lauren, but I've been coping with this poor man's death for five months. I've carried him on my back through some of the toughest places, marshes, swamps. I saw other travelers who begged to be saved, but I instead chose to carry this dead orphan back to where he belong…"
+
+"He's not dead." You insist.
+
+The Rose Pass holder hesitates. "No one knows a cure to the Medusa's stare." He says. "It's one of the deadliest creatures past the fifth layer." You look down, embarrassed. "Well, he left most of his things to the orphanage, but he did leave you some stuff. Here, I'll give it to you and be on my way."
+
+[+2000 Doubloons]
+*line_break
+[+50 Blue Coins]
+*line_break
+[+5 Starblossoms]
+*line_break
+[+2 Clackadoo Feathers] [i](Rare)[/i]
+*line_break
+[+81 Kiwis]
+*line_break
+[Sketch of your face from memory]
+*set doubloons + 2000
+*set inventory_blue_coins + 50
+*set inventory_starblossom + 5
+*set inventory_clackadoo_feather + 2
+*set inventory_kiwi + 81
+*set inventory_george_drawing true
+
+*comment TODO: George funeral scene
+*comment TODO: Main character also finds a third note confirming that George's father is STILL alive (and has found a way to extend his lifetime deep in the Tunnel)
+    
+*page_break
 *return

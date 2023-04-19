@@ -3,19 +3,58 @@
 
 *scene_list
     startup
+    introduction
+    logic
+    orphanage
+    town
+    tunnel
+    lore
+    scraps
+    notes
+    todo
     
 *comment ////////////////////////////////////////////////////////////
 *comment // Some constants
 *comment ////////////////////////////////////////////////////////////
 
 *create layer_1_equipments_needed 2
+*create layer_2_equipments_needed 4
+*create layer_3_equipments_needed 9
+*create job_pay_begging 23
 *create job_pay_farm_hand 152
+*create job_pay_farm_hand_advanced 304
+*create job_pay_ers_servant 126
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Logic variables
 *comment ////////////////////////////////////////////////////////////
 
 *create temp_logic_boolean false
+*create temp_new_affiliation ""
+*create temp_affiliate ""
+*create temp_affiliate_strength_var ""
+*create logic_nuts_required 0
+*create logic_squirrel_strength_offered 0
+*create logic_garden_plot ""
+*create logic_garden_plot_timer ""
+*create total_lemens 0
+*create logic_lemens_to_remove 0
+*create logic_lemen_transfer_order "freshest"
+*create logic_lemen_receiving_inventory ""
+*create logic_lemen_giving_inventory ""
+*create logic_lemen_curr_age_pointer 0
+*create tracking_question 0
+*create tracking_answer_wrong false
+*create logic_fight_power 0
+*create logic_fight_encounter "none"
+*create logic_fight_result ""
+*create logic_book_to_update_research_on ""
+*create logic_book_to_update_research_on_time_left ""
+*create logic_research_points_to_add 0
+*create logic_research_passed ""
+*create logic_return_scene ""
+*create logic_return_label ""
+*create logic_confirm false
     
 *comment ////////////////////////////////////////////////////////////
 *comment // More important variables
@@ -24,35 +63,308 @@
 *create home_base_scene "orphanage"
 *create home_base_label "orphanage_home_base"
 
-*create doubloons 0
+*create doubloons 120
+*create reputation 0
 *create experience 0
+*create energy 10
+*create focus_points 0
+*create max_energy 10
 *create starting_months_passed 156
 *comment Later months_passed will be set to the same value as starting_months_passed, so the 0 doesn't matter too much now.
 *create months_passed 0
+*create curr_month_name ""
+*create ghost_mode "normal"
+*create skip_mode "normal"
+*create kiwi_level 0
+*create hide_stats true
+*create decision_point ""
+
+*create health 100
+*create max_health 100
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Alerts/Displays
+*comment ////////////////////////////////////////////////////////////
+
+*create show_simple_stats true
+*create show_alerts true
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Effects
+*comment ////////////////////////////////////////////////////////////
+
+*create effect_end_potion_strength_1 0
+*create effect_end_potion_experience_1 0
+*create effect_end_potion_restless_1 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Upkeep
+*comment ////////////////////////////////////////////////////////////
+
+*create rent_paid_month_town_crusty_shack 0
+*create rent_paid_month_town_decent_shack 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Keys
+*comment ////////////////////////////////////////////////////////////
+
+*create key_owned_town_gym false
+*create key_owned_ghost_key false
+*create key_owned_gas_station false
+*create key_owned_town_outskirts_temple false
+*create key_owned_town_outskirts_cold_topic false
+*create key_owned_town_outskirts_community_garden false
+*create key_owned_town_outskirts_tea_shop false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Inventory Containers
+*comment ////////////////////////////////////////////////////////////
+
+*create container_owned_tea_box_outskirts false
+*create container_contents_tea_box_outskirts "none"
+*create container_capacity_tea_box_outskirts 100
+*create container_occupancy_tea_box_outskirts 0
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Inventory Amounts
 *comment ////////////////////////////////////////////////////////////
-    
+
+*comment TODO: Add inventory display for blue coins
+*create inventory_blue_coins 0
 *create inventory_clackadoo_feather 0
 *create inventory_dagger 0
 *create inventory_equipments 0
-*create inventory_lemens 0
+*create inventory_flower_seeds_1 0
+*comment TODO: Add to inventory
+*create inventory_goblin_meat 0
+*create inventory_kiwi 0
+*create inventory_lemens_13 0
+*create inventory_lemens_12 0
+*create inventory_lemens_11 0
+*create inventory_lemens_10 0
+*create inventory_lemens_9 0
+*create inventory_lemens_8 0
+*create inventory_lemens_7 0
+*create inventory_lemens_6 0
+*create inventory_lemens_5 0
+*create inventory_lemens_4 0
+*create inventory_lemens_3 0
+*create inventory_lemens_2 0
+*create inventory_lemens_1 0
+*create inventory_lemens_immortal 0
+*comment You can only have 0 or 1 map kits, so just make it a boolean
+*create inventory_map_kit false
 *create inventory_petunal_blossoms 0
 *create inventory_rosalia 0
+*create inventory_special_dirt 0
 *create inventory_starblossom 0
 *create inventory_torch 0
+*create inventory_ectoplasm 0
+*create inventory_building_materials 0
+*create inventory_kiwi_seeds 0
+*create inventory_nuts 0
+*create inventory_ducats 0
+*create inventory_shtg2 false
+*create inventory_shovel false
+*create inventory_tracking_meat 0
+*create inventory_petunal_seeds 0
+*create inventory_blue_coin_seed 0
+*create inventory_fertilizer 0
+*create inventory_george_drawing false
+*create inventory_andellise false
+*create inventory_doubloon_seeds 0
+*create inventory_glowshroom_flower 0
+*create inventory_two_handed_sword 0
+*create inventory_purple_coin 0
+*create inventory_pokeball 0
+*create inventory_ghost_dagger 0
+*create inventory_mother_of_specters 0
+*create inventory_acorns 0
+*create inventory_blue_coin_pickaxe_uses 0
+*create inventory_duke_nut false
+*create inventory_xp_amulet 0
+*create inventory_burnt_match_box 0
+*create inventory_orphan_socks 3
+*create inventory_dingrit_claw 0
+
+*comment Materials 1
+*create inventory_cool_pointy_blue_rock 0
+*create inventory_sharp_gray_and_white_rock 0
+*create inventory_indistinct_smooth_pebble_rock 0
+*comment Materials 2
+*create inventory_igneous_dirty_granite_rock 0
+*create inventory_purple_shiny_translucent_rock 0
+*comment Materials 3
+*create inventory_calcite_creations_rock 0
+*comment Conglomerate breaks into several different random rocks and one gem nugget
+*create inventory_conglomerate_rock 0
+*create inventory_cubical_normal_rock 0
+*comment Materials 4
+*create inventory_chalky_green_rock 0
+*create inventory_porplum_crystally_thing_rock 0
+*comment Materials 5
+*create inventory_deep_black_soul_rock 0
+*create inventory_deep_cats_eye_rock 0
+
+*comment Materials 1
+*create inventory_rock_product_gravel 0
+*create inventory_rock_product_dirt 0
+*create inventory_rock_product_gravelly_dirt 0
+*create inventory_rock_product_chalk 0
+*create inventory_rock_product_stony_shard 0
+*create inventory_rock_product_gray_powder 0
+*create inventory_rock_product_white_power 0
+*comment Materials 2
+*create inventory_rock_product_milk 0
+*create inventory_rock_product_repair_pack 0
+*create inventory_rock_product_glaze 0
+*create inventory_rock_product_magma 0
+*create inventory_rock_product_blue_powder 0
+*create inventory_rock_product_purple_powder 0
+*comment Materials 3
+*create inventory_rock_product_porple 0
+*create inventory_rock_product_polygon 0
+*create inventory_rock_product_green 0
+*comment Materials 4
+*create inventory_rock_product_talcum 0
+*create inventory_rock_product_transluminescense 0
+*comment Materials 5
+*create inventory_rock_product_soul 0
+*create inventory_rock_product_cat 0
+*create inventory_rock_product_eye 0
+*comment Materials 6
+*create inventory_rock_product_indistinguishable_mix 0
+*create inventory_rock_product_deeaptha 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Rocks Collected
+*comment ////////////////////////////////////////////////////////////
+
+*comment Materials 1
+*comment All over the place
+*create total_collected_cool_pointy_blue_rock 0
+*comment Found in large quantities but only rarely
+*create total_collected_sharp_gray_and_white_rock 0
+*comment Here and there
+*create total_collected_indistinct_smooth_pebble_rock 0
+*comment Materials 2
+*create total_collected_igneous_dirty_granite_rock 0
+*create total_collected_purple_shiny_translucent_rock 0
+*comment Materials 3
+*create total_collected_calcite_creations_rock 0
+*create total_collected_conglomerate_rock 0
+*create total_collected_cubical_normal_rock 0
+*comment Materials 4
+*create total_collected_chalky_green_rock 0
+*create total_collected_porplum_crystally_thing_rock 0
+*comment Materials 5
+*create total_collected_deep_black_soul_rock 0
+*create total_collected_deep_cats_eye_rock 0
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Places unlocked
 *comment ////////////////////////////////////////////////////////////
 
-*create unlocked_town_market false
-*create unlocked_town_study false
+*create unlocked_home_base_actions false
+*create unlocked_experience false
+*create unlocked_doubloons false
+*create unlocked_energy false
+*create unlocked_focus false
+*create unlocked_market_square_booth false
 *create unlocked_job_farm_hand false
-*comment This isn't really a place to unlock, but it's something that comes about as you progress through the game, so I guess it counts.
 *create unlocked_support_self false
+*create unlocked_hint_garden false
 *create unlocked_level_up false
+*create unlocked_orphanage_garden false
+*create unlocked_new_general_store_items false
+*create unlocked_market_garden_store false
+*create unlocked_town_outskirts false
+*create unlocked_new_orphanage_book false
+*create unlocked_orphanage_basement false
+*create unlocked_town_events false
+*create unlocked_level_up_2 false
+*create unlocked_tea_storage false
+*create unlocked_visit_rooms false
+*create unlocked_search_for_rosalia false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // General Event Vars
+*comment ////////////////////////////////////////////////////////////
+
+*create general_event_occurred_two_hundred_moon_day false
+*create general_event_occurred_george_gave_glowshroom false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Specific Event Vars
+*comment ////////////////////////////////////////////////////////////
+
+*create specific_event_general_store_position_offered false
+*create specific_event_orphanage_three_research_shop false
+*create specific_event_orphanage_mabel_no_research false
+*create specific_event_orphanage_mabel_no_research_month 211
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Event Visit Vars
+*comment ////////////////////////////////////////////////////////////
+
+*create event_wedding_visited_dulcius_wedding_1 false
+*create event_explorer_conference_visited_1 false
+*create event_festival_town_petunal_1 false
+*create event_town_book_club_last_visited 0
+*create event_solar_eclipse_visited_1 false
+*create event_solar_eclipse_visited_2 false
+*create event_lemen_ball_game_visited_1 false
+*create event_traveling_trainer_visited_1 false
+*create event_fortune_teller_visited_1 false
+*create event_town_market_birthday_1 false
+*create event_social_welfare_disbursement_1 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Place focus points
+*comment ////////////////////////////////////////////////////////////
+
+*create focus_points_orphanage_hallways 3
+*create focus_points_orphanage_study 4
+*create focus_points_orphanage_garden 2
+*create focus_points_town_outskirts_gym 2
+*create focus_points_town_general_store 2
+*create focus_points_town_market_square 2
+*create focus_points_town_square_park 1
+*create focus_points_town_square_library 0
+*create focus_points_town_the_streets 1
+*create focus_points_town_market_armory 3
+*create focus_points_town_explorers_conference 3
+*create focus_points_orphanage_basement 3
+*create focus_points_town_crusty_shack 2
+*create focus_points_town_community_garden_chair 3
+*create focus_points_town_blue_coin_clothing_store 7
+*create focus_points_town_lemen_collective 1
+*create focus_points_town_petunia_shop 4
+*create focus_points_town_outskirts_gas_station 1
+*create focus_points_town_decent_shack 3
+*create focus_points_town_market_equipment_store 4
+*create focus_points_town_market_trainer 5
+*create focus_points_town_market_gatherer 3
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Advancements unlocked
+*comment ////////////////////////////////////////////////////////////
+
+*create unlocked_trainings false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Passes
+*comment ////////////////////////////////////////////////////////////
+
+*create pass_unlocked_green false
+
+*create pass_unlocked_blue false
+*create pass_unlocked_blue_properly false
+*create pass_lost_blue_from_cave false
+
+*create pass_unlocked_yellow false
+*create pass_test_passed_yellow false
+*create pass_yellow_commons_artifact ""
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Fetch Skills
@@ -60,46 +372,798 @@
 
 *create lemen_fetch_skill 5
 *create rosalia_fetch_skill 2
+*create skill_fetch_mother_of_specters 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Focus
+*comment ////////////////////////////////////////////////////////////
+
+*create experience_lost_resting_percentage 10
+
+*comment Upgrages
+*create focus_upgrade_max_energy_1 false
+*create focus_upgrade_max_energy_2 false
+*create focus_upgrade_max_energy_3 false
+*create focus_upgrade_max_energy_4 false
+*create focus_upgrade_max_energy_5 false
+*create focus_upgrade_max_energy_6 false
+*create focus_upgrade_max_energy_7 false
+*create focus_upgrade_max_energy_8 false
+*create focus_upgrade_max_energy_9 false
+*create focus_upgrade_max_energy_10 false
+*create focus_upgrade_percentage_lost_resting_1 false
+*create focus_upgrade_percentage_lost_resting_2 false
+*create focus_upgrade_percentage_lost_resting_3 false
+*create focus_upgrade_percentage_lost_resting_4 false
+*create focus_upgrade_monthly_doubloons_1 false
+*create focus_upgrade_fighting_power_per_energy_1 false
+*create focus_upgrade_well_rested_fighting_power_1 false
+*create focus_upgrade_research_speed_1 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Trainings
+*comment ////////////////////////////////////////////////////////////
+
+*create exploration_trainings 0
+
+*create training_done_with_patricia false
+*create layer_2_kiwi_trainer_num_trainings 0
+*comment George training accounted for in another var
+*create yummy_doubloon_num_trainings 0
+*comment Tracking meat training also in another var
+*create farm_supervisor_sam_training false
+*create training_done_layer_1_extra_encounter false
+*comment Traveling trainer training in another var
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Fighting
+*comment ////////////////////////////////////////////////////////////
+
+*create can_fight false
+
+*create stamina 4
+*create max_stamina 4
+
+*comment Attacks
+*create attack_damage_poke 3
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Physical Skills
+*comment ////////////////////////////////////////////////////////////
+
+*create nimblicity_skill 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Job Offers
+*comment ////////////////////////////////////////////////////////////
+
+*create job_offered_advanced_farm_hand false
+*create job_offered_farm_hand_supervisor false
+*create job_offered_once_farm_hand_supervisor false
+*create job_offered_farmer false
+*create job_offered_town_weed_farmer false
+*create job_offered_petunia_assistant false
+*create job_offered_ers_servant false
+*create job_passed_ers_servant false
+*comment TODO: A section on when tests are next offered
+*create job_test_next_offered_ers_servant 0
+*create job_offered_tea_shop false
+*create job_offered_general_store_grunt false
+
+*create num_full_time_jobs 0
+*create max_num_full_time_jobs 1
+
+*create has_job_advanced_farm_hand false
+*create has_job_farm_hand_supervisor false
+*create has_job_petunia_assistant false
+*create has_job_tea_shop false
+*create has_job_general_store_grunt false
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Job Experience
 *comment ////////////////////////////////////////////////////////////
 
 *create job_experience_farm_hand 0
+*create job_experience_secretary 0
+*create job_experience_sales 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Misc. Job Vars
+*comment ////////////////////////////////////////////////////////////
+
+*comment TODO: Update these in job hirings/resignations
+
+*create town_farm_hand_total_times_worked 0
+*create town_farm_hand_advanced_times_worked 0
+*create town_farm_hand_supervisor_times_worked_without_quitting 0
+*create petunia_assistant_times_worked 0
+*create town_weed_farmer_orphanage_denied false
+*create job_town_tea_rosalia_required 5
+*create job_town_general_store_num_times_worked 0
+*create job_general_store_clackadoo_stolen_choice_presented false
+*create general_store_stole_clackadoo_feather false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Personal Task Experience
+*comment ////////////////////////////////////////////////////////////
+
+*create task_experience_gardening 0
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Knowledge Booleans
 *comment ////////////////////////////////////////////////////////////
 
+*create knowledge_lemens false
+*create knowledge_clackadoo_feather false
 *create knowledge_petunal_blossoms false
 *create knowledge_rosalia false
 *create knowledge_starblossom false
+*create knowledge_glowshroom_flower false
+*comment Acorns make squirrel clans personally loyal to you
+*create knowledge_acorn false
+*create knowledge_kiwi_level false
+*create knowledge_ghostly_orbs false
+*create knowledge_mother_of_specters false
+
+*create knowledge_blue_coins false
+*create knowledge_purple_coin false
+*create knowledge_ducats false
 
 *comment ////////////////////////////////////////////////////////////
-*comment // Exploration Booleans
+*comment // Orphanage Variables
 *comment ////////////////////////////////////////////////////////////
 
-*create found_layer_1_cave false
-*create found_layer_1_rosalia_patch false
-*create found_layer_1_tso_note_1 false
+*create orphanage_haggled_george_yellow_pass false
+
+*create orphanage_benedict_visits_this_month 0
+*create orphanage_troy_socks_stolen 0
+*create orphanage_caroline_last_quest_completion_month 0
+*create orphanage_caroline_quest_level 0
+*comment The following doesn't count botany atm (we assume it's already done)
+*create orphanage_study_num_researches_completed 0
+
+*create orphanage_basement_storage_current_lemen_circles 0
+*create orphanage_basement_storage_max_lemen_circles 1
+
+*create orphanage_basement_storage_lemens_1 0
+*create orphanage_basement_storage_lemens_2 0
+*create orphanage_basement_storage_lemens_3 0
+*create orphanage_basement_storage_lemens_4 0
+*create orphanage_basement_storage_lemens_5 0
+*create orphanage_basement_storage_lemens_6 0
+*create orphanage_basement_storage_lemens_7 0
+*create orphanage_basement_storage_lemens_8 0
+*create orphanage_basement_storage_lemens_9 0
+*create orphanage_basement_storage_lemens_10 0
+*create orphanage_basement_storage_lemens_11 0
+*create orphanage_basement_storage_lemens_12 0
+*create orphanage_basement_storage_lemens_13 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Town Variables
+*comment ////////////////////////////////////////////////////////////
+
+*create town_outskirts_temple_warned false
+*create town_outskirts_randy_cheated false
+*create town_outskirts_randy_guess_correctly false
+*create town_outskirts_randy_blue_coin_bought false
+*create town_outskirts_randy_cheated_goblin_month 0
+*create town_outskirts_tree_talk false
+
+*create town_garden_shop_blue_coin_collected false
+
+*create collected_town_farm_hand_supervisor_office_nut false
+*create town_knows_homeowner false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Sword Sidequest Vars
+*comment ////////////////////////////////////////////////////////////
+
+*create layer_1_kiwi_sword_seen false
+*create layer_1_cave_sword_seen false
+*create layer_1_cave_sword_effect false
+*create layer_1_dagger_sword_seen false
+*create layer_1_mangrove_sword_seen false
+
+*create mentioned_sword_shopkeeper false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Encounter Point
+*comment ////////////////////////////////////////////////////////////
+
+*create encounter_points_layer_1 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Perpetual Progress Points & Upgrades
+*comment ////////////////////////////////////////////////////////////
+
+*comment Default progress points
+
+*comment This one is gotten by simply visiting the PPP area
+*create layer_1_perpetual_progress_point_free false
+*create layer_1_perpetual_progress_point_sold_rosalia_general_store false
+*create layer_1_perpetual_progress_point_harvest_rosalia_from_garden false
+*create layer_1_perpetual_progress_point_buy_from_market_booths false
+*create layer_1_perpetual_progress_point_finish_non_orphanage_research false
+*create layer_1_perpetual_progress_point_visit_town_outskirts_gym false
+
+*comment TODO
+*create layer_1_perpetual_progress_point_visit_layer_2 false
+
+*comment "Stats Increase" package
+
+*comment TODO: Implement
+
+*comment Need to have gotten at least 1000 doubloons since last time
+*create layer_1_perpetual_progress_point_last_number_doubloons 0
+*comment Need to have gotten at least 15 blue coins since last time
+*create layer_1_perpetual_progress_point_last_number_blue_coins 0
+*comment Need at least 15 more equipments
+*create layer_1_perpetual_progress_point_last_number_equipments 0
+
+*comment Perpetually perpetual progress points package (no tracker variables, just check for actual thing happening directly)
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Layer 1 Variables
+*comment ////////////////////////////////////////////////////////////
+
+*comment General Vars
+
+*create layer_1_num_general_explorations 0
+
+*comment 1 - Cave
+
+*create mapped_layer_1_cave false
+
+*create layer_1_cave_visits 0
+*create layer_1_cave_cave_visits 0
+*create layer_1_cave_around_petunal_picked false
+*create layer_1_cave_around_petunal_times_missed 0
+*create layer_1_cave_ruby_troy_parent_encounter false
+*create layer_1_cave_ruby_troy_parent_approval false
+
+*comment 2 Lemen Encounter
+
+*create layer_1_lemen_encounter_duke_met false
+*create layer_1_lemen_encounter_duke_visits 0
+*create layer_1_lemen_encounter_new_left_ectoplasm false
+*create layer_1_lemen_encounter_found_duke_nut false
+
+*comment 3 - Pokemon
+
+*create layer_1_pokemon_tattle false
+
+*comment 4 - Rosalia Encounter
+
+*comment 5 - Tso
+
+*create layer_1_tso_found_note false
+*create layer_1_tso_blue_coin_taken true
+
+*comment 6 - Henry
+
+*create layer_1_henry_saw_orange_orb false
+*create layer_1_henry_machine_visits 0
+*create layer_1_henry_machine_doubloons_invested 0
+
+*comment 7 - Gift
+
+*create layer_1_gift_gift_found false
+
+*comment 8 - Dagger
+
+*create layer_1_dagger_flying_key_caught_month 0
+*create layer_1_dagger_flying_key_caught_once false
+*create layer_1_dagger_flying_key_has false
+*create layer_1_dagger_flying_key_used false
+*create layer_1_dagger_flying_key_used_month 0
+*create layer_1_dagger_dagger_visits 0
+*create layer_1_dagger_dagger_taken false
+*create layer_1_dagger_ghost_dagger_picked false
+
+*comment 9 - Backpack
+
+*create layer_1_backpack_knife_tattle false
+
+*comment 10 - Blue Coin
+
+*create mapped_layer_1_blue_coin false
+
+*create layer_1_blue_coin_collected_nut false
+*create layer_1_blue_coin_petunal_blossoms_picked false
+*create layer_1_blue_coin_stash_amount 6
+*create layer_1_blue_coin_stash_times_missed 0
+
+*comment 11 - Gravestone
+
+*create layer_1_gravestone_grave_respects_paid false
+*create layer_1_gravestone_grave_ghost_visits 0
+
+*comment 12 - Base
+
+*create layer_1_base_visits 0
+
+*comment 13 - Keys
+
+*create mapped_layer_1_keys false
+
+*create layer_1_keys_acorn_picked false
+
+*comment 14 - Scrolls
+
+*create layer_1_scrolls_defeated false
+*create layer_1_scrolls_visits 0
+*create layer_1_scrolls_woods_visits 0
+*create layer_1_scrolls_lake_island_reward_taken false
+
+*comment 15 - Kiwi
+
+*create mapped_layer_1_kiwi false
+
+*create layer_1_kiwi_andelisse_blue_coin_taken false
+*create layer_1_kiwi_map_name ""
+
+*comment 16 - Ghost
+
+*create mapped_layer_1_ghost false
+
+*create layer_1_ghost_visits 0
+*create layer_1_ghost_tim_quest_offered false
+*create layer_1_ghost_tim_quest_offered_red false
+
+*comment 17 - Materials
+
+*create mapped_layer_1_materials false
+
+*create layer_1_materials_visits 0
+
+*comment Phantoshop (sub-encounter of Materials)
+
+*create layer_1_phantoshop_bought_nut false
+
+*comment 18 - Button
+
+*create layer_1_button_extra_rosalia 0
+*create layer_1_button_extra_doubloons 0
+*create layer_1_button_extra_building_materials 0
+*create layer_1_button_extra_blue_coins 0
+
+*comment 19 - Starblossom
+
+*comment 20 - Hint Garden
+
+*create layer_1_hint_garden_hint_given_months_passed false
+*create layer_1_hint_garden_hint_given_botany false
+*create layer_1_hint_garden_hint_given_key_shop false
+*create layer_1_hint_garden_hint_given_level_up false
+*create layer_1_hint_garden_hint_given_market_square false
+*create layer_1_hint_garden_hint_given_advanced_farm_hand false
+*create layer_1_hint_garden_hint_given_garden false
+*create layer_1_hint_garden_hint_given_blue_coins false
+*create layer_1_hint_garden_hint_given_lemen_fetch false
+*create layer_1_hint_garden_hint_given_equipments false
+*create layer_1_hint_garden_hint_given_base_marker false
+*create layer_1_hint_garden_hint_given_squirrel_war false
+*create layer_1_hint_garden_hint_given_fight false
+*create layer_1_hint_garden_hint_given_farm_experience false
+*create layer_1_hint_garden_hint_given_reading_1 false
+*create layer_1_hint_garden_hint_given_layer_2_visits false
+*create layer_1_hint_garden_hint_given_experience_1 false
+*create layer_1_hint_garden_last_visited 0
+
+*comment 21 - Dragon
+
+*comment 22 - Overhang
+
+*create layer_1_overhang_scythe_taken false
+
+*comment 23 - Colosseum
+
+*comment 24 - Shrine of Good
+
+*create layer_1_shrine_of_good_bad_deed ""
+*create layer_1_shrine_of_good_bad_deed_month 0
+
+*comment 25 - Training
+
+*comment Gather Lemens
+
+*comment Gather Rosalia
+
+*create mapped_layer_1_gather_rosalia false
+
+*comment Tracking
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Layer 2 Variables
+*comment ////////////////////////////////////////////////////////////
+
+*comment General Vars
+
+*create layer_2_num_general_explorations 0
+*create layer_2_persistence_visits 0
+
+*create layer_2_blue_coin_encounter_1 false
+*create layer_2_blue_coin_encounter_2 false
+*create layer_2_blue_coin_encounter_3 false
+*create layer_2_blue_coin_encounter_4 false
+*create layer_2_blue_coin_encounter_5 false
+*create layer_2_blue_coin_encounter_6 false
+*create layer_2_blue_coin_encounter_7 false
+*create layer_2_blue_coin_encounter_8 false
+*create layer_2_blue_coin_encounter_9 false
+*create layer_2_blue_coin_encounter_10 false
+*create layer_2_blue_coin_encounter_11 false
+*create layer_2_blue_coin_encounter_12 false
+*create layer_2_blue_coin_encounter_13 false
+*create layer_2_blue_coin_encounter_14 false
+*create layer_2_blue_coin_encounter_15 false
+*create layer_2_blue_coin_encounter_16 false
+*create layer_2_blue_coin_encounter_17 false
+*create layer_2_blue_coin_encounter_18 false
+*create layer_2_blue_coin_encounter_19 false
+*create layer_2_blue_coin_encounter_20 false
+
+*comment 1 - Patricia
+
+*create mapped_layer_2_patricia false
+
+*create layer_2_patricia_campsite_visits 0
+
+*comment 2 - Cave
+
+*comment 3 - Goblin
+
+*comment 4 - Mangrove
+
+*create layer_2_mangrove_quest_given 0
+*create layer_2_mangrove_quest_completed false
+*create layer_2_mangrove_found_lantern false
+
+*comment 5 - Gather Kiwis
+
+*comment 6 - Portal
+
+*create mapped_layer_2_portal false
+
+*create layer_2_portal_visits 0
+*create layer_2_portal_enter_visits 0
+
+*comment 7 - Max
+
+*comment 8 - Mine
+
+*create mapped_layer_2_mine false
+
+*comment 9 - Potions
+
+*comment 10 - Kiwi Trainer
+
+*create mapped_layer_2_kiwi_trainer false
+
+*comment 11 - Monument
+
+*create layer_2_monument_mountain_name ""
+
+*comment 12 - Starblossom
+
+*comment 13 - Spiders
+
+*comment 14 - Battleground
+
+*create layer_2_battleground_charles_battle_occurred false
+
+*comment 15 - Tso
+
+*create layer_2_tso_found_note false
+
+*comment 16 - Artifact Dungeon
+
+*create layer_2_artifact_dungeon_level 1
+
+*comment 17 - Temple of Knowledge
+
+*create layer_2_temple_of_knowledge_passes_unlocked 0
+
+*comment 18 - Coin Pile
+
+*comment 19 - Mother of Specters
+
+*create layer_2_mother_of_specters_fight_won false
+
+*comment 20 - Scrolls
+
+*comment The Boss
+
+*create layer_2_the_boss_defeated false
+
+*comment MISC
+
+*create layer_2_fight_won false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Base Variables
+*comment ////////////////////////////////////////////////////////////
+
+*create layer_1_base_last_used_training_station_1 0
+*create layer_1_base_num_stages_built_this_trip 0
+*create layer_1_base_num_stages_max_built_per_trip 1
+
+*create layer_1_base_built_marker false
+*create layer_1_base_built_foundation false
+*create layer_1_base_built_lemen_garden false
+*create layer_1_base_built_interaction_station false
+*create layer_1_base_built_training_station_1 false
+*comment Requires Foundation
+*create layer_1_base_built_affirmation_station false
+*create layer_1_base_built_firepit false
+*create layer_1_base_built_squirrel_planning_1 false
+*create layer_1_base_built_covering false
+*create layer_1_base_built_ghost_circle false
+*comment Requires covering (Construction I)
+*create layer_1_base_built_garden_1 false
+
+*create layer_1_base_max_squirrels_commanded 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Squirrel Variables
+*comment ////////////////////////////////////////////////////////////
+
+*comment TODO: Make some affiliates with default affiliations
+*create squirrel_affiliation_alice "nothing"
+*create squirrel_affiliation_alice_strength_var "nothing"
+*create squirrel_affiliation_max "nothing"
+*create squirrel_affiliation_max_strength_var "nothing"
+*create squirrel_affiliation_deadjamin "nothing"
+*create squirrel_affiliation_deadjamin_strength_var "nothing"
+*create squirrel_affiliation_rory "nothing"
+*create squirrel_affiliation_rory_strength_var "nothing"
+
+*create squirrel_alive_alice true
+*create squirrel_alive_max true
+
+*create squirrel_faction_unlocked_henry false
+
+*create squirrel_strength_charles 1200
+*create squirrel_strength_henry 500
+*create squirrel_strength_fred 1200
+*create squirrel_favors_fred 0
+
+*create squirrel_charles_defeated false
+*create squirrel_fred_defeated false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Gardens
+*comment ////////////////////////////////////////////////////////////
+
+*create gardens_orphanage_plot_1 "nothing"
+*create gardens_orphanage_plot_1_ready_to_harvest 0
+*create gardens_orphanage_plot_2 "nothing"
+*create gardens_orphanage_plot_2_ready_to_harvest 0
+*create gardens_petunia_plot_1 "nothing"
+*create gardens_petunia_plot_1_ready_to_harvest 0
+*create gardens_layer_1_base_plot_1 "nothing"
+*create gardens_layer_1_base_plot_1_ready_to_harvest 0
+
+*create gardens_orphanage_num_times_harvested 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Tracking Skill Tree
+*comment ////////////////////////////////////////////////////////////
+
+*create tracking_meat_skill_points 0
+*create tracking_meat_level 0
+
+*create tracking_upgrade_rosalia_fetch false
+*create tracking_upgrade_extra_nut false
+*create tracking_upgrade_blue_coin false
+*create tracking_upgrade_immortal_lemen false
+*create tracking_upgrade_extra_orphanage_garden false
+*create tracking_upgrade_special_dirt false
+*create tracking_upgrade_petunal_blossoms false
+*create tracking_upgrade_training_1 false
+*create tracking_upgrade_training_2 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Research Unlocks
+*comment ////////////////////////////////////////////////////////////
+
+*create research_unlocked_exploration_2 false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Library vars
+*comment ////////////////////////////////////////////////////////////
+
+*create visited_town_library false
+*create has_mabel_library_pass false
+
+*create book_checked_out_town_library_1 "none"
+*create book_checked_out_town_library_1_research_points_left 0
+
+*create book_checked_out_knowledge_library_1 "none"
+*create book_checked_out_knowledge_library_1_research_points_left 0
+*create book_checked_out_knowledge_library_2 "none"
+*create book_checked_out_knowledge_library_2_research_points_left 0
+*create book_checked_out_knowledge_library_3 "none"
+*create book_checked_out_knowledge_library_3_research_points_left 0
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Research Tree
 *comment ////////////////////////////////////////////////////////////
 
+*create research_speed 100
+
 *create researched_botany_1 false
+*create researched_artifacts_1 false
+*create researched_exploration_1 false
+*create researched_reading_1 false
+*create researched_good_habits_1 false
+*create researched_exploration_2 false
+*create researched_tracking_1 false
+*create researched_observation_1 false
+*create researched_construction_1 false
+*create researched_fighting_1 false
+*create researched_monsters_1 false
+*create researched_fighting_monsters_1 false
+*create researched_basic_social_etiquette false
+*create researched_basic_social_cues false
+*create researched_clothing_price_reduction_1 false
+*create researched_reading_2 false
+*create researched_foresight_1 false
+*create researched_legalese_1 false
+*create researched_cartography_1 false
+*create researched_history_1 false
+*create researched_exploration_3 false
+*create researched_gifts_1 false
+*create researched_art_1 false
+*create researched_433_transcribed false
+*create researched_fashion_1 false
+*create researched_creative_writing_1 false
+*create researched_indexing false
+*create researched_artifacts_2 false
+*create researched_cultural_studies_1 false
+*create researched_pacifism false
+*create researched_materials_1 false
+*create researched_fitness_1 false
+*create researched_construction_2 false
+*create researched_artifacts_3 false
+*create researched_artifacts_4 false
+*create researched_botany_2 false
+*create researched_botany_3 false
+*create researched_tracking_2 false
+*create researched_fighting_2 false
+*create researched_ghost_reading_1 false
+*create researched_reading_3 false
 
 *comment ////////////////////////////////////////////////////////////
-*comment // Number of Visits Trackers
+*comment // Artifacts knowledge
+*comment ////////////////////////////////////////////////////////////
+
+*create artifact_knowledge_persuasion_stone false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Artifacts in possession
+*comment ////////////////////////////////////////////////////////////
+
+*comment Mini Artifacts
+*create mini_artifact_has_art_of_dirt_sales false
+
+*create artifact_has_language_orb false
+*create artifact_has_magic_scythe false
+*create artifact_has_equipipen false
+*create artifact_has_lemen_ten_fold_way false
+*create artifact_has_equipments_stocking_device false
+*create artifact_has_doubloon_doubler false
+*create artifact_uses_doubloon_doubler 1
+
+*create artifact_has_ghost_orb_off_white false
+
+*create artifact_lantern_month_end 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Number of Visits Trackers (non-Tunnel)
 *comment ////////////////////////////////////////////////////////////
 
 *create visits_orphanage_study 0
+*create visit_orphanage_with_rosalia_knowledge false
+*create visits_orphanage_garden 0
+*create visits_blue_coin_clothes_shop 0
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Market Variables
+*comment ////////////////////////////////////////////////////////////
+
+*comment The equipments price isn't really useds
+*create equipments_price 26
+*create town_market_square_booths_last_month_visited 0
+*create unlocked_town_market_lemen_collective false
+*create town_lemen_collective_level 0
+*create town_lemen_collective_doubloon_cost 1
+*create town_market_blue_pass_shop_blue_coin_bought false
+*create town_market_garden_shop_fertilizers_left 10
+*create town_general_store_sold_goblin_meat false
+*create town_general_store_num_times_bought_lemens_this_month 0
+*create town_market_armory_angered false
+*create town_market_armory_pacified false
+*create town_market_sold_clackadoo false
+*create town_market_general_store_petunal_blossoms_in_stock 2
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Clothing (Oh gosh how did I go this far down the rabbit hole)
+*comment ////////////////////////////////////////////////////////////
+
+*create has_street_attire false
+*create has_shopping_attire false
+*create has_travel_shoes false
+*create has_mundane_attire false
+*create has_business_suit false
+*create has_fancy_business_suit false
+*create has_streets_clothes false
+*create has_social_vest false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Residential Variables
+*comment ////////////////////////////////////////////////////////////
+
+*create town_decent_shack_front_door_sign "Your words here!"
+*create town_decent_shack_silverware_counter 0
+*create town_decent_shack_taken_matchbox false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Outskirts Variables
+*comment ////////////////////////////////////////////////////////////
+
+*create month_gym_last_visited 0
+*create num_times_visited_town_outskirts_gym 0
+*create town_outskirts_randy_money_cheated_log "Start of Debts (I'll pay one day I swear!)"
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Streets Variables
+*comment ////////////////////////////////////////////////////////////
+
+*create streets_sketchy_fighting_taught false
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Encounters with People
 *comment ////////////////////////////////////////////////////////////
 
+*create met_patricia false
+*create met_courtney false
 *create met_henry false
+*create met_charles false
+*create met_alice false
+*create met_amy false
+*create met_amy_as_ghost false
+*create met_troy false
+*create met_tim_ghost false
+*create met_troy_general_store false
+*create encounter_troy_work_2 false
+*create saved_troy_orphanage false
+*create met_andellise false
+*create met_rory false
+*create randy_burned false
+*create troy_parents_ghost_banquet_gift false
+*create person_ghost_seller_first_talk false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // People Events
+*comment ////////////////////////////////////////////////////////////
+
+*create troy_orphaned_event_occurred false
+*create troy_orphaned_month 188
+*create george_departure_date 0
+*create george_departure_event_1_occurred false
+*create george_departure_event_1_time 0
+*create george_departure_event_2_occurred false
+*create george_departure_event_2_time 0
+*create george_departure_event_3_occurred false
+*create george_departure_event_3_time 0
+*create george_departure_event_4_occurred false
+*create george_gone false
+*create george_frozen false
+*create andellise_dead false
+*create andellise_loved false
+*create tom_event_rosalia_lockbox_4_correct_choice false
 
 *comment ////////////////////////////////////////////////////////////
 *comment // Relationships with People
@@ -110,61 +1174,55 @@
 *create fond_henry false
 
 *comment ////////////////////////////////////////////////////////////
+*comment // Sidequest vars
+*comment ////////////////////////////////////////////////////////////
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Achievements / Objectives
+*comment ////////////////////////////////////////////////////////////
+
+*create unlocked_objective_blue_pass false
+*create objective_blue_pass false
+*create unlocked_objective_town_square false
+*create objective_town_square false
+*create unlocked_objective_layer_two_novice false
+*create objective_layer_two_novice false
+*create unlocked_objective_kinda_trained false
+*create objective_kinda_trained false
+
+*create objective_layer_2_visits 0
+*create objective_times_focused_var 0
+
+*create achievement_rolling_in_rosalia false
+*create achievement_kiwi_white_belt false
+*create achievement_well_read_trigger false
+*create achievement_well_read false
+*create achievement_lemen_lover false
+*create achievement_lemen_lover_var_times_gathered_in_a_row 0
+*create achievement_lemen_lover_var_is_gathering_lemens false
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Diary
+*comment ////////////////////////////////////////////////////////////
+
+*create diary "Start of the Diary!"
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Misc
+*comment ////////////////////////////////////////////////////////////
+
+*create times_read_intro 0
+*create town_general_store_bought_something false
+*create unlocked_squirrel_war false
+*create unlocked_exeggcute_quest false
+*create is_in_tunnel false
+
+*comment ////////////////////////////////////////////////////////////
 *comment // Initializations
 *comment ////////////////////////////////////////////////////////////
 
 *set months_passed starting_months_passed
 
-*goto_scene introduction
+*comment ——————————————————————————————
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+*goto_scene introduction start

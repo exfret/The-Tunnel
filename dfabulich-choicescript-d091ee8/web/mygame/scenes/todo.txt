@@ -1,0 +1,158 @@
+*comment Current Queue
+
+*comment Extras List
+>>> Update more diary entries
+>>> Something to make tea delivery raises less frequent
+>>> Do a code review
+>>> Finish startup file for blue demo
+>>> Add Misty and Mae wedding at month 264
+>>> Finish stats file for blue demo
+>>> Upload blue demo to VSCode and fix errors
+>>> Test blue demo!
+
+*comment Tabled
+>>> Needs Yellow Pass Implemented - Something to increase base button multiplier (and otherwise upgrade layer 1 encounters)
+
+*comment Future thoughts
+>>> An artifact that allows you to change squirrel loyalties last-minute when a battle happens
+>>> An artifact that gives you 1000 Squirrel Strength from no clan, just yourself, that you can reassign whenever
+>>> Only apply equipments discount as you work more at general store job (so that it isn't just something you sign up for and quit just for the discount)
+
+*comment Milestones
+>>> Minimum viable product up to blue pass
+>>> Host on itch.io or something similar
+>>> Demo to yellow pass
+>>> Dedicated website
+
+
+
+*label random_ideas
+
+
+Random thoughts
+
+15. More Focus Point Skill Tree upgrades
+15.5: A stats screen area for special upgrades and effects
+
+16. Lauren suggestion: Cheese shop
+
+10. NAH Activities that increase energy
+11. NAH Ways to heal
+
+17. Work on tea system and allow it to regenerate energy
+18. Fix shops/market to go by new system for letting players know that purchase was successful
+19. Research on squirrels
+20. Change fertilizer to "basic fertilizer" and make it only work on basic plants (plants with basic in their name)
+21. Eventually blue coins "go out of style"
+22. Market square tarp, other market birthday special items
+23. Equipment store focus option
+24. More market shops, like a spa
+25. Make lemen shop in tunnel less brutal
+26. A 20 Questions game with answers from the game
+27. The option to collect firewood
+28. Silverware code use somewhere
+29. Use the "we'd be the perfect MATCH" pun somewhere
+30. Ability to steal from other orphans
+31. Achievement for stealing socks from everyone
+32. Mini artifact to be able to pay 1000 months of rent (actually, just make this a default ability)
+33. Ability to visit your own room
+34. A tunnel encounter that likes low energy
+35. Add more checks
+36. Hedge maze
+37. Daydreams - real life events can be "spent" as daydreams
+38. Ability to slowly find out how to cure the curse from caroline
+39. Ability to upgrade market buildings
+40. A weapon that applies only a fixed amount of benefit over the course of the battle, but in a smart way
+41. Actually Implement Mabel death
+42. Scrolls shack key
+43. Layer 1 base upgrades that take impact every time you visit layer 1 (like a special pre-encounter)
+44. World building. Like, how the fuck are there seasons, it's a giant dome?
+45. Tim slowly builds demon effigy to escape from ghost circle that is actually demon circle
+46. Skill points from winning fights?
+47. Combat trinkets that can be equipped or unequipped
+48. Add Deadjamin death scene
+49. Special things for visiting encounters in certain orders
+50. Highlight game-changing decisions/happenings (like Alice's death, which can't be taken back)
+51. Explain how troy's parents being ghosts isn't all too bad or smth
+52. Skill points you can collect in tunnel, but only if you direct travel to locations
+53. Prestige system
+54. "tempoorary energy"
+55. Different attacks that an enemy can choose from
+56. Wager clackadoo feather in game of chance
+57. Achievement for petting dog some number of times
+58. A sneakiness skill, called snekiness
+59. Update tracking questions
+60. Rename nimblicity skill to nimblicity (and rename skills in general)
+61. Resistances dungeon (really complicated combat)
+62. Balance the cave now that it requires fewer torches (actually just needs to be worked on in general)
+63. Fix up and integrate layer_2_fight with rest of story
+64. New menu for going somewhere specific/mapped
+65. Special dialog for lemen suit
+66. Excess energy idea (temporarily over max), given by some things like good habits
+67. A seemingly-random full moon variable that's triggered on and off by certain actions
+68. Monsters research gives more lootable monsters (i.e.- you can attack a dingrit in more places)
+69. Consequences for being too vicious
+70. Combat
+71. Give option to put andelisse into your prized possessions
+72. Make blue coins no longer require experience to grow
+73. Implement diary in a more important way
+74. Inventory management for later layer trips
+75. Rename events to occurrences
+
+Ghost training
+Free doubloons dude
+
+Note that low energy will make you miss out on opportunities
+
+Future Todo (can't do yet)
+1. A little reminder every one hundred months after yellow pass was gotten
+
+
+Have to figure out name of founder of a place for a skill point (but then if you already know, you already know?) How about make it easy-ish but hard part is finding the places?
+
+Perpetually perpetual progress point package, base building edition
+
+Have PPP’s for visiting gym, and other outskirts activities
+
+Perpetual progress point package for layer 1 encounters
+
+Handle of music box breaks
+Sword is curse
+Take hilt to fight Mabel
+Art of dirt sales encyclopedia page
+
+Mini lemen gardens in more places
+Immortal lemens encyclopedia page when buying from tracking
+Sell 100 lemens option
+
+Andelisse dialogue options - randomly? Also if another squirrel, and hot spots (anndelisse helps you harvest)
+
+Make sure job offers are see-able when you can’t select them
+
+Can still take ers test multiple times???
+
+
+squirrel friend and encounters + lemens
+
+
+Trinkets — Different colors in different combinations give different things.
+
+
+
+More ways to sell things from tunnel
+Development info
+Something else to increase nimblicity
+
+
+Something that travels between encounters
+
+
+
+Dream realm
+
+
+
+PPP Purchase to unlock something in another area
+
+
+Remove num_visits and just make it specific to places

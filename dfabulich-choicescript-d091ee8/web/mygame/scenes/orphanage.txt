@@ -1,213 +1,1346 @@
-*label first_return
+*label orphanage_home_base
+*set is_in_tunnel false
+*if (skip_mode = "normal")
+    *page_break
+*gosub_scene logic home_base_updates
 
-*set inventory_lemens + 12
+*comment EVENTS (Orphanage specific)
 
-You return to the orphanage with 12 fully harvested lemens, exhausted and yet excited for the weeks to come.
+*comment Lantern (VERY FIRST THING!)
+*if (artifact_lantern_month_end > 0)
+    *gosub event_lantern
 
-*page_break
+*comment First, do general events
+*gosub event_eval
 
-The next few weeks consist of just exploration with George, him showing you around the tunnel's first layer. Towards the end, he even shows you the start of the second layer, the first one where there is any hope of finding new relics. However, you don't stay long enough to find any. At the end, he gives you an artifact. "Promise me you'll never get rid of this. I give it to all my mentees so that they remember me." It's a feather. "This has practical purpose, too. It will fly away if you are about to be in grave danger. It's very hard to catch and at that point you probably will want to just run, but one warning is better than none. It comes from a clackadoo bird that I was able to catch in the fourth layer. They are born with an instinct to always know when to flee danger, which makes them incredibly difficult to catch, but also bestows the feathers with that magical property I mentioned. Hold onto it as best as you can.
+*comment Troy
+*if ((not (troy_orphaned_event_occurred)) and (months_passed > troy_orphaned_month))
+    *gosub event_troy_orphanage_event
+
+*comment 200th month
+*if (((not (general_event_occurred_two_hundred_moon_day)) and (months_passed >= 200)) and (not (george_gone)))
+    *gosub event_two_hundred_moon_day
+
+*comment Check the month in startup
+*if (((not (specific_event_orphanage_mabel_no_research)) and (orphanage_study_num_researches_completed = 1)) and (months_passed >= specific_event_orphanage_mabel_no_research_month))
+    *gosub event_orphanage_mabel_no_research
+
+*comment "Mysterious Flower"
+*if (((not (general_event_occurred_george_gave_glowshroom)) and (months_passed >= 225)) and (not (george_gone)))
+    *gosub event_flower_given
+    
+*if ((not (specific_event_orphanage_three_research_shop)) and (orphanage_study_num_researches_completed >= 3))
+    *gosub event_mabel_three_researches
+
+*if (skip_mode = "normal")
+    [b]Back at the orphanage[/b]
+
+*temp equipments_needed layer_1_equipments_needed
+*if (artifact_has_equipipen)
+    *set equipments_needed - 1
 
 *choice
-    #Take the Clackadoo Feather [+1 Clackadoo feather]
-        *goto clackadoo_feather
+    *if (unlocked_home_base_actions)
+        #See home base actions
+            *goto_scene logic home_base_actions
+    *selectable_if ((energy >= 1) and (inventory_equipments >= equipments_needed)) #Go to the Tunnel (layer 1) [-1 Energy, -${equipments_needed} Equipments]
+        *if (((layer_1_backpack_knife_tattle) or (layer_1_pokemon_tattle)) and (months_passed < 200))
+            *goto lose_weapon_tattle
+        
+        [-${equipments_needed} Equipments]
+        *line_break
+        [-1 Energy]
+        *set inventory_equipments - equipments_needed
+        *line_break
+        *set energy - 1
+        
+        *goto_scene tunnel layer_1
+    #Go into town
+        *goto_scene town main
+    #Go to the orphanage's study
+        *goto orphanage_study
+    *if (unlocked_visit_rooms)
+        #Go to someone else's room
+            *goto orphanage_visit_room
+    *if (unlocked_orphanage_garden)
+        #Go to the orphanage's garden
+            *goto orphanage_garden
+    *if (unlocked_orphanage_basement)
+        #Go to the basement of the orphanage
+            *goto basement
+    *if (unlocked_focus)
+        *if (focus_points_orphanage_hallways >= 1)
+            #Focus [${focus_points_orphanage_hallways} Focus Points Available]
+                *set objective_times_focused_var + 1
+                [+${focus_points_orphanage_hallways} Focus Points]
+                *set focus_points + focus_points_orphanage_hallways
+                *set focus_points_orphanage_hallways 0
 
-*label clackadoo_feather
+                *goto orphanage_home_base
 
-*set months_passed + 1
+*label lose_weapon_tattle
 
-*set inventory_clackadoo_feather + 1
+*if (george_gone)
+    When you leave, you hesitate. Isn't someone going to take your weapons?
+    
+    No one comes.
+    
+    Hm… okay.
+    
+    *goto_scene tunnel layer_1
 
-You're off on your own now.
+*set diary ("George took all the weapons I wasn't supposed to have...[n/][n/]" & diary)
+
+"Woah, woah, woah, where do you think you're going?" Shouts George after you. "Hand it over."
+
+*comment TODO: Make this a choice and you can run away
+*comment TODO: Lose more than just dagger if you have it
+
+You lose all your weapons.
+
+*set inventory_dagger 0
+*set layer_1_backpack_knife_tattle false
+*set layer_1_pokemon_tattle false
 
 *goto orphanage_home_base
 
-*label orphanage_home_base
-
-[b]Back at the orphanage[/b]
-
-*temp months_passed_to_unlock_support_self 0
-*set months_passed_to_unlock_support_self starting_months_passed
-*set months_passed_to_unlock_support_self + 4
-*if (months_passed >= months_passed_to_unlock_support_self)
-    *if not (unlocked_support_self)
-        The orphanage tells you it's really stressing out and needs you to help pay for yourself. Now, you will need to help pay for the travel supplies. Regardless of time spent in each travel, the number of [i]travel equipments[/i] you'll need only depends on the layer you go into. Farther layers will require exponentially more equipment.
-        
-        To help support your expensive tunneling hobby, the orphanage also recommends some farmers nearby needing farmhands, but also more strongly recommends to not dilly dally your life away collecting flowers in the tunnel.
-        *set unlocked_support_self true
-        *set unlocked_job_farm_hand true
-        
-*temp random_hint 0
-*rand random_hint 1 6
-
-*if (random_hint = 1)
-    Hint: Even if your adventures in "general exploring" don't turn out to be fruitful, you still gain experience, which unlocks new choices down the road. So, don't give up on that option!
-*if (random_hint = 2)
-    Hint: Sometimes, with increased skills, you may notice new things about places even if you've been there before.
-*if (random_hint = 3)
-    Hint: Try to be efficient with your actions. People don't live forever!
-*if (random_hint = 4)
-    Hint: Once you acquire a map-making kit and explore enough of an area, you can start charting the places you've been to in order to return there later!
-*if (random_hint = 5)
-    Hint: You can go to the stats screen and come back for a different hint each time!
-*if (random_hint = 6)
-    Hint: Some areas don't need a map to return to, but some places do.
-
-*label orphanage_home_base_given_random_hint
-
-*temp months_passed_to_unlock_market 0
-*set months_passed_to_unlock_market starting_months_passed
-*set months_passed_to_unlock_market + 2
-*if (months_passed >= months_passed_to_unlock_market)
-    *if not (unlocked_town_market)
-        You just unlocked the ability to access the town market.
-        *set unlocked_town_market true
-        *goto orphanage_homebase_evaluated_market_unlock
-
-*label orphanage_homebase_evaluated_market_unlock
-
-*temp months_passed_to_unlock_study 0
-*set months_passed_to_unlock_study starting_months_passed
-*set months_passed_to_unlock_study + 3
-*if (months_passed >= months_passed_to_unlock_study)
-    *if not (unlocked_town_study)
-        You just unlocked the ability to access the study.
-        *set unlocked_town_study true
-        *goto orphanage_homebase_evaluated_study_unlock
-
-*label orphanage_homebase_evaluated_study_unlock
-
-*choice
-    #Take a trip to the tunnel
-        *if not (unlocked_support_self)
-            *goto_scene tunnel start_of_trip_layer_1
-        *goto_scene tunnel start_of_trip
-    *if (unlocked_town_market) #Go to town market
-        *goto_scene town market_main
-    *if (unlocked_town_study) #Study in the orphanage's study
-        *goto orphanage_study
-    *if (unlocked_job_farm_hand) #Do work in town
-        *goto_scene town job
-    *comment *if (unlocked_level_up) #Give George blossoms and rosalia to demonstrate your readiness for a blue pass [-2 petunal blossoms, -1 rosalia, gain blue pass]
-        *comment TODO
-
 *label orphanage_study
+*page_break
 
 *comment orphanage study only unlocked if in orphanage as home base.
 
 *set visits_orphanage_study + 1
 
 *if (visits_orphanage_study = 1)
+    *set diary ("I visited the orphanage's study for the first time.[n/][n/]" & diary)
+    
     A young, thin woman looks up from a desk at the front of the orphanage's study. "I'm Mabel. I heard you have been exploring quite a lot, recently. It would only make sense to give you access to our dismal collection of knowledge and folklore surrounding the tunnel. You'll have to get access to the main town library for more in-depth knowledge. Just choose a subject to study and you can rent the book for a month."
-    *goto orphanage_study_first_visit_evaluated
+    
+*if (not (visit_orphanage_with_rosalia_knowledge)) and (knowledge_rosalia)
+    *set visit_orphanage_with_rosalia_knowledge true
+    
+    You mention your newfound knowledge of rosalia to the librarian. She answers, "I have a taste for expensive teas, so bring me back rosalia if you want to learn any of the more advanced subjects!"
 
-*label orphanage_study_first_visit_evaluated
+*comment TODO: Make this a choice rather than automatic dialog
+
+*if ((visited_town_library) and (not (has_mabel_library_pass)))
+    You ask about the town library pass to Mabel.
+    
+    *if (not (researched_reading_1))
+        "Ha, you want the pass and you haven't even researched reading 1! You won't understand any of the books there without that prerequisite."
+        
+        *goto orphanage_study_eval_energy
+    
+    "Well, you have to understand." She says. "All the books there are completely different. You won't find any duplicates for ease of programming purposes. And the system is different there, too. You have to carry the book for a long time while passively researching it over time. There are no due dates, just keep in mind it might be a while to finish some of those more advanced books."
+    
+    "Eventually, you'll be able to carry multiple passes at once and increase your research speed. But in the beginning, research will be really slow (you only spend 100 points into each book you research in the beginning, and many cost thousands of research points), so you better get on it!"
+    
+    *set has_mabel_library_pass true
+
+*label orphanage_study_eval_energy
+
+*comment TODO: Monsters research
+
+*if (energy = 0)
+    "Oh dear," says the librarian, "You look awfully tired. I don't think you'll get much out of studying here. You should go rest first."
+    
+    *goto orphanage_home_base
+
+*if (((knowledge_petunal_blossoms) and (researched_exploration_1)) and (not (researched_tracking_1)))
+    "By the way, I'm in need of some petunal blossoms for my latest teas. Just a little bit to spice them up. Let me know if you have any and there's one book in particular I was thinking of lending in return."
+
+"So what would you like to research?"
+
+*temp can_test_out_of_botany_1 false
+*if ((knowledge_rosalia) and (knowledge_petunal_blossoms and knowledge_starblossom))
+    *set can_test_out_of_botany_1 true
 
 *choice
-    *if not (researched_botany_1)
-        #Research Botany I [+1 month]
-            *goto research_botany_1
-    #Don't research anything
-        *goto orphanage_homebase
+    #Back
+        *goto orphanage_home_base
+    #Read the library catalog
+        The library catalog lists all books available to the orphanage study and their prerequisite researches.
+        
+        [b]Botany I:[/b] Also known as "Flowers, you dumbass" by Emerald Lemson. This book teaches you the basics of botany, which happen to comprise of three main flowers (rosalia, petunal blossoms, and starblossoms).
+        
+        [b]Artifacts I:[/b] Also known as "That rusty old book Lauren never researches" by Kyle Hess, it reveals the secrets of blue coins to you (if you haven't already learned about them), and, even more importantly, allows you to start discovering persistence artifacts from layers 2 and beyond.
+        
+        [b]Exploration I:[/b] Also known as "Explore or Explode" by Andy Savage. It allows you to engage in five new encounters randomly in general exploration, for each layer, and is an important prerequisite for more books.
+        
+        [b]Reading Skills I:[/b] Has the title "Reading, for people who don't know how to… wait… oh" and the author's name is missing. Is an important prerequisite to many other researches and unlocks the town square library once you have access to town square.
+        
+        [b]Good Habits I:[/b] Gives some energy every now and then. Also an important prereq to other books. Oh yeah, the title is "3.14 Successful Habits you can Count On" by Delicious Smith (yes, that's her name). Requires: Reading I
+        
+        [b]Exploration II:[/b] An extremely advanced book for the orphanage. Also known as "Finding your way around with Explorer Tso!" by George's father. Must be found elsewhere and returned to the orphanage. An important prerequisite to many other researches in addition to unlocking 5 new encounters in each layer. Requires: A Blue Pass, Exploration I, Reading I
+        
+        [b]Tracking I:[/b] Allows you to go tracking in the first layer. Also known as "Getting on Track with Tracking" by Loco M. Otive. Requires: Exploration I
+        
+        [b]Observation I:[/b] A very advanced book (for an orphan) with the title "Keep this away from orphan kids and redheads, they won't understand it anyways" by two authors, soon to be dead. Despite its atrocious title, the book goes over very important details about observing new aspects of your encounters, which will unlock new things down the line. Requires: Reading I
+        
+        [b]Monsters I:[/b] Also known as "Don't Kill Monsters" by Anonymous. It gives you information about various common monsters in the layers, their weaknesses, and also (boringly) how to interact peacefully with them. Requires: Botany I, at least 120 Experience
+        
+        [b]Fighting I:[/b] Titled "Fighting I, by Brutus Leotard", and then under it there is some text claiming the author is Brutus Leotard (his name is also on the first page, last page, spine, and back of the book, and takes up the full space each time). It teaches you how to fight and gives you more max health. Requires: Being at least 200 months old
+        
+        *goto orphanage_study
+    *if ((researched_botany_1) and ((not (knowledge_rosalia)) or (not (knowledge_petunal_blossoms))))
+        #Research Botany again [+2 Months]
+            *comment TODO: Flesh out on this interaction
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            Mabel is curious why you're studying a book whose contents you already knew, but you refuse to tell her out of embarrassment.
+            
+            [Encyclopedia Entry: Rosalia]
+            *line_break
+            [Encyclopedia Entry: Petunal Blossoms]
+            *set knowledge_rosalia true
+            *set knowledge_petunal_blossoms true
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((knowledge_rosalia) and (not (researched_artifacts_1)))
+        *selectable_if (inventory_rosalia >= 3) #Research Artifacts I [-3 Rosalia, +1 month, +6 Experience]
+            *set diary ("I researched Artifacts I.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            This book discusses many different artifacts, including blue coins, persuasion stones, and persistence artifacts.
+            
+            *comment TODO: Write entries on these
+            
+            [-3 Rosalia]
+            *line_break
+            [Researched: Artifacts I]
+            *line_break
+            [+6 Experience]
+            *set inventory_rosalia - 3
+            *set researched_artifacts_1 true
+            *set experience + 6
+            
+            You even find a blue coin tucked away in the far back of the book.
 
-*label research_botany_1
+            [+1 Blue Coin]
+            *set inventory_blue_coins + 1
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((knowledge_rosalia) and (not (researched_exploration_1)))
+        *selectable_if (inventory_rosalia >= 10) #Research Exploration I [-10 Rosalia, +1 month,  +6 Experience]
+            *set diary ("I researched Exploration I.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            The book details various ways to find new ways to explore the layers. You can now find 5 different new encounters in each layer!
+            
+            [-10 Rosalia]
+            *line_break
+            [Researched: Exploration I]
+            *line_break
+            [+6 Experience]
+            *set inventory_rosalia - 10
+            *set researched_exploration_1 true
+            *set experience + 6
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((knowledge_rosalia) and (not (researched_reading_1)))
+        *selectable_if (inventory_rosalia >= 6) #Research Reading I [-6 Rosalia, +2 months, +15 Experience]
+            *set diary ("I researched Reading I.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            *gosub_scene logic month_passed
+            
+            This was a hard one, so it took two months to finish instead of just one. However, you're now prepared for some of the harder material.
+            
+            [-6 Rosalia]
+            *line_break
+            [Researched: Reading I]
+            *line_break
+            [+15 Experience]
+            *set inventory_rosalia - 6
+            *set researched_reading_1 true
+            *set logic_research_passed "researched_reading_1"
+            *gosub_scene logic do_research_effects
+            *set experience + 15
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((not (researched_good_habits_1)) and (researched_reading_1))
+        #Research Good Habits I [+1 month, +6 Experience]
+            *set diary ("I researched Good Habits I.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            Good Habits will teach you how to manage your energy better. Unfortunately, you only really use its suggestions around New Year's Resolution time.
+            
+            [Researched: Good Habits I]
+            *line_break
+            [+6 Experience]
+            *set researched_good_habits_1 true
+            *set experience + 6
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((research_unlocked_exploration_2) and (not (researched_exploration_2)))
+        *selectable_if (((pass_unlocked_blue) and (researched_exploration_1)) and (researched_reading_1)) #Research Exploration II [+1 month, +30 Experience, Requires Exploration 1, Reading 1, and a Blue Pass]
+            *set diary ("I researched Exploration II.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            You researched Exploration II, which is an important prerequisite to many other researches in addition to unlocking 5 new encounters in each layer.
+            
+            [Researched: Exploration II]
+            *line_break
+            [+30 Experience]
+            *set researched_exploration_2 true
+            *set experience + 30
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((researched_exploration_1) and (not (researched_tracking_1)))
+        *selectable_if (inventory_petunal_blossoms >= 5) #Research Tracking I [-5 Petunal Blossoms, +1 Month, +10 Experience]
+            *set diary ("I researched basic tracking methods.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            Tracking I will allow you to engage in tracking missions in layer 1.
+            
+            [-5 Petunal Blossoms]
+            *line_break
+            [Researched: Tracking I]
+            *line_break
+            [Encyclopedia Entry: Tracking]
+            *line_break
+            [+10 Experience]
+            *set inventory_petunal_blossoms - 5
+            *set researched_tracking_1 true
+            *set experience + 10
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((researched_reading_1) and (not (researched_observation_1)))
+        *selectable_if (inventory_rosalia >= 14) #Research "The Powers of Observation, Book I" [-14 Rosalia, +1 Month, +6 Experience]
+            *set diary ("I did some research to observe things better. Grrr! I will always spot you now![n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            You research Observation I. Now you will notice more things on your exploration trips. One of the most important things is the new checks system. You can read about them in the encyclopedia.
+            
+            Mabel nods at you in pride for getting through one of the most complicated books the orphanage has.
+            
+            [-14 Rosalia]
+            *line_break
+            [Researched: Observation I]
+            *line_break
+            [Encyclopedia Entry: Checks]
+            *line_break
+            [+6 Experience]
+            *set inventory_rosalia - 14
+            *set researched_observation_1 true
+            *set experience + 6
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if (((experience >= 120) and (researched_botany_1)) and (not (researched_monsters_1)))
+        *selectable_if (inventory_rosalia >= 9) #Research Monsters I [-9 Rosalia, +1 Month, +6 Experience, Requires 120 Experience]
+            *set diary ("I understand the 'monsters' of the world a little more clearly now.[n/][n/]" & diary)
+            
+            *gosub_scene logic month_passed
+            
+            You research Monsters I, which opens your eyes to the complex world and interrelationships between monsters and humans.
+            
+            [-9 Rosalia]
+            *line_break
+            [Researched: Monsters I]
+            *line_break
+            [+6 Experience]
+            *set inventory_rosalia - 9
+            *set researched_monsters_1 true
+            *set experience + 6
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if ((months_passed >= 200) and (not (researched_fighting_1)))
+        #Research Fighting I [+1 Month, +2 Experience, Unlocked at 200 Months]
+            *set diary ("Watch out world, I can fight now! Ow, just stubbed my toe in excitement.[n/][n/]" & diary)
+            
+            *if (months_passed < 230)
+                Mabel scoffs as she sees what book you're choosing. "As soon as everyone gets their 200'th month I see them go after that one. Wish I'd trashed it long ago."
 
-*set researched_botany_1 true
-*set months_passed + 1
+                You ignore her and read it.
+            *if (months_passed >= 230)
+                Mabel sighs. "I guess you had to learn fighting eventually, as a Tunnel explorer, I mean. Usually I don't approve of this book, but you're probably one of the few people who need to use it."
+                
+                You smile at her and read it.
+            
+            *gosub_scene logic month_passed
+            
+            [Researched: Fighting I]
+            *set researched_fighting_1 true
+            
+            You can now fight. See the Encyclopedia page on fighting for more information.
+            
+            [Encyclopedia Page: Fighting]
+            *set can_fight true
+            
+            The book also has some great fighting tips in the back.
+            
+            [+2 Max Health]
+            *set max_health + 2
+            *set health max_health
+            
+            And here's your experience!
+            
+            [+2 Experience]
+            *set experience + 2
+            
+            *set orphanage_study_num_researches_completed + 1
+            *goto orphanage_home_base
+    *if (unlocked_focus)
+        *if (focus_points_orphanage_study >= 1)
+            #Focus [${focus_points_orphanage_study} Focus Points Available]
+                *goto study_focus
 
-*temp no_previous_knowledge true
+*label study_focus
 
-The first part of the book is all about Lemens. What they are, how to find them, all sorts of things. Of course, you already know about them from your trips with George. Still, it gives some more tips on how to harvest them better. Lemen Fetch Skill +2.
-
-*set lemen_fetch_skill + 2
-
-*if (knowledge_petunal_blossoms)
-    Of course, the book covers petunal blossoms. It just talks about how they're found near caves, but other than that, no new information.
-    *set no_previous_knowledge false
-    *goto evaluated_botany_1_knowledge_petunal_blossoms
-*else
-    Apparently, there's a purple flower with yellow specks that can be found around the first layer. Its petals are apparently really nutritious. Your town is quite carnivorous, but you can think of a few vegetarians who would like the rare vitamins and minerals to be found in the petals. It says the petals are common and that you need a lot for a complete meal, however, so they won't fetch very much.
-    *set knowledge_petunal_blossoms true
-    *goto evaluated_botany_1_knowledge_petunal_blossoms
+*if (george_frozen)
+    "We're all tired, here, hun. Do anything that'll get your energy up."
     
-*label evaluated_botany_1_knowledge_petunal_blossoms
+    *set objective_times_focused_var + 1
+    [+${focus_points_orphanage_study} Focus Points]
+    *set focus_points + focus_points_orphanage_study
+    *set focus_points_orphanage_study 0
     
-*if (knowledge_rosalia)
-    Of course, the book covers rosalia. All it has to say really is that picking skills are best improved with experience, which isn't very helpful.
-    *set no_previous_knowledge false
-    *goto evaluated_botany_1_knowledge_rosalia
-*else
-    The book then talks about a rose-like plant with big, broad leaves on its stem. It says that small parts of the leaves are used for expensive teas. You wonder if you've already seen any around while exploring the tunnel.
-    *set knowledge_rosalia true
-    *goto evaluated_botany_1_knowledge_rosalia
-    
-*label evaluated_botany_1_knowledge_rosalia
-
-*if (knowledge_starblossom)
-    The final part discusses starblossom, that one flower (why is it all about flowers?). The book mainly focuses on harvesting techniques, noting that a special harvest tool grade 2 is needed to pick the flower (SHTG2).
-    *set no_previous_knowledge false
-    *goto evaluated_botany_1_knowledge_starblossom
-*else
-    The final part discusses a rarer flower named the starblossom, whose petals are large and shaped like a five-pointed star. It is perpetually in bloom apparently, but survives much better in layers two and three, and thus is rare to find in layer one. Apparently, a special harvest tool called the SHTG2 is needed to scavenge it from the ground due to its deep roots.
-    *set knowledge_starblossom true
-    *goto evaluated_botany_1_knowledge_starblossom
-
-*label evaluated_botany_1_knowledge_starblossom
-
-*if (no_previous_knowledge)
-    Unfortunately, since you didn't know any of the topics in the book other than about Lemens, it takes you an extra month to complete it. Mabel let's you keep it for longer, but more of your youth has been wasted away.
-    *set months_passed + 1
     *goto orphanage_home_base
+
+Mabel says she'll only let you focus here if you bring her lots of rosalia. "Housing doesn't come for free," she says, "and neither do expensive teas that I waste my money on instead of spending it on food for the orphan boys and girls I watch starve to death outside!" She laughs. Such a grave sense of humor. Everyone knows her taste in good teas and ability to make them straight from rosalia is what keeps this orphanage running.
+
+Quite literally. She hasn't drank a drop of tea since she started this place, instead preferring to sell it for as much as she needs to keep her babies alive. Her rare skills in tea-making are precious and necessary to the survival of everyone here. But you still resent her for making you get her tea leaves. Those kids outside can starve. Ugh.
+
+*choice
+    *selectable_if (inventory_rosalia >= 3) #Give her some leaves to focus here [-3 Rosalia]
+        *goto focus_in_study_more_rosalia
+    #Nevermind
+        *goto orphanage_home_base
+
+*label focus_in_study_more_rosalia
+
+[-3 Rosalia]
+*set inventory_rosalia - 3
+
+"Oh, only 3 rosalia?" Mabel says. "You must have misheard me, I say [i]13[/i] rosalia!" She shakes her head. "Tsk Tsk. Well, I'll just hold on to the 3 you gave me without counting it toward the 13, and if you don't pay the 13 now you'll have to go through this whole dialog again if you want to focus here. So it's either pay 13 rosalia up front or…
+
+*if (inventory_rosalia < 13)
+    *set diary ("Mabel stole my rosalia![n/][n/]" & diary)
+    
+    Oh, you don't have 13 rosalia. Well, like I said, I'll just hold on to this and completely forget this whole interaction. Make sure you come back next time with 16. Goodbye!
+    
+    *goto orphanage_home_base
+
+Or… well, you'll have to pay those 3 rosalia again in addition to coming back to pay the 13. Looks like you even have the 13, actually. Don't mind if I scoop that up without even giving you the choice, actually.
+
+[-13 Rosalia]
+*set inventory_rosalia - 13
+
+*set diary ("I focused in the orphanage's study.[n/][n/]" & diary)
+
+*set objective_times_focused_var + 1
+[+${focus_points_orphanage_study} Focus Points]
+*set focus_points + focus_points_orphanage_study
+*set focus_points_orphanage_study 0
 
 *goto orphanage_home_base
 
+*label orphanage_visit_room
 
+*if (skip_mode = "skip")
+    *if (decision_point = "58")
+        *set decision_point "59"
+        *goto orphanage_visit_george
+*choice
+    #Back
+        *goto orphanage_home_base
+    *if (not (george_gone))
+        #Visit George
+            *goto orphanage_visit_george
+    *if (orphanage_benedict_visits_this_month < 5)
+        #Visit Benedict
+            *set orphanage_benedict_visits_this_month + 1
 
+            *if (orphanage_benedict_visits_this_month = 1)
+                You don't know Benedict too well, but you have a good laugh with him whenever you chat. He's much less pretentious than his name implies.
+            *if (orphanage_benedict_visits_this_month = 2)
+                You knock on Benedict's door to talk to him again, but he tells you he's busy.
+            *if (orphanage_benedict_visits_this_month = 3)
+                You knock again on the door to see if Benedict is free now. There's no answer, but you can hear some shuffling inside.
+            *if (orphanage_benedict_visits_this_month = 4)
+                "Look, I'm not into you!" He yells this time. "Stop bothering me."
+            *if (orphanage_benedict_visits_this_month = 5)
+                *if (layer_1_shrine_of_good_bad_deed = "")
+                    *set layer_1_shrine_of_good_bad_deed "Bothered poor Benedict."
+                    *set layer_1_shrine_of_good_bad_deed_month months_passed
+                
+                You walk up to his door again, but Ms. Bee, your hall manager, is there. She sternly tells you to go back you your room and stop bothering poor Benedict. You don't really have another choice.
 
+            *goto orphanage_home_base
+    *if (inventory_goblin_meat >= 1)
+        #Leave stinky goblin meat just outside of Benedict's door [-1 Goblin Meat]
+            [-1 Goblin Meat]
+            *set inventory_goblin_meat - 1
+            
+            A little while later, you hear a scream from Benedicts room and you snicker. Ms. Bee comes rushing over to see what's going on and gasps, then immediately knocks on your door. Wait, how did she know it was you? Well, who else in this orphanage would have access to goblin meat, something found only in the Tunnel?
+            *if (not (george_gone))
+                It's a hard choice between you and George, honestly. (That was sarcasm).
+            
+            You're grounded for a month.
+            
+            *gosub_scene logic month_passed
+            
+            *goto orphanage_home_base
+    #Visit Caroline
+        *goto orphanage_visit_caroline
+    *if (saved_troy_orphanage)
+        #Visit Troy
+            *goto visit_troy
+    *if ((saved_troy_orphanage) and (orphanage_troy_socks_stolen = 0))
+        *selectable_if (nimblicity_skill >= 50) #Steal one of Troy's socks [Requires 50 Nimblicity Skill]
+            [+1 Troy Sock]
+            *set orphanage_troy_socks_stolen + 1
+            *set inventory_orphan_socks + 1
+            
+            Operation success. This one has little Christmas trees on it.
+            *goto orphanage_home_base
 
+*label orphanage_visit_caroline
 
+*if ((orphanage_caroline_last_quest_completion_month + 1) >= months_passed)
+    Caroline is still playing with the last thing you gave her. (She'll play with it the month you gave it to her and the month after).
+    
+    *page_break
+    *goto orphanage_visit_room
 
+Caroline was cursed with a forever-child curse and must now be a child her whole life despite being physically an adult. But she really likes playing with all the new stuff you get from the Tunnel, and watching that helps you learn, so, like, give her stuff and get experience.
 
+Oh, and look at that, she says hi! Got anything for her?
 
+UwU
 
+*gosub_scene logic update_total_lemens
 
+*if (orphanage_caroline_quest_level = 0)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (total_lemens >= 2) #Give Caroline 2 Lemens [-2 Lemens, +5 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She covers the lemens with her hands, then uncovers them, watching their light appear and disappear.
+            
+            [-2 Lemens]
+            *line_break
+            [+5 Experience]
+            *set logic_lemens_to_remove 2
+            *gosub_scene logic remove_lemens
+            *set experience + 5
 
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 1)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_rosalia >= 1) #Give Caroline 1 Rosalia [-1 Rosalia, +6 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She crushes up part of the dried leaf and smells it, then puts it on her tongue and let's it sit there. You would have never dared that, since you assumed the rosalia had to be brewed or something first. You try with the other bits of the leaf she didn't use and it actually tastes quite good!
+            
+            [-1 Rosalia]
+            *line_break
+            [+6 Experience]
+            *set inventory_rosalia - 1
+            *set experience + 6
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 2)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_petunal_blossoms >= 3) #Shower her in Petunal Blossom Petals [-3 Petunal Blossoms, +7 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She dances like a girl in a field of flowers. You learn the joy of youthfulness.
+            
+            [-3 Petunal Blossoms]
+            *line_break
+            [+7 Experience]
+            *set inventory_petunal_blossoms - 3
+            *set experience + 7
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 3)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_flower_seeds_1 >= 1) #Give her a basic flower seed [-1 Basic Flower Seed, +8 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She eats the seed. Well, it's not poisonous, at least.
+            
+            [-1 Basic Flower Seed]
+            *line_break
+            [+8 Experience]
+            *set inventory_flower_seeds_1 - 1
+            *set experience + 8
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 4)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_blue_coins >= 3) #Give her some blue coins [-3 Blue Coins, +9 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She peels off some paint to reveal that one of the coins you gave her was actually a blue coin painted blue.
+            
+            Scandalous.
+            
+            [-3 Blue Coins]
+            *line_break
+            [+9 Experience]
+            *set inventory_blue_coins - 3
+            *set experience + 9
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 5)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_nuts >= 1) #This is nuts [-1 Nut, +10 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            As you soon learn, the nut bounces off the wall really easily. However, it makes a horrendous *clank* sound, so you have to get her to stop.
+            
+            [-1 Nut]
+            *line_break
+            [+10 Experience]
+            *set inventory_nuts - 1
+            *set experience + 10
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 6)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_building_materials >= 3) #Build a fort with her [-3 Building Materials, +11 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She seems super proud of the fort at the end.
+            
+            [-3 Building Materials]
+            *line_break
+            [+11 Experience]
+            *set inventory_building_materials - 3
+            *set experience + 11
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 7)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_special_dirt >= 8) #Play in the dirt [-8 Special Dirt, +12 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            The dirt really matches the fort actually.
+            
+            [-8 Special Dirt]
+            *line_break
+            [+12 Experience]
+            *set inventory_special_dirt - 8
+            *set experience + 12
+            
+            *goto orphanage_visit_room
+*if (orphanage_caroline_quest_level = 8)
+    *choice
+        #Back
+            *goto orphanage_visit_room
+        *selectable_if (inventory_starblossom >= 1) #Show her a starblossom [-1 Starblossom, +13 Experience]
+            *set orphanage_caroline_last_quest_completion_month months_passed
+            *set orphanage_caroline_quest_level + 1
+            
+            She gazes at it for hours, pointing out details you never noticed before.
+            
+            [-1 Starblossom]
+            *line_break
+            [+13 Experience]
+            *set inventory_starblossom - 1
+            *set experience + 13
+            
+            *goto orphanage_visit_room
+        
+Caroline has no more quests for you at the moment. Check back in another game update!
 
+*comment TODO
 
+*page_break
+*goto orphanage_visit_room
 
+*label orphanage_visit_george
 
+*if (skip_mode = "normal")
+    You knock on George's door and he opens it. He seems tired, like you woke him up in the middle of a nap, but he immediately perks up when he sees you. "Hello!"
 
+*label orphanage_visit_george_choice
 
+*if (skip_mode = "normal")
+    "So, what can I do for you?" Says George.
 
+*comment TODO: Chat options here
 
+*if (skip_mode = "skip")
+    *if (decision_point = "59")
+        *set decision_point "60"
+        *goto orphanage_visit_george_blue_pass
+*choice
+    #Back
+        *goto orphanage_visit_room
+    *if (not (pass_unlocked_blue))
+        #Ask George how to get a Blue Pass in order to access the second layer
+            *goto orphanage_visit_george_blue_pass
+    *if ((not (orphanage_haggled_george_yellow_pass)) and (unlocked_level_up_2))
+        #Haggle George to start the process for getting a yellow pass [Requires 170 Experience]
+            *set orphanage_haggled_george_yellow_pass true
+            George tells you he's not a high enough pass level to just be giving out yellow passes. You'll need to go to the Town Square and take a test, plus have enough trainings for that.
 
+            However, he can give you a training.
+            *if (not (unlocked_trainings))
+                He quickly explains to you what a training is before you get started.
 
+                [Encylopedia Entry: Trainings]
+                *set unlocked_trainings true
 
+            [Training]
+            *set exploration_trainings + 1
+            *goto orphanage_home_base
+    *if (experience = 420)
+        #Let George know I have 420 experience
+            "Uhh, so?" Answers George, completely oblivious.
+            
+            *page_break
+            *goto orphanage_visit_george_choice
 
+*label orphanage_visit_george_blue_pass
 
+*if (skip_mode = "normal")
+    "Well, let's see here," says George. "That requires me to verify you have made a sufficient number of visits to the first layer on your own, so that you know basic survival skills there. I think it'd be safe to say that bringing me 2 Petunal Blossoms and 1 Rosalia is a fair request to satisfy that piece. Of course, you'll also need a decent amount of experience."
 
+*if (skip_mode = "skip")
+    *goto orphanage_level_up_blue
+*choice
+    #Back
+        *goto orphanage_visit_george_choice
+    #Back home
+        *goto orphanage_home_base
+    *selectable_if (((inventory_petunal_blossoms >= 2) and (inventory_rosalia >= 1)) and (experience >= 70)) #Cash in the flowers for a Blue Pass [-2 Petunal Blossoms, -1 Rosalia, Requires 70 Experience, Gain Blue Pass]
+        *goto orphanage_level_up_blue
 
+*label orphanage_level_up_blue
 
+[-2 Petunal Blossoms]
+*line_break
+[-1 Rosalia]
+*line_break
+[Blue Pass]
+*set inventory_petunal_blossoms - 2
+*set inventory_rosalia - 1
+*set pass_unlocked_blue true
+*set pass_unlocked_blue_properly true
 
+*if (skip_mode = "normal")
+    *page_break
 
+*set diary ("[i]I achieved the Blue Pass.[/i] We had a huge ceremony and I could see the tremendous grin on George's face![n/][+Blue Pass][n/][n/]" & diary)
 
+*if (skip_mode = "normal")
+    George gets together the whole orphanage for the celebration of this special occasion!  There are tattered banners and other children throw floor sand like confetti. Even with all the raggedness, it inspires you. You wish to turn this dump into a proper place one day.
 
+    As a reward, George also gives you 2 Blue Coins. "I've been collecting these," He says, "But I think you should have some. You mean so much to me. Thank you for being a good mentee."
 
+*if (not (knowledge_blue_coins))
+    *comment TODO: Mention golden salt rocks elsewhere
+    
+    *if (skip_mode = "normal")
+        He sees the perplexed look on your face and explains. "These are blue coins. They come from the Tunnel, rather than the Doubloons which are minted from the Golden Salt Rocks in the Dome's Salt Flats. Some places only take these things as currency, since they think of Dome-based items as inferior.
+    
+    [Encyclopedia Entry: Blue Coins]
+    
+    *set knowledge_blue_coins true
 
+[+2 Blue Coins]
+*set inventory_blue_coins + 2
 
+*if (skip_mode = "skip")
+    *return
 
+*goto orphanage_home_base
 
+*label visit_troy
+            
+Troy is happy to see you, but he's not really feeling energetic right now.
 
+*choice
+    #Back
+        *goto orphanage_visit_room
+    *selectable_if (false) #Share some tea with him to energize him [-6 Units of Tea]
+        *goto visit_troy_tea_time_choose_tea_box
 
+*label visit_troy_tea_time_choose_tea_box
 
+Where would you like to take the tea from?
 
+*choice
+    #Back
+        *goto visit_troy
+    #Back home
+        *goto orphanage_home_base
+    *if (container_owned_tea_box_outskirts)
+        *selectable_if (container_occupancy_tea_box_outskirts >= 6) #My tea box from Leif's Tea Shop (contains ${container_contents_tea_box_outskirts})
+            Sorry, but tea time with Troy isn't yet implemented
+            
+            *goto visit_troy
 
+*label orphanage_garden
 
+*if (visits_orphanage_garden = 0)
+    *set diary ("I visited the orphanage garden for the first time.[n/][n/]" & diary)
+    
+    "Hello!" Shouts Ms. Bee, the garden caretaker. Although you hear she is in this place so often that she sleeps in it (or perhaps it's so that one more kid can have a bed), you have seen her before. She's the one who supervises your corridor, and you know she can be quite strict. It's unfortunate she has to be the garden coordinator, as well.
+    
+    "You can get another 2 plots in the garden. Some plants require even better dirt to grow outside the Tunnel, too. Lemens, of course, won't ever grow outside the tunnel!"
+    
+    Note: Harvesting plants now [i]always[/i] gives 2 experience in addition to any bonuses listed (so basic flower seeds give 3 experience upon being harvested).
+    
+*if ((visits_orphanage_garden = 10) and (gardens_orphanage_num_times_harvested = 0))
+    What are you doing coming here to the garden just to not harvest any plants? You've visited this place 10 times and not harvested from here a single time. Dumbass.
 
+*set visits_orphanage_garden + 1
 
+*if ((gardens_orphanage_num_times_harvested = 2) and (not (unlocked_market_garden_store)))
+    *set diary ("Wow! Ms. Bee might actually like me. She just let me know about the gardening store.[n/][n/]" & diary)
+    
+    Ms. Bee looks at you excitedly and says, "TWO whole plants harvested! Usually our children get impatient and tired after the first one and let the second die! That is, if they even get the first one planted in the first place."
+    
+    "Since you're so enthusiastic about gardening, you should visit the garden store in the market, which will be unlocked now."
+    
+    *set unlocked_market_garden_store true
 
+*comment Some extra options if you get on Bee's good side
 
+What would you like to do in the garden?
 
+*choice
+    #Back
+        *goto orphanage_home_base
+    #Go to plot 1
+        *set logic_garden_plot "gardens_orphanage_plot_1"
+        *set logic_garden_plot_timer "gardens_orphanage_plot_1_ready_to_harvest"
+        *set logic_return_scene "orphanage"
+        *set logic_return_label "orphanage_garden"
+        *goto_scene logic manage_garden
+    *if (tracking_upgrade_extra_orphanage_garden)
+        #Go to plot 2
+            *set logic_garden_plot "gardens_orphanage_plot_1"
+            *set logic_garden_plot_timer "gardens_orphanage_plot_1_ready_to_harvest"
+            *set logic_return_scene "orphanage"
+            *set logic_return_label "orphanage_garden"
+            *goto_scene logic manage_garden
+    *if (unlocked_focus)
+        *if (focus_points_orphanage_garden >= 1)
+            #Focus [${focus_points_orphanage_garden} Focus Points Available]
+                *goto orphanage_garden_focus
 
+*label orphanage_garden_focus
 
+*if (gardens_orphanage_num_times_harvested < 3)
+    "Oh," says Ms. Bee. "I'd like you to have harvested at least 3 different times here before you go off focusing in this place! You've only harvested ${gardens_orphanage_num_times_harvested} different times in this specific location. Now off you go!"
+    
+    *goto orphanage_garden
 
+Mhmmm, nice dirt.
+
+*set objective_times_focused_var + 1
+[+${focus_points_orphanage_garden} Focus Points]
+*set focus_points + focus_points_orphanage_garden
+*set focus_points_orphanage_garden 0
+
+*goto orphanage_garden
+
+*label basement
+
+You descend the creaky stairs to the moist, moist, moist (and soggy) basement in the orphanage. You hear drops of water from all around, despite the ground not being wet (only moist). The floor is hard but slopes in some places and not in others, and the wooden beams that hold up the floor look like they'll burst any moment. Especially since they're moist.
+
+In the beginning, you are only allowed a personal storage bin shoved against a wall in the corner, but as time goes on you'll get to use more of the little rooms here. Some even say there are tunnels beyond the barred-shut door that says "TUNNELS: DON'T ENTER", but you think those are only myths.
+
+*choice
+    #Back
+        *goto orphanage_home_base
+    #Put some things in storage
+        *goto basement_storage
+    #Examine the music box in the corner
+        *goto basement_music_box
+    *if (focus_points_orphanage_basement >= 1)
+        #Focus [${focus_points_orphanage_basement} Focus Points Available]
+            *set objective_times_focused_var + 1
+            [+${focus_points_orphanage_basement} Focus Points]
+            *set focus_points + focus_points_orphanage_basement
+            *set focus_points_orphanage_basement 0
+
+            *page_break
+            *goto basement
+
+*label basement_storage
+
+What would you like to put in here for safekeeping? Right now, there is a trash bin to dump excess kiwis in order to gain kiwi levels, and there is also room for a single 32-lemen circle in your bin (these circles preserve the freshness of the lemens while you are gone).
+
+Actually, you can't even dump kiwis yet because Kyle wasted all his time on the lemen transfer machine, which was unnecessarily complicated considering lemens exist in 13 states according to freshness, and he decided to do it in a fancy way rather than the simple one. It actually turned out quite nicely. You just can't throw away your kiwis yet.
+
+*gosub_scene logic update_total_lemens
+
+*choice
+    #Back
+        *goto basement
+    *if (orphanage_basement_storage_current_lemen_circles < orphanage_basement_storage_max_lemen_circles)
+        *selectable_if (total_lemens >= 32) #Add a Lemen Circle to the bin [-32 Lemens]
+            *set orphanage_basement_storage_current_lemen_circles + 1
+            *goto basement_storage_add_lemen_circle
+    *if (orphanage_basement_storage_current_lemen_circles > 0)
+        #Take out the lemens from the bin [+32 Lemens]
+            *set orphanage_basement_storage_current_lemen_circles - 1
+            *goto basement_storage_remove_lemen_circle
+
+*label basement_storage_add_lemen_circle
+
+*set logic_lemen_giving_inventory "inventory_lemens"
+*set logic_lemen_receiving_inventory "orphanage_basement_storage_lemens"
+
+*choice
+    #Add your freshest lemens to the circle
+        *set logic_lemen_transfer_order "freshest"
+        *gosub_scene logic transfer_lemen_inventory
+        *goto basement_storage
+    #Add your oldest lemens to the circle
+        *set logic_lemen_transfer_order "oldest"
+        *gosub_scene logic transfer_lemen_inventory
+        *goto basement_storage
+
+*label basement_storage_remove_lemen_circle
+
+You transfer the lemens back from your lemen circle.
+
+*set logic_lemen_giving_inventory "orphanage_basement_storage_lemens"
+*set logic_lemen_receiving_inventory "inventory_lemens"
+
+*set logic_lemen_transfer_order "oldest"
+*gosub_scene logic transfer_lemen_inventory
+*goto basement_storage
+
+*goto orphanage_home_base
+
+*label basement_music_box
+
+Just an old, rusty music box. Mabel swears it's cursed because of how old it is, but, like, it's a frickin' music box LOL. The side has a little coin-shaped slot carved in, as if you're supposed to wind it up with a coin, but it doesn't seem like the right shape for a doubloon. It must need another sort of coin. Hm… strange.
+
+*if (inventory_ducats > 0)
+    Then you pause. Wait. It may not be the correct size for a doubloon, but it is the perfect size for a ducat. You pull one of the coins out of your pocket.
+    
+    *choice
+        #Insert it into the music box.
+            *goto basement_music_box_activated
+        #This is a bad idea. Leave immediately.
+            You walk out of the basement and slam the door shut behind you.
+            *goto orphanage_home_base
+
+*label basement_music_box_activated
+
+You twist it gently, careful not to break the delicate box. After a few moments winding it up in complete silence (wait, where'd the dripping go?), you remove the ducat and hear the soft chime of an ancient nursery rhyme. Looking down at this box on the ground, you somehow recognize the words that go with its chimes and sing along.
+            
+"A great warrior once held a great sword,"
+*line_break
+"From its blade much blood poured,"
+*line_break
+"When the warrior died, the sword kept going,"
+*line_break
+"It fell warriors from all sides unknowing,"
+*line_break
+"Until one day the sword was put away,"
+*line_break
+"The sword swore it would escape,"
+*line_break
+"From the tunnel maze inside it was placed,"
+*line_break
+"Then through the Tunnel it would ring,"
+*line_break
+"'Master sword, your job is not done',"
+*line_break
+"'There is more to destroy.'"
+
+"Lauren!" You hear a scream from atop the stairs down to the basement.
+
+*page_break
+
+You perk up from your trance at the sound of Mabel's voice. Crap, you're going to be in so much trouble from playing with this stup…
+
+A shiver pierces down your back as you stare at 12 swords identical to the one from the stone surrounding you. You slowly stand up as you hear Mabel's footsteps tap-tapping down all the way to the basement floor. One of them raises into the air and rotates until its hilt is facing you. Mabel is across from you.
+
+Then the music box makes one last chime.
+
+"Master sword's job is not done."
+*line_break
+"There is yet more to do."
+*line_break
+"But, if you help me Lauren, I may save you."
+
+Then you feel a slight breeze and hear a soft whistle and shortly after, the swords vanish. But the hole in Mabel's side doesn't.
+
+*page_break
+
+"Mabel, no, I…" You start between unbelieving sobs. You can see her staring at you, but you can't tell the emotion she bears on her face. You think it must be anger, but then she smiles one last time before a soft sigh signals her last moment in the Dome. You don't recall moving over to her, but you're holding her limp body. Blood is all over the ground. Yes, the ground is wet now, drenched in fact, with blood.
+
+Ms. Bee, Mabel's lifelong friend, is the next to enter the scene. She runs down the stairs recklessly at first, then softly takes the last few. "Lauren…" Ms. Bee starts, "What… what happened?"
+
+You look up at her, expecting at least one choice of words to come to your head, but there are none.
+
+*page_break
+
+Mabel's funeral is simple. The orphanage was her family, since she'd disowned whatever biological family she'd had in a past life. Some children even speculated that she was an alien without family. And since the orphanage was poor, her funeral wasn't very elaborate. Just a few choice things said by a few choice people, a stone in the backyard, and that was it.
+
+You didn't talk to anyone about what had happened except Ms. Bee. She told you it would have been unwise. She also urged you to stop exploring, but you can't stop. It's in your blood. And, besides, maybe out there is some artifact to bring her back. Mabel doesn't have to be gone. Right?
+
+You sigh. Should you keep Tunneling?
+
+*choice
+    #Yes
+        So then, on it is.
+        *goto orphanage_home_base
+    #No
+        *ending
+
+*comment ////////////////////////////////////////////////////////////
+*comment // Orphanage Events
+*comment ////////////////////////////////////////////////////////////
+
+*label event_eval
+    
+*comment Purple coin
+*if (((layer_1_cave_ruby_troy_parent_approval) and (not (troy_parents_ghost_banquet_gift))) and (general_event_occurred_two_hundred_moon_day))
+    *gosub event_troy_purple_coin
+
+*comment George's Trip
+*if ((not (george_departure_date = 0)) and ((not (george_departure_event_1_occurred)) and (months_passed >= (george_departure_date + 5))))
+    *gosub event_george_departure_event_1
+*if ((not (george_departure_date = 0)) and ((not (george_departure_event_2_occurred)) and (months_passed >= (george_departure_event_1_time + 12))))
+    *gosub event_george_departure_event_2
+*if ((not (george_departure_date = 0)) and ((not (george_departure_event_3_occurred)) and (months_passed >= (george_departure_event_2_time + 9))))
+    *gosub event_george_departure_event_3
+
+*return
+
+*comment Lantern
+*label event_lantern
+
+You try to enter through the door of the orphanage, but Ms. Bee stops you in your tracks.
+
+"What do you think you're doing bringing [i]that[/i] cursed object into this place?" She asks
+
+"But, I live here?" you say questioningly. Ms. Bee is usually the one begging the other staff to take in kids they can't afford to take in.
+
+"Right, and clearly you've done something terrible to merit the lantern. Well, I won't have it, [i]out[/i]." And then she shuts the door.
+
+You don't know where else to go except the town.
+
+*set home_base_scene "town"
+*set home_base_label "streets_home_base"
+
+And in the town, the only place you know of that will accept you now is the Streets. The slummiest part.
+
+But, hey, at least you have what you've gathered so far. Hopefully it's enough.
+
+*goto {home_base_scene} {home_base_label}
+
+*comment Troy
+*label event_troy_orphanage_event
+
+*set diary ("There was a big argument between Bee and Dicky back at the orphanage today.[n/][n/]" & diary)
+
+*set troy_orphaned_event_occurred true
+
+When you come back, you hear some yelling in the orphanage director's office. It's between Ms. Bee and Director Dicky, who runs the orphanage.
+
+"We have to take him in!" Pouts Ms. Bee. "He'll starve if we leave him outside."
+
+"We don't have the funds!" Shouts back Dicky. "You always want to let in every single kid. Well, sometimes they just have to starve!"
+
+"[i]You[/i] have the money." Snaps Bee.
+
+"Oh, sure, I donate half my personal income to this place and now I'm supposed to donate more just because of that? You know, I put more toward charity than pretty much any of the bastards in this town, and this is what I get? This bullshit '[i]I need to give more[/i]' mentality."
+
+"He's going to die." Yells Ms. Bee.
+
+"Well, then how about you pay for it?" You can hear Ms. Bee go silent. "Oh, right, I forgot you can't because of all the money you owe me. Now go back to your little garden."
+
+You hear the door opening and duck back outside. It wasn't exactly a private conversation, but you still feel embarrassed for listening in on the conversation. And outside the orphanage door stands a boy about your age.
+
+*if (met_troy)
+    It's Troy.
+
+    *page_break
+
+    "Lauren?" He says, dumbfounded. Then his voice picks up speed. "You have to help me! My parents got lost in the Tunnel, or something, their bodies were found, but well, I can't do this. I'm going to die." And then he curls up in the fetal position.
+
+    *fake_choice
+        #You can't let Troy die
+
+    "I won't let you die, Troy," you say. Then you go back inside the orphanage and head all the way to the administrative section, where you're normally not allowed and where Director Dicky is. "You have to take him i…" You start to yell before Dicky shuts his office door in your face.
+
+    You think. How can you get Dicky's attention?
+
+    "How much will it cost to take him in?"
+
+    Dicky opens the door again. "You know, if it were any other person, I wouldn't believe they had the funds. But I've heard that you've been doing pretty well for yourself in those Tunnels. Okay, you want to know how much it would cost to take him in for the next few years? 32,000. Up front."
+
+    *if (doubloons >= 32000)
+        *choice
+            #Give Dicky 32000 Doubloons to take in Troy.
+                *set doubloons - 32000
+                *goto troy_accepted_into_orphanage
+            #There has to be another way?
+                *goto troy_event_another_way
+
+    "Oh, what's that, you don't have 32,000?"
+
+    *page_break
+    *goto troy_event_another_way
+
+"Uh," you start, before ducking back inside. This is not something you want to get in the middle of. So you head about your way.    
+
+*return
+
+*label troy_event_another_way
+
+"Well, if you can't afford the cash transaction, there is another way. I need a rare artifact. Something you wouldn't find in the first two layers. You think you can do that for me?"
+
+"Well, I might need some more time to get to the third layer to find…"
+
+No, I want one now.
+
+But, you don't have a…
+
+*if (inventory_clackadoo_feather > 0)
+    Wait. You do. The clackadoo feather.
+
+    *choice
+        #Give Dicky the Clackadoo Feather to take Troy in.
+            *set inventory_clackadoo_feather - 1
+            *goto troy_accepted_into_orphanage
+        #Let Troy Die
+            *if (layer_1_shrine_of_good_bad_deed = "")
+                    *set layer_1_shrine_of_good_bad_deed "Let Troy die even though you still had a clackadoo feather."
+                    *set layer_1_shrine_of_good_bad_deed_month months_passed
+            
+            *goto let_troy_die
+*if (inventory_clackadoo_feather = 0)
+    *goto troy_clackadoo_feather_sold
+
+*label troy_accepted_into_orphanage
+
+*set diary ("Troy is alive because of me.[n/][n/]" & diary)
+
+*set saved_troy_orphanage true
+
+You and Dicky go back to the front of the orphanage where Troy was and open the door. Troy looks up, whimpering. "Please, sir, you have t…" he starts.
+
+Dicky cuts him off. "Lauren paid for you to stay here. From now on, consider yourself a resident of Sleepy Hollow Orphanage." Then Dicky holds out his hand, and Troy bursts into tears.
+
+*page_break
+*return
+
+*label troy_clackadoo_feather_sold
+
+The clackadoo feather. You sold it. You kick yourself.
+
+*label let_troy_die
+
+*set diary ("Troy is dead because of me.[n/][n/]" & diary)
+
+You'll never forgive yourself for Troy's death.
+
+*page_break
+*return
+    
+*comment Purple coin
+*label event_troy_purple_coin
+
+*set troy_parents_ghost_banquet_gift true
+
+Troy runs up to you when you get back to the orphanage.
+
+"Hey, Lauren! I had this weird dream, and uh…" Then he pauses. "I think you should have this." He blushes. "I heard it's a big gift, I just think, well, I think my parents wanted you to have it. It's a purple coin."
+
+[+1 Purple Coin][i](Rare)[/i]
+*line_break
+[Encyclopedia Entry: Purple Coins]
+*set inventory_purple_coin + 1
+*set knowledge_purple_coin true
+    
+*page_break
+*return
+
+*comment 200th month
+*label event_two_hundred_moon_day
+
+*set diary ("Awww, all my friend got together to celebrate my 200th moon day.[n/][n/]" & diary)
+
+*set general_event_occurred_two_hundred_moon_day true
+
+As soon as you enter your room, George and Benedict (another orphan at the fraternity) burst out from the corner saying "surprise!"
+*if (saved_troy_orphanage)
+    Troy stands awkwardly behind them, wearing a weak smile.
+
+There's a cake on your desk and banners and decorations.
+*if (saved_troy_orphanage)
+    You recognize the icing on the cake as Troy's handwriting.
+It's for your Two Hundred Moon day!
+
+While birthdays are celebrated in this world, the occasion of someone's hundredth moon is much more important. In particular, 200 Moons marks one's transition into young adulthood, with many new privileges. 300 Moons is an even bigger mark, but we'll cross that when we get there!
+
+The important part now is to enjoy your cake and good times with George
+*if (saved_troy_orphanage)
+    and Troy
+and Benedict.
+
+"I also got you a gift!" Benedict says. "I found this coin in one of Mabel's library books." Benedict was such an avid reader. Of course he'd be the one to find it.
+
+[+1 Blue Coin]
+*set inventory_blue_coins + 1
+
+*if (saved_troy_orphanage)
+    "Hey!" Jests Troy, "I also got Lauren that! No fair." Then he hands you a purple coin.
+
+    Wait, this isn't blue? George and Benedict gasp.
+
+    "Oh," says Troy, "I thought the one you gave her was purple, too."
+
+    "Is that… a purple coin?" Says Benedict.
+
+    "Yeah, aren't they supposed to be valuable?"
+
+    "[i]Very[/i]." Answers George. "You could have easily bought your way into the orphanage with the money that's worth."
+
+    Troy's face turns red. "Oh, I guess Lauren didn't need to give up that clackadoo feather then. Uh… I'll get you this and a proper gift as well!"
+
+    George points out, "Well, if anyone saw an orphan boy like you carrying that around, they'd probably just snatch the coin up and throw you back out. Getting the money the coin is worth in a desperate situation is the hard part. I don't think you would have had good luck selling that on your own. And besides, a purple coin is far too powerful an item for the character to possess this early in the game. You should give her a blue coin and instead let this just be foreshadowing of the purple coin."
+
+    "Alright, but don't you think speaking like that will break the immersion into the story, George?"
+
+    "No, not at all, character_name_var_troy."
+
+    Troy passes the purple coin through the plot machine and turns it blue, then hands it to you.
+
+    [+1 Blue Coin]
+    *set inventory_blue_coins + 1
+    
+*page_break
+*return
+
+*comment George's Trip
+*label event_george_departure_event_1
+
+*set diary ("George can do whatever he sets his mind to.[n/][n/]" & diary)
+
+*set george_departure_event_1_occurred true
+*set george_departure_event_1_time months_passed
+
+It's been half a year since George left. You arrive at the orphanage to find some good news, though: George was spotted in the fourth layer by some of Mabel's friends! You only know because you overhear Mabel cursing about George's disappearance to Ms. Bee. You laugh; your mentor can handle this.
+
+*page_break
+
+Right?
+    
+*page_break
+*return
+
+*label event_george_departure_event_2
+
+*set george_departure_event_2_occurred true
+*set george_departure_event_2_time months_passed
+
+*set diary ("I can't believe they're giving up on George like this. Surely, he's still alive.[n/][n/]" & diary)
+
+Well over a year has passed and no one's heard any more news about George. Apparently, they just let another orphanage move into his room. An unprecedented move, considering George's father had been such a big donor to the orphanage. Essentially, the orphanage is admitting he's dead. But you know he can't be.
+
+*page_break
+*return
+
+*label event_george_departure_event_3
+
+*set george_departure_event_3_occurred true
+*set george_departure_event_3_time months_passed
+
+*set diary ("I hear George is on his way back![n/][n/]" & diary)
+
+You hear some news about George. He's been found in the seventh layer! You're surprised he got so far. They don't even have a special pass for the seventh layer. If you're able to make it that far, great. You're on your own at that point.
+
+That also means George was somehow able to sneak through the fifth [i]and[/i] sixth layer outposts. And he survived each of those layers as well, which is no easy task on its own.
+
+And now he's returning.
+
+He'll be back in about five months. You don't know much else. You heard most of this through gossip. But you're excited to tell George all the things you've done while he was away.
+
+*comment TODO: Make it so that it lists some of those things here
+    
+*page_break
+*return
+
+*comment "Mysterious Flower"
+*label event_flower_given
+
+*set diary ("I wonder who gave me this flower.[n/][n/]" & diary)
+
+*set general_event_occurred_george_gave_glowshroom true
+
+When you enter your bedroom, you find a glowing, white, translucent flower on your desk made out to "my crush" from "your secret admirer uwu". You decide to keep it, even though you don't really know what it is.
+
+[+1 Mysterious Flower]
+*set inventory_glowshroom_flower + 1
+
+*page_break
+*return
+
+*label event_orphanage_mabel_no_research
+
+*set specific_event_orphanage_mabel_no_research true
+
+You're walking to dinner when Mabel, who's walking the other way, scorns at you. Rumors have been going around that she's been talking trash behind your back about how just because you go into the Tunnels you think research is beneath you. How you're missing so many features of the game because you won't just visit poor Mabel and read a damn book.
+
+You feel really bad. You should apologize to Mabel. You also decide to do a research or two in order to access a lot more areas and features. And most of all, you make the firm decision to tell everyone this is your favorite game now and how funny and charming the author is. (Oh, and handsome too!)
+
+*page_break
+*return
+
+*label event_mabel_three_researches
+
+*set specific_event_orphanage_three_research_shop true
+
+Mabel knocks on your door and nearly opens it herself. She's gleaming. "You've completed 3 orphanage researches now. You should be so proud of yourself!" Then she gives you a big hug. "I didn't really believe in your exploration adventures before, but seeing you try so hard in so many different areas has proven me wrong. I know the name of someone in town who will buy a lot more stuff off of you than the general store guy."
+
+Well, that would have been helpful earlier…
+
+*page_break
+*return

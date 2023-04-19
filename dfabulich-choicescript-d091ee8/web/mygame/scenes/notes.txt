@@ -1,0 +1,27 @@
+Logging a job
+
+1. Create job next_to_work and resignation_time vars
+2. Add job offer encounter (and make job offer var)
+3. Add job offer, job resign, and job un-resign options to relevant job board page
+4. Add job choice to job page (TODO: more detail)
+5. Add job to blacklist trigger and blacklist effects
+6. Add job to valid employments for the Blue Coin store list in the logic file
+7. Add job to alerts in logic file
+8. Add job schedule to stats screen
+
+Logging an event
+
+1. Add invitation in logic file
+2. Add calendar entry in stats screen
+3. Add actual event nav
+
+People Desc.s
+
+Henry - Has a hand and a nose in everything somehow. Likes the ghostly orbs because they're shiny.
+
+Well-read: research and return a book from the library
+
+
+Menu-ing
+1. "Back" is always the first option in "navigation menus" (those that aren't part of a narrative choice, but just to redirect the game where the player wants to go).
+2. If "Back" doesn't immediately go back home, also include a "Back home" option (TODO: fix some places where that's not a thing)

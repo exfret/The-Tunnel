@@ -1,0 +1,29 @@
+*label intro
+
+What would you like to read about?
+
+*choice
+    #Items
+        *goto items
+    #World features
+        *goto features
+    #People
+        *goto people
+    #Game mechanics
+        *goto mechanics
+
+*label items
+
+Below is a complete list of items in the game. (Or, rather, it is [i]supposed to be[/i] complete, which is a big difference!) Choose one and read more about it.
+
+*choice
+    #Rosalia
+        Rosalia is a rose-like plant with big, broad, deep red leaves and smaller leaves along its stem. These smaller leaves are often crushed up to create teas. Most commonly thought to only exist in the first layer until hordes of them were found in layer five.
+    #Mother of Specters
+        Yellow flowers with short petals and a sweet, buttery smell to them. Extremely poisonous. Named after the number of ghosts they've caused. Note: Mother of Specters Fetch skill acts differently than other fetch skills at this point. It has a skill tree rather than contributing directly to harvesting more Mother of Specters.
+
+*label features
+
+*choice
+    #Ghostly flower circles
+        Ghosts are often confined to flower circles. These flowers are usually Rosalia, but can be others as well.
